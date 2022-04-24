@@ -1,0 +1,8 @@
+(library
+ (name lang)
+ (modes native)
+ (instrumentation (backend bisect_ppx))
+ (libraries
+   syntax
+   asm
+   instr))

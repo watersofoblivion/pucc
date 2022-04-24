@@ -1,0 +1,7 @@
+(library
+ (name riscvTest)
+ (modes native)
+ (libraries
+    ounit2
+    riscv
+    pipelineTest))

@@ -1,0 +1,6 @@
+(library
+ (name asmTest)
+ (modes native)
+ (libraries
+    ounit2
+    asm))
