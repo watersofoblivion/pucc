@@ -1,8 +1,8 @@
 %{
   [@@@coverage exclude_file]
 
-  let make_file kontinue =
-    Syntax.file []
+  let make_file tops kontinue =
+    Syntax.file tops
       |> kontinue
 %}
 
@@ -14,4 +14,4 @@
 /* Source Files */
 
 %public file:
-| EOF { make_file }
+| EOF { make_file [] }

@@ -24,6 +24,7 @@ depends: [
   "ounit2"
   "ANSITerminal"
   "bisect_ppx"
+  "landmarks-ppx"
   "uutf"
   "uunf"
   "sedlex"

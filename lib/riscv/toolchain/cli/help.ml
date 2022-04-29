@@ -10,6 +10,6 @@ let cmd_help =
   ] in
 
   let term = Term.(ret (const (fun _ -> `Help (`Pager, None)) $ const ())) in
-  let info = Term.info "hdub" ~doc ~sdocs ~exits:Common.exits ~man in
+  let info = Cmd.info "hdub" ~doc ~sdocs ~exits:Common.exits ~man in
 
   (term, info)
