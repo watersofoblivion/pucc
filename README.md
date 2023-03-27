@@ -1,15 +1,27 @@
 PU/CC
 ===
 
-PU/CC is a CPU for functional languages compiled for stackless execution with Continuation Passing Style and a language compiling to that CPU.
+PU/CC is:
 
-The CPU is simple, 5-stage scalar RISC pipeline based on the RISC-V ISA, but with three novel changes:
+* A softcore CPU for pure functional languages compiled for stackless execution with Continuation Passing Style
+* A language compiling to that CPU
 
-* A scratchpad memory has been added and the [closure conversion algorithm](https://flint.cs.yale.edu/flint/publications/escc.pdf) has been extended to use it.
-* Flow control has been moved from being individual instructions to being a function header and branching has been moved into a dedicated component.
-* Automated garbage collection has been implemented in hardware
+CPU
+---
 
-The language is a Go-flavored dialect of ML.
+The core CPU is simple, 5-stage scalar RISC pipeline based on the RISC-V ISA, but with a few novel extensions:
+
+1. Flow control (jumps and branches) has been moved from being individual instructions to a combination of a function header and tagged instructions.  Branching has been moved into a dedicated pipeline Flow Control stage (`FC`) before Instruction Fetch, effectively extending the pipeline "backwards".  The instruction cache is also bifurcated into non-flow control and flow control caches.
+1. Generational garbage collection has been implemented in hardware and integrated into the virtual memory system.
+1. A scratchpad memory has been added and the [closure conversion algorithm](https://flint.cs.yale.edu/flint/publications/escc.pdf) has been extended to use it automatically with no user intervention.
+1. A L4-inspired microkernel has been implemented in hardware and controls thread and process scheduling as well as IPC using [CML](http://cml.cs.uchicago.edu/)-like channels.  It is implemented by further extending the pipeline backwards with new Threading (`TH`) and Process (`PR`) management stages.  In simulations (though not on real hardware) this microkernel has been given a dedicated RAM, Flash "swap", and separate virtual memory.
+
+A second, straight RISC-V implementation has been included so it can be used as a baseline for comparison against PU/CC.  Both CPUs have been verified to work on [Xilinx Artix-7 100T FPGAs](https://www.xilinx.com/products/silicon-devices/fpga/artix-7.html), specifically on the [Alchitry Au+](https://www.sparkfun.com/products/17514) and [Digilent Arty 7](https://digilent.com/shop/arty-a7-100t-artix-7-fpga-development-board/) boards.
+
+Language
+---
+
+The language is a Go-flavored dialect of ML that can target both PU/CC and RISC-V.
 
 Building
 ===
@@ -98,16 +110,16 @@ Software
 
 Only one thing is written in OCaml:
 
-* `bootstrap` - The bootstrap PU/CC compiler
+* `bootstrap` - An unoptimizing bootstrap PU/CC compiler, executable on non-PU/CC architectures (anything that OCaml can run on, such as x86_64, ARM, etc.) and generating either vanilla RISC-V or PU/CC executables.
 
-The rest of the sources are a few libraries and programs written in PU/CC that are compiled with the bootstrap compiler and can be run on both the RISC-V and PU/CC CPUs:
+The rest of the sources are a few libraries and programs written in PU/CC that are compiled with the bootstrap compiler and can be run on both the RISC-V and PU/CC softcore CPUs:
 
 * `lex` - A Lexical analyzer generator
 * `yacc` - A LR(1) parser generator, augmented with some of the niceties of Menhir
 * `punit` - A xUnit test framework
 * `cmdline` - A command-line arguments parsing library
 * `format` - A formatting library based on OCaml's `Format` module
-* `pu/cc` - A self-hosted optimizing PU/CC compiler
+* `pu/cc` - A self-hosted, optimizing PU/CC compiler
 
 Other
 ---
