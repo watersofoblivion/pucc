@@ -1,0 +1,16 @@
+load("@//rules:ocaml.bzl", "ocaml_package")
+
+ocaml_package(
+    name = "riscV",
+    label = "RISC-V Assembly",
+    modules = [
+        "ast"
+    ],
+    deps = [
+        "//bootstrap/core:core",
+    ],
+    test_deps = [
+        "//bootstrap/core:coreTest",
+    ],
+    visibility = ["//bootstrap:__subpackages__"]
+)

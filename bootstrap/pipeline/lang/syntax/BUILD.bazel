@@ -1,0 +1,16 @@
+load("@//rules:ocaml.bzl", "ocaml_package")
+
+ocaml_package(
+    name = "syntax",
+    label = "Concrete Syntax",
+    modules = [
+        "syntaxAst"
+    ],
+    deps = [
+        "//bootstrap/core:core",
+    ],
+    test_deps = [
+        "//bootstrap/core:coreTest",
+    ],
+    visibility = ["//bootstrap:__subpackages__"]
+)

@@ -1,0 +1,22 @@
+opam-version: "2.0"
+compiler: ["ocaml-base-compiler.4.12.0"]
+roots: ["cmdliner.1.1.1" "menhir.20220210" "ounit2.2.2.6"]
+installed: [
+  "base-bigarray.base"
+  "base-bytes.base"
+  "base-threads.base"
+  "base-unix.base"
+  "cmdliner.1.1.1"
+  "dune.3.7.0"
+  "menhir.20220210"
+  "menhirLib.20220210"
+  "menhirSdk.20220210"
+  "ocaml.4.12.0"
+  "ocaml-base-compiler.4.12.0"
+  "ocaml-config.2"
+  "ocaml-options-vanilla.1"
+  "ocamlfind.1.9.6"
+  "ounit2.2.2.6"
+  "seq.base"
+  "stdlib-shims.0.3.0"
+]

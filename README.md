@@ -1,10 +1,73 @@
-Hardware Playground
+PU/CC
 ===
 
-Contains [FuseSoC](https://fusesoc.readthedocs.io/en/stable/index.html) cores as I work through the [Learning FPGSs](https://www.amazon.com/Learning-FPGAs-Digital-Design-Beginners/dp/1491965495) book.
+PU/CC is a CPU for functional languages compiled for stackless execution with Continuation Passing Style and a language compiling to that CPU.
 
-Each project is a separate core, buildable for both the Alchitry Cu and the Alchitry Au+.  For the Cu, the core is built with IceStore and can be built using `fusesoc run --target=cu watersofoblivion:hdub:<core-name>`.  For the Au+, the core is built with Xilinx Vivado and can be built using `fusesoc run --target=au_plus --setup --build watersofoblivion:hdub:<core-name>`.  For both, the cores must be loaded onto the devices using the Alchitry Loader (part of [Alchitry Labs](https://alchitry.com/alchitry-labs).)
+The CPU is simple, 5-stage scalar RISC pipeline based on the RISC-V ISA, but with three novel changes:
 
-Available Cores:
+* A scratchpad memory has been added and the [closure conversion algorithm](https://flint.cs.yale.edu/flint/publications/escc.pdf) has been extended to use it.
+* Flow control has been moved from being individual instructions to being a function header and branching has been moved into a dedicated component.
+* Automated garbage collection has been implemented in hardware
 
-* `fpga-book-first`: Turn on a LED when the button is pressed.
+The language is a Go-flavored dialect of ML.
+
+Building
+---
+
+The codebase is written in a variety of languages:
+
+* The CPU is written SystemVerilog
+* The CPU tests are written in C++
+* The bootstrap PU/CC compiler is written in OCaml
+* The main PU/CC compiler and its supporting libraries and utilities are written in PU/CC
+
+In order build all this in a single build system, [Bazel](https://bazel.build/) was chosen.
+
+### Dependencies
+
+To get started, You need to install a few packages using yor favorite package manager:
+
+* Bazil - Build System
+* OPAM - OCaml Package Manager
+
+Once you install those, you need to install all of the OCaml dependencies for the bootstrap compiler.  In the root of this repo, run:
+
+```bash
+# Refresh your package list
+opam update
+
+# Install all packages into a local OPAM switch.  This will take a while
+# because it has to build the full OCaml compiler and then install all of the
+# packages.
+opam switch import .obazl.d/opam/local.manifest --switch .
+
+# Sync Bazel with OPAM
+bazel run @opam//local:refresh
+```
+
+### Building
+
+Then just use Bazel to build all the things and run all the tests:
+
+```bash
+# Build everything
+bazel build //...
+
+# Test Everything
+bazel test //...
+```
+
+Sources
+---
+
+The sources include:
+
+* `bootstrap` - The bootstrap PU/CC compiler, written in OCaml
+
+There are also a few libraries and programs written in PU/CC that are compiled with the bootstrap compiler and can be run on the generated PU/CC CPU:
+
+* `lex` - A Lexical analyzer generator
+* `yacc` - A LR(1) parser generator
+* `punit` - A xUnit test framework
+* `cmdline` - A command-line arguments parsing library
+* `puccc` - An optimizing PU/CC compiler

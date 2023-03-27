@@ -1,0 +1,21 @@
+load("@//rules:ocaml.bzl", "ocaml_package")
+
+ocaml_package(
+    name = "close",
+    label = "Closure Conversion",
+    modules = [
+        "env",
+        "pass",
+    ],
+    deps = [
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/cps:cps",
+        "//bootstrap/pipeline/lang/clo:clo",
+    ],
+    test_deps = [
+        "//bootstrap/core:coreTest",
+        "//bootstrap/pipeline/lang/cps:cpsTest",
+        "//bootstrap/pipeline/lang/clo:cloTest",
+    ],
+    visibility = ["//bootstrap:__subpackages__"]
+)

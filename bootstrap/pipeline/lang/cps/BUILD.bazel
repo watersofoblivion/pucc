@@ -1,0 +1,16 @@
+load("@//rules:ocaml.bzl", "ocaml_package")
+
+ocaml_package(
+    name = "cps",
+    label = "Continuation-Passing Syntax",
+    modules = [
+        "cpsAst"
+    ],
+    deps = [
+        "//bootstrap/core:core",
+    ],
+    test_deps = [
+        "//bootstrap/core:coreTest",
+    ],
+    visibility = ["//bootstrap:__subpackages__"]
+)

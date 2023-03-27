@@ -1,0 +1,83 @@
+load("@rules_verilog//verilog:defs.bzl", "verilog_module")
+load("@rules_cc//cc:defs.bzl", "cc_test")
+load("@rules_verilator//verilator:defs.bzl", "verilator_cc_library")
+
+# Source
+
+verilog_module(
+    name = "src",
+    top = "HDubCoreThruWire",
+    srcs = [
+        "HDubCoreThruWireIf.sv",
+        "HDubCoreThruWire.sv"
+    ],
+    visibility = ["//visibility:public"]
+)
+
+# Unit Tests
+
+verilog_module(
+    name = "unit-test-top",
+    top = "UnitTestTop",
+    srcs = [
+        "UnitTestHarness.sv",
+        "UnitTestTop.sv"
+    ],
+    deps = [":src"],
+    visibility = ["//visibility:private"]
+)
+
+verilator_cc_library(
+    name = "unit-test-verilated",
+    module = ":unit-test-top",
+    visibility = ["//visibility:private"]
+)
+
+cc_test(
+    name = "unit-test",
+    size = "small",
+    srcs = [
+        "thru-wire-unit-test.h",
+        "thru-wire-unit-test.cc",
+        "unit-test-main.cc",
+    ],
+    deps = [
+        ":unit-test-verilated",
+        "@com_google_googletest//:gtest",
+    ],
+    visibility = ["//visibility:public"]
+)
+
+# Integration Tests
+
+verilog_module(
+    name = "integration-test-top",
+    top = "IntegrationTestTop",
+    srcs = [
+        "IntegrationTestHarness.sv",
+        "IntegrationTestTop.sv"
+    ],
+    deps = [":src"],
+    visibility = ["//visibility:private"]
+)
+
+verilator_cc_library(
+    name = "integration-test-verilated",
+    module = ":integration-test-top",
+    visibility = ["//visibility:private"]
+)
+
+cc_test(
+    name = "integration-test",
+    size = "small",
+    srcs = [
+        "thru-wire-integration-test.h",
+        "thru-wire-integration-test.cc",
+        "integration-test-main.cc",
+    ],
+    deps = [
+        ":integration-test-verilated",
+        "@com_google_googletest//:gtest"
+    ],
+    visibility = ["//visibility:public"]
+)

@@ -1,6 +1,0 @@
-(library
- (name check)
- (modes native)
- (instrumentation (backend bisect_ppx))
- (libraries
-   asm))

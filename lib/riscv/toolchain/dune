@@ -1,6 +1,0 @@
-(library
- (name toolchain)
- (modes native)
- (instrumentation (backend bisect_ppx))
- (libraries
-   cli))

@@ -1,0 +1,21 @@
+load("@//rules:ocaml.bzl", "ocaml_package")
+
+ocaml_package(
+    name = "flatten",
+    label = "Flattening to First-Order SSA",
+    modules = [
+        "env",
+        "pass",
+    ],
+    deps = [
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/clo:clo",
+        "//bootstrap/pipeline/lang/ssa:ssa",
+    ],
+    test_deps = [
+        "//bootstrap/core:coreTest",
+        "//bootstrap/pipeline/lang/clo:cloTest",
+        "//bootstrap/pipeline/lang/ssa:ssaTest",
+    ],
+    visibility = ["//bootstrap:__subpackages__"]
+)

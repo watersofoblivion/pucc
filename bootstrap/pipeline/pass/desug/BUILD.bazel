@@ -1,0 +1,21 @@
+load("@//rules:ocaml.bzl", "ocaml_package")
+
+ocaml_package(
+    name = "desug",
+    label = "Desugaring",
+    modules = [
+        "env",
+        "pass",
+    ],
+    deps = [
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/syntax:syntax",
+        "//bootstrap/pipeline/lang/annot:annot",
+    ],
+    test_deps = [
+        "//bootstrap/core:coreTest",
+        "//bootstrap/pipeline/lang/syntax:syntaxTest",
+        "//bootstrap/pipeline/lang/annot:annotTest",
+    ],
+    visibility = ["//bootstrap:__subpackages__"]
+)

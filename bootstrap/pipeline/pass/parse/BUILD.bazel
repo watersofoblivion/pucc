@@ -1,0 +1,236 @@
+load("@rules_ocaml//build:rules.bzl", "ocamllex", "ocaml_module", "ocaml_test")
+load("@obazl//build:rules_ocaml.bzl", "menhir")
+
+# Environment
+
+ocaml_module(
+    name = "parseEnv",
+    struct = "parseEnv.ml",
+    deps = [
+        "//bootstrap/core:core"
+    ],
+    visibility = ["//visibility:private"],
+)
+
+# Parser
+
+menhir(
+    name = "genparser",
+    tool = "@ocaml//bin:menhir",
+    base = "parser",
+    grammars = [
+        "core.mly",
+        "tokens.mly",
+        "lit.mly",
+        "name.mly",
+        "pkg.mly",
+        "import.mly",
+        "file.mly",
+    ],
+    deps = [
+        "//bootstrap/toolchain/workspace:workspace",
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/syntax:syntax",
+        ":parseEnv",
+    ],
+    outs = [
+        "parser.mli",
+        "parser.ml",
+    ],
+    explain = True,
+    flags = [
+            "--strict",
+            "--no-dollars",
+    ],
+)
+
+ocaml_module(
+    name = "parser",
+    sig = "parser.mli",
+    struct = "parser.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "//bootstrap/toolchain/workspace:workspace",
+        "//bootstrap/core:core",
+        ":parseEnv",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+# Lexer
+
+ocamllex(
+    name = "genlex",
+    src = "lexer.mll",
+    out = "lexer.ml",
+    visibility = ["//visibility:private"],
+)
+
+ocaml_module(
+    name = "lexer",
+    struct = "lexer.ml",
+    deps = [
+        ":parseEnv",
+        ":parser",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+# Module
+
+ocaml_module(
+    name = "parseEntry",
+    struct = "parseEntry.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "//bootstrap/toolchain/workspace:workspace",
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/pass/parse:parser",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+ocaml_module(
+    name = "parse",
+    sig = "parse.mli",
+    struct = "parse.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "//bootstrap/toolchain/workspace:workspace",
+        "//bootstrap/core:core",
+        ":parseEnv",
+        ":lexer",
+        ":parser",
+        ":parseEntry",
+    ],
+    visibility = ["//bootstrap:__subpackages__"],
+)
+
+# Tests
+
+ocaml_module(
+    name = "parseEnvTest",
+    struct = "parseEnvTest.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "//bootstrap/core:core",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/core:coreTest",
+        ":parseEnv"
+    ],
+    visibility = ["//visibility:private"],
+)
+
+ocaml_module(
+    name = "parserTest",
+    struct = "parserTest.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/syntax:syntax",
+        ":parseEnv",
+        ":parser",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/core:coreTest",
+        "//bootstrap/pipeline/lang/syntax:syntaxTest",
+        ":parseEnvTest",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+ocaml_module(
+    name = "lexerTest",
+    struct = "lexerTest.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        ":parseEnv",
+        ":parser",
+        ":lexer",
+        "@ounit2//lib/ounit2",
+        ":parseEnvTest",
+        ":parserTest",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+ocaml_module(
+    name = "parseTest",
+    sig = "parseTest.mli",
+    struct = "parseTest.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/syntax:syntax",
+        ":parse",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/core:coreTest",
+        "//bootstrap/pipeline/lang/syntax:syntaxTest",
+        ":parseEnvTest",
+        ":parserTest",
+        ":lexerTest"
+    ],
+    visibility = ["//bootstrap:__subpackages__"],
+)
+
+# Suite
+
+ocaml_module(
+    name = "parseEnvSuite",
+    struct = "parseEnvSuite.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/pipeline/lang/syntax:syntax",
+        ":parse",
+        "//bootstrap/pipeline/lang/syntax:syntaxTest",
+        ":parseTest",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+ocaml_module(
+    name = "parserSuite",
+    struct = "parserSuite.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/pipeline/lang/syntax:syntax",
+        ":parse",
+        "//bootstrap/pipeline/lang/syntax:syntaxTest",
+        ":parseTest",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+ocaml_module(
+    name = "lexerSuite",
+    struct = "lexerSuite.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/pipeline/lang/syntax:syntax",
+        ":parse",
+        "//bootstrap/pipeline/lang/syntax:syntaxTest",
+        ":parseTest",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+ocaml_module(
+    name = "parseSuite",
+    struct = "parseSuite.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/pipeline/lang/syntax:syntax",
+        ":parse",
+        "//bootstrap/pipeline/lang/syntax:syntaxTest",
+        ":parseTest",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+ocaml_test(
+    name = "parse-test",
+    main = ":parseSuite",
+)

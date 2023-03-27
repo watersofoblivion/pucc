@@ -1,6 +1,0 @@
-(library
- (name parseTest)
- (modes native)
- (libraries
-    ounit2
-    parse))

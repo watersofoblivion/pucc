@@ -1,0 +1,16 @@
+load("@//rules:ocaml.bzl", "ocaml_package")
+
+ocaml_package(
+    name = "workspace",
+    label = "Workspace",
+    modules = [
+        "pkg",
+        "fs",
+    ],
+    deps = [
+        "@fpath//lib/fpath",
+    ],
+    test_deps = [
+        "//bootstrap/core:core",
+    ]
+)

@@ -1,6 +1,0 @@
-(library
- (name hdub)
- (modes native)
- (instrumentation (backend bisect_ppx))
- (libraries
-   riscv))

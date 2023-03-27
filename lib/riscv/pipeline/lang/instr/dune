@@ -1,4 +1,0 @@
-(library
- (name instr)
- (modes native)
- (instrumentation (backend bisect_ppx)))

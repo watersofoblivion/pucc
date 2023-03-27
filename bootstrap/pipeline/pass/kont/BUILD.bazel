@@ -1,0 +1,21 @@
+load("@//rules:ocaml.bzl", "ocaml_package")
+
+ocaml_package(
+    name = "kont",
+    label = "CPS Conversion",
+    modules = [
+        "env",
+        "pass",
+    ],
+    deps = [
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/mono:mono",
+        "//bootstrap/pipeline/lang/cps:cps",
+    ],
+    test_deps = [
+        "//bootstrap/core:coreTest",
+        "//bootstrap/pipeline/lang/mono:monoTest",
+        "//bootstrap/pipeline/lang/cps:cpsTest",
+    ],
+    visibility = ["//bootstrap:__subpackages__"]
+)

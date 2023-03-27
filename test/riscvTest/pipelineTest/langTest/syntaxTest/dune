@@ -1,6 +1,0 @@
-(library
- (name syntaxTest)
- (modes native)
- (libraries
-    ounit2
-    syntax))

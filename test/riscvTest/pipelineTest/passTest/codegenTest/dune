@@ -1,6 +1,0 @@
-(library
- (name codegenTest)
- (modes native)
- (libraries
-    ounit2
-    codegen))

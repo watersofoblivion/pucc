@@ -1,0 +1,12 @@
+load("@//rules:ocaml.bzl", "ocaml_package")
+
+ocaml_package(
+    name = "cli",
+    label = "Command-Line Interface",
+    modules = [
+        "impl",
+    ],
+    deps = [
+        "@cmdliner//lib/cmdliner",
+    ]
+)

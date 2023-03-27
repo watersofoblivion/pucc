@@ -1,5 +1,16 @@
-_build
-build
+# Bazel
+bazel-bin
+bazel-pucc
+bazel-out
+bazel-testlogs
+
+# rules_ocaml
+.obazl.d/opam/local/
+.obazl.d/logs/
+_opam
+
+# Other
+.vscode
 .metals
 .docker
 _coverage

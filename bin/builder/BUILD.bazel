@@ -1,0 +1,17 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+
+cc_library(
+    name = "libbuilder",
+    srcs = ["builder.cc"],
+    hdrs = ["builder.h"]
+)
+
+cc_binary(
+    name = "builder",
+    srcs = ["main.cc"],
+    deps = [
+        "@com_google_absl//absl/strings",
+        "@com_google_googletest//:gtest",
+        ":libbuilder"
+    ]
+)

@@ -1,6 +1,0 @@
-(library
- (name checkTest)
- (modes native)
- (libraries
-    ounit2
-    check))

@@ -1,0 +1,21 @@
+load("@//rules:ocaml.bzl", "ocaml_package")
+
+ocaml_package(
+    name = "norm",
+    label = "A-Normalization",
+    modules = [
+        "env",
+        "pass"
+    ],
+    deps = [
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/annot:annot",
+        "//bootstrap/pipeline/lang/ir:ir",
+    ],
+    test_deps = [
+        "//bootstrap/core:coreTest",
+        "//bootstrap/pipeline/lang/annot:annotTest",
+        "//bootstrap/pipeline/lang/ir:irTest",
+    ],
+    visibility = ["//bootstrap:__subpackages__"]
+)

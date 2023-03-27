@@ -1,0 +1,14 @@
+load("@rules_ocaml//build:rules.bzl", "ocaml_module", "ocaml_binary")
+
+ocaml_module(
+  name = "main",
+  struct = "main.ml",
+  deps = [
+    "@cmdliner//:cmdliner"
+  ]
+)
+
+ocaml_binary(
+  name = "bootstrap",
+  main = "main",
+)

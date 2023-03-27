@@ -1,7 +1,0 @@
-(library
- (name riscv)
- (modes native)
- (instrumentation (backend bisect_ppx))
- (libraries
-   pipeline
-   toolchain))

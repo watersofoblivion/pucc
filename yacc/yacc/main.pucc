@@ -1,0 +1,4 @@
+program yacc
+
+def Main() =
+    ()

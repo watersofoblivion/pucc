@@ -1,9 +1,0 @@
-(library
- (name pass)
- (modes native)
- (instrumentation (backend bisect_ppx))
- (libraries
-   parse
-   norm
-   check
-   codegen))

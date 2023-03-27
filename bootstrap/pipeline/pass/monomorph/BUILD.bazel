@@ -1,0 +1,21 @@
+load("@//rules:ocaml.bzl", "ocaml_package")
+
+ocaml_package(
+    name = "monomorph",
+    label = "Monomorphization",
+    modules = [
+        "env",
+        "pass",
+    ],
+    deps = [
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/ir:ir",
+        "//bootstrap/pipeline/lang/mono:mono",
+    ],
+    test_deps = [
+        "//bootstrap/core:coreTest",
+        "//bootstrap/pipeline/lang/ir:irTest",
+        "//bootstrap/pipeline/lang/mono:monoTest",
+    ],
+    visibility = ["//bootstrap:__subpackages__"]
+)

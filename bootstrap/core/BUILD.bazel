@@ -1,0 +1,11 @@
+load("@//rules:ocaml.bzl", "ocaml_package")
+
+ocaml_package(
+    name = "core",
+    label = "Core",
+    modules = [
+        "loc",
+        "seq",
+        "sym",
+    ],
+)
