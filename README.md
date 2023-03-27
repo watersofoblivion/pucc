@@ -73,11 +73,11 @@ bazel test //...
 
 While this is fully automated, it is *not* speedy.
 
-All of the hardware tests use [Verilator](https://www.veripool.org/verilator/), which is a software simulator for hardware.  It compiles Verilog to a heavily optimized C++ simulator and is compiled with a high optimizer setting.  Compilation is slow and memory intesive.
+All of the hardware tests use [Verilator](https://www.veripool.org/verilator/), which is a software simulator for hardware.  It compiles a top-level SystemVerilog `module` to a heavily optimized C++ simulator and is compiled with a high optimizer setting.  Compilation is slow and memory intensive.  And because each test suite is a separate top-level SystemVerilog `module`, there's a *lot* of compilation to do.
 
-Execution is also slow.  When going full throttle and using all available CPU cores, it emulates what is a 100MHz clock on hardware at about 25kHz, which is about 0.025% (or 1/4,000-th) of real-time.  And most of the tests are *not* going anywhere close to full throttle.
+Execution is also slow.  When going full throttle and using all available CPU cores, it emulates what is a 100MHz clock on hardware at about 25kHz, which is about 0.025% (or 1/4,000-th) of real-time.  And most of the tests are not going *anywhere close* to full throttle.
 
-Despite all of this, Verilator is still the fastest simulator out there.
+Despite all of this, Verilator is still the fastest simulator out there which is why I'm using it.
 
 Sources
 ===
