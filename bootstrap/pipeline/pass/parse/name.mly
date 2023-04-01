@@ -6,14 +6,14 @@
 %}
 
 /* Entry Point (for Testing) */
-%type <ParseEnv.env -> (ParseEnv.env * Syntax.name)> name_test
-%start name_test
+%type <ParseEnv.env -> (ParseEnv.env * Syntax.name)> parse_name
+%start parse_name
 
 %%
 
 /* Test */
 
-%public name_test:
+%public parse_name:
 | name = name; EOF { name }
 
 /* Names */

@@ -31,14 +31,14 @@
 %}
 
 /* Entry Point (for testing) */
-%type <ParseEnv.env -> (ParseEnv.env * Syntax.import)> import_test
-%start import_test
+%type <ParseEnv.env -> (ParseEnv.env * Syntax.import)> parse_import
+%start parse_import
 
 %%
 
 /* Test */
 
-%public import_test:
+%public parse_import:
 | import = import; EOF { import }
 
 /* Import Statements */

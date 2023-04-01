@@ -3,25 +3,26 @@ PU/CC
 
 PU/CC is:
 
-* A softcore CPU for pure functional languages compiled for stackless execution with Continuation Passing Style
-* A language compiling to that CPU
+* A softcore CPU designed for pure functional languages compiled for stackless execution with Continuation Passing Style (CPS)
+* A pure functional language compiled for stackless execution with CPS that targets that softcore CPU
+* An incomplete work in progress :)
 
 CPU
 ---
 
-The core CPU is simple, 5-stage scalar RISC pipeline based on the RISC-V ISA, but with a few novel extensions:
+The core CPU is a typical 5-stage scalar RISC pipeline based on the RISC-V ISA.  Instead of extending the primary computational pipeline, PU/CC introduces a few novel extensions around this standard core:
 
-1. Flow control (jumps and branches) has been moved from being individual instructions to a combination of a function header and tagged instructions.  Branching has been moved into a dedicated pipeline Flow Control stage (`FC`) before Instruction Fetch, effectively extending the pipeline "backwards".  The instruction cache is also bifurcated into non-flow control and flow control caches.
+1. Flow control (jumps and branches) has been moved from being individual instructions in the main instruction stream to a combination of a function header and tagged ALU/Load instructions.  Branching logic has been moved into a dedicated pipeline Flow Control stage (`FC`) containing the PC.  This stage is placed before Instruction Fetch, effectively extending the pipeline "backwards".  The instruction cache is also bifurcated into non-flow control and flow control caches.  A specific compiler optimization has been implemented to take advantage of this configuration and largely obviate the need for branch prediction.
 1. Generational garbage collection has been implemented in hardware and integrated into the virtual memory system.
 1. A scratchpad memory has been added and the [closure conversion algorithm](https://flint.cs.yale.edu/flint/publications/escc.pdf) has been extended to use it automatically with no user intervention.
-1. A L4-inspired microkernel has been implemented in hardware and controls thread and process scheduling as well as IPC using [CML](http://cml.cs.uchicago.edu/)-like channels.  It is implemented by further extending the pipeline backwards with new Threading (`TH`) and Process (`PR`) management stages.  In simulations (though not on real hardware) this microkernel has been given a dedicated RAM, Flash "swap", and separate virtual memory.
+1. A L4-inspired microkernel has been implemented in hardware and controls thread and process scheduling as well as IPC using [CML](http://cml.cs.uchicago.edu/)-like channels.  It is implemented by further extending the pipeline backwards with new Threading (`TH`) and Process (`PR`) management stages.  In simulations (though not on real hardware) this microkernel has been given a dedicated RAM, Flash based "swap", and separate virtual memory to offload the functioning of the microkernel onto its own dedicated, isolated hardware resources.
 
 A second, straight RISC-V implementation has been included so it can be used as a baseline for comparison against PU/CC.  Both CPUs have been verified to work on [Xilinx Artix-7 100T FPGAs](https://www.xilinx.com/products/silicon-devices/fpga/artix-7.html), specifically on the [Alchitry Au+](https://www.sparkfun.com/products/17514) and [Digilent Arty 7](https://digilent.com/shop/arty-a7-100t-artix-7-fpga-development-board/) boards.
 
 Language
 ---
 
-The language is a Go-flavored dialect of ML that can target both PU/CC and RISC-V.
+The language is a Go-flavored dialect of the pure core of ML that can target both PU/CC and RISC-V.
 
 Building
 ===

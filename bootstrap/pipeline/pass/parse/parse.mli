@@ -107,8 +107,8 @@ type token = private
   | LIT_FALSE       (** False Literal ([false]) *)
   | LIT_INTEGER     (** Integer Literal ([42], [-97], [0xCAFEBABE], etc.) *)
   *)
-  | LIT_STRING      (** String Literal (["foobar"]) *)
-  | LIT_IDENT       (** Identifier Literal ([myIdent]) *)
+  | LIT_STRING of string      (** String Literal (["foobar"]) *)
+  | LIT_IDENT of string       (** Identifier Literal ([myIdent]) *)
 (** Tokens *)
 
 (**
@@ -280,7 +280,7 @@ val op_bind : token
  val kwd_library : token
 (** Library Package ([library]) *)
 
-val kwd_executabl : token
+val kwd_executable : token
 (** Executable Package ([executable]) *)
 
 val kwd_import : token
@@ -389,30 +389,30 @@ val parse_file_from_channel : in_channel -> env -> (env * Syntax.file)
  * The parser entry points below are only used for testing.
  *)
 
-val parse_file : ?env:env -> string -> (env * Syntax.file)
+val parse_file : env -> string -> (env * Syntax.file)
 (**
  * Parse a file.
  *
- * @param ?env The environment to parse in.  Defaults to the empty environment.
+ * @param env The environment to parse in.  Defaults to the empty environment.
  * @param src The source to parse
  * @return An updated environment and the parsed file
  *)
 
-val parse_pkg : ?env:env -> string -> Syntax.pkg
+val parse_pkg : env -> string -> (env * Syntax.pkg)
 (**
  * Parse a package statement.
  * 
- * @param ?env The environment to parse in.  Defaults to the empty environment.
+ * @param env The environment to parse in.  Defaults to the empty environment.
  * @param src The source to parse
  * @return The parsed package statement
  *)
 
 
-val parse_import : ?env:env -> string -> (env * Syntax.import)
+val parse_import : env -> string -> (env * Syntax.import)
 (**
  * Parse a package statement.
  * 
- * @param ?env The environment to parse in.  Defaults to the empty environment.
+ * @param env The environment to parse in.  Defaults to the empty environment.
  * @param src The source to parse
  * @return An updated environment and the parsed import statement
  *)

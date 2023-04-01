@@ -12,6 +12,12 @@ ocaml_module(
     visibility = ["//visibility:private"],
 )
 
+ocaml_module(
+    name = "parseToken",
+    struct = "parseToken.ml",
+    visibility = ["//visibility:private"],
+)
+
 # Parser
 
 menhir(
@@ -27,11 +33,13 @@ menhir(
         "import.mly",
         "file.mly",
     ],
+    token = ":parseToken",
     deps = [
         "//bootstrap/toolchain/workspace:workspace",
         "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
         ":parseEnv",
+        ":parseToken",
     ],
     outs = [
         "parser.mli",
@@ -52,7 +60,9 @@ ocaml_module(
         "@menhirLib//lib/menhirLib",
         "//bootstrap/toolchain/workspace:workspace",
         "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/syntax:syntax",
         ":parseEnv",
+        ":parseToken",
     ],
     visibility = ["//visibility:private"],
 )
@@ -71,6 +81,7 @@ ocaml_module(
     struct = "lexer.ml",
     deps = [
         ":parseEnv",
+        ":parseToken",
         ":parser",
     ],
     visibility = ["//visibility:private"],
@@ -85,7 +96,11 @@ ocaml_module(
         "@menhirLib//lib/menhirLib",
         "//bootstrap/toolchain/workspace:workspace",
         "//bootstrap/core:core",
-        "//bootstrap/pipeline/pass/parse:parser",
+        "//bootstrap/pipeline/lang/syntax:syntax",
+        ":parseToken",
+        ":parseEnv",
+        ":lexer",
+        ":parser",
     ],
     visibility = ["//visibility:private"],
 )
@@ -98,6 +113,7 @@ ocaml_module(
         "@menhirLib//lib/menhirLib",
         "//bootstrap/toolchain/workspace:workspace",
         "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/syntax:syntax",
         ":parseEnv",
         ":lexer",
         ":parser",
@@ -114,8 +130,10 @@ ocaml_module(
     deps = [
         "@menhirLib//lib/menhirLib",
         "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/syntax:syntax",
         "@ounit2//lib/ounit2",
         "//bootstrap/core:coreTest",
+        "//bootstrap/pipeline/lang/syntax:syntaxTest",
         ":parseEnv"
     ],
     visibility = ["//visibility:private"],
@@ -226,6 +244,7 @@ ocaml_module(
         ":parse",
         "//bootstrap/pipeline/lang/syntax:syntaxTest",
         ":parseTest",
+        ":parseEnvSuite",
     ],
     visibility = ["//visibility:private"],
 )

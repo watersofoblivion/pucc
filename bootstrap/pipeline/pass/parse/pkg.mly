@@ -11,14 +11,14 @@
 %}
 
 /* Entry Point (for Testing) */
-%type <ParseEnv.env -> (ParseEnv.env * Syntax.pkg)> pkg_test
-%start pkg_test
+%type <ParseEnv.env -> (ParseEnv.env * Syntax.pkg)> parse_pkg
+%start parse_pkg
 
 %%
 
 /* Test */
 
-%public pkg_test:
+%public parse_pkg:
 | pkg = pkg; EOF { pkg }
 
 /* Package Statements */
