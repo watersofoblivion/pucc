@@ -22,6 +22,8 @@ val string_of_pkg : Annot.pkg -> string
  * {2 Fixtures}
  *)
 
+(** {3 Package Statements} *)
+
 val fresh_pkg_library : ?id:Core.sym -> unit -> Annot.pkg
 (**
  * Generate a fresh library package statement.
@@ -40,6 +42,8 @@ val fresh_pkg_executable : ?id:Core.sym -> unit -> Annot.pkg
  * @param _ A dummy parameter
  * @return A fresh executable package statement
  *)
+
+(** {3 Files} *)
  
 val fresh_file : ?pkg:Annot.pkg -> unit -> Annot.file
 (**
