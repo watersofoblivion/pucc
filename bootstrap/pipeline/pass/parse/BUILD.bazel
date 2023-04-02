@@ -18,6 +18,12 @@ ocaml_module(
     visibility = ["//visibility:private"],
 )
 
+ocaml_module(
+    name = "parseAction",
+    struct = "parseAction.ml",
+    visibility = ["//visibility:private"],
+)
+
 # Parser
 
 menhir(
@@ -27,10 +33,14 @@ menhir(
     grammars = [
         "core.mly",
         "tokens.mly",
-        "lit.mly",
         "name.mly",
+        "ty.mly",
+        "op.mly",
+        "patt.mly",
+        "expr.mly",
         "pkg.mly",
         "import.mly",
+        "top.mly",
         "file.mly",
     ],
     token = ":parseToken",
@@ -40,6 +50,7 @@ menhir(
         "//bootstrap/pipeline/lang/syntax:syntax",
         ":parseEnv",
         ":parseToken",
+        ":parseAction",
     ],
     outs = [
         "parser.mli",
@@ -63,6 +74,7 @@ ocaml_module(
         "//bootstrap/pipeline/lang/syntax:syntax",
         ":parseEnv",
         ":parseToken",
+        ":parseAction",
     ],
     visibility = ["//visibility:private"],
 )
@@ -82,6 +94,7 @@ ocaml_module(
     deps = [
         ":parseEnv",
         ":parseToken",
+        ":parseAction",
         ":parser",
     ],
     visibility = ["//visibility:private"],
@@ -97,8 +110,9 @@ ocaml_module(
         "//bootstrap/toolchain/workspace:workspace",
         "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
-        ":parseToken",
         ":parseEnv",
+        ":parseToken",
+        ":parseAction",
         ":lexer",
         ":parser",
     ],
@@ -115,6 +129,8 @@ ocaml_module(
         "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
         ":parseEnv",
+        ":parseToken",
+        ":parseAction",
         ":lexer",
         ":parser",
         ":parseEntry",

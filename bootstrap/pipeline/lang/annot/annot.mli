@@ -11,6 +11,8 @@
  * The data types to represent the annotated syntax.
  *)
 
+(** {3 Types} *)
+
 type ty = private
   | TyBool (** Booleans *)
   | TyInt  (** Integers *)
@@ -18,10 +20,53 @@ type ty = private
       param: ty; (** The parameter types *)
       res:   ty; (** The result type *)
     } (** Functions *)
+  | TyMod of {
+      ty: tymod; (** The module type *)
+    } (** Module *)
   | TyConstr of {
       id: Core.sym; (** The name of the constructor *)
     } (** Constructor *)
 (** Types *)
+
+and tymod =
+  | ModSig of {
+      tops: sigelem list; (** Signature elements *)
+    } (** Signature *)
+  | ModFunct of {
+      id:  Core.sym; (** The name of the parameter *)
+      ty:  tymod;    (** The type of the parameter *)
+      res: tymod;    (** The result of the functor *)
+    } (** Functor *)
+  | ModId of {
+      id: Core.sym; (** Identifier *)
+    } (** Identifier *)
+(** Module Types *)
+
+and sigelem =
+  | SigElemTy of {
+      tys: tybind list; (** A list of mutually-recursive type bindings *)
+    } (** Type bindings *)
+  | SigElemLet of {
+      ty: ty; (** The type of the bound value *)
+    } (** Value bindng *)
+(** Signature Elements *)
+
+and tybind = private
+  | TyPublic of {
+      id: Core.sym; (** The identifier *)
+      ty: ty;       (** The type definition *)
+    } (** Public types *)
+  | TyPrivate of {
+      id: Core.sym; (** The identifier *)
+      ty: ty;       (** The type definition *)
+    } (** Private types *)
+  | TyAbstract of {
+      id: Core.sym; (** The identifier *)
+      ty: ty;       (** The type definition *)
+    } (** Abstract types *)
+(** Type Bindings *)
+
+(** {3 Primitive Operations} *)
 
 type prim = private
   | PrimNeg  (** Negation *)
@@ -49,6 +94,8 @@ type prim = private
   | PrimGt   (** Greater Than *)
 (** Primitive Operations *)
 
+(** {3 Patterns} *)
+
 type patt = private
   | PattGround (** Ground pattern *)
   | PattVar of {
@@ -56,12 +103,16 @@ type patt = private
     } (** Variable pattern *)
 (** Patterns *)
 
+(** {3 Function Parameters} *)
+
 type param = private
   | Param of {
       patt: patt; (** The pattern to match the parameter against *)
       ty:   ty;   (** The type of the pattern *)
     } (** Function parameter *)
 (** Function parameters *)
+
+(** {3 Expressions} *)
 
 type expr = private
   | ExprBool of {
@@ -106,6 +157,8 @@ and binding = private
   }
 (** Bindings *)
 
+(** {3 Package Statements} *)
+
 type pkg = private
   | Library of {
       id: Core.sym; (** The name of the library *)
@@ -114,6 +167,8 @@ type pkg = private
       id: Core.sym; (** The name of the executable *)
     } (** An executable *)
 (** Package Statements *)
+
+(** {3 Top-Level Bindings} *)
 
 type top = private
   | TopTy of {
@@ -124,6 +179,8 @@ type top = private
       bindings: binding list; (** A set of mutually-recursive value bindings *)
     } (** Value Binding *)
 (** Top-Level Bindings *)
+
+(** {3 Files} *)
 
 type file = private
   | File of {

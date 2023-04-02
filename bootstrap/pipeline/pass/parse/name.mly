@@ -1,22 +1,31 @@
-%{
-  let make_name sloc id env =
-    let loc = make_loc sloc in
-    let (env, sym) = id env in
-    (env, Syntax.name loc sym)
-%}
+/*
+ * Names
+ */
 
-/* Entry Point (for Testing) */
-%type <ParseEnv.env -> (ParseEnv.env * Syntax.name)> parse_name
+/* Entry Point for Testing */
+%type <Syntax.name> parse_name
+%type <Syntax.name> parse_dotted
+
 %start parse_name
+%start parse_dotted
 
 %%
 
-/* Test */
+/*
+ * Testing
+ */
 
 %public parse_name:
 | name = name; EOF { name }
 
-/* Names */
+/*
+ * Implementation
+ */
 
+/* A simple name */
 %public name:
-| name = ident { make_name $sloc name }
+| id = LIT_IDENT { Actions.name $sloc id }
+
+/* A dotted name */
+%public dotted:
+| lhs = name; "."; rhs = name { Actions.dotted $sloc lhs rhs }

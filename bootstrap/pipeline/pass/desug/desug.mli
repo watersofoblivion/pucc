@@ -1,8 +1,32 @@
 (**
  * {1 Desugaring}
  *
- * Passes over the abstract syntax, type-checks it, and desugars it into the
- * annotated syntax.
+ * Converts the abstract syntax into the desugared syntax and produces a type
+ * signature for the package.  Several tasks are performed concurrently in this
+ * pass:
+ *
+ * {ul
+ *   {li Checks
+ *     {ul
+ *       {li Types are checked}
+ *       {li Pattern matching is checked for completeness and non-redudancy}}}
+ *   {li Syntactic Transformations
+ *     {ul
+ *       {li Integer literals are converted from strings into ints}
+ *       {li Logical AND and OR operators ([&&] and [||]) are desugared into conditionals to implement short-circuiting behavior}
+ *       {li The reverse function application operator ([|>]) is in-lined to avoid excessive partial application and closure creation}}}
+ *   {li File Merging and Flattening
+ *     {ul
+ *       {li All files in the package are merged into a single package}
+ *       {li All imports are flattened into a single set and given canonical names}
+ *       {li Top-level value bindings ([val], [def], and [let]) are flattened to just top-level [let] bindings}
+ *       {li Top-level type and value bindings are topologically sorted}}}
+ *   {li Package- and File-Private Expansion
+ *     {ul
+ *       {li Package- and file-private type definitions are in-lined}
+ *       {li Package- and file-private functors are applied and modules are expanded away}}}
+ *       {li Package- and file-private polymorphism is monomorphized}
+ *       {li Package- and file-private structural equality checks are replaced with generated functions}}}}
  *)
 
 (**

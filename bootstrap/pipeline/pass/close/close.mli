@@ -1,8 +1,13 @@
 (**
  * {1 Closure Conversion}
  *
- * Closure converts the CPS into closure-passing style.  Additionally, performs
- * type-checking as a sanity check.
+ * Closure converts the CPS into closure-passing style.
+ *
+ * Several tasks are performed concurrently during this pass:
+ *
+ * {ul
+ *   {li Closure conversion is performed}
+ *   {li When targeting PU/CC, functions are decomposed into the "extended basic blocks" expected by the PU/CC ISA}}
  *)
 
 (**

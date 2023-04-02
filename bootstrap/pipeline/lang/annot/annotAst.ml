@@ -11,12 +11,16 @@ type ty =
   | TyMod of { ty: tymod }
   | TyConstr of { id: Core.sym; }
 and tymod =
-  | ModSig of { tops: topsig; }
-  | ModFunct of { id: Core.sym; param: tymod; res: tymod }
+  | ModSig of { tops: sigelem list; }
+  | ModFunct of { id: Core.sym; ty: tymod; res: tymod }
   | ModId of { id: Core.sym; }
-and topsig =
-  | SigTy of { id: Core.sym; ty: ty option; }
-  | SigLet of { ty: ty; }
+and sigelem =
+  | SigElemTy of { ty: tybind list; }
+  | SigElemLet of { ty: ty; }
+and tybind =
+  | TyPublic of { id: Core.sym; ty: ty; }
+  | TyPrivate of { id: Core.sym; ty: ty; }
+  | TyAbstract of { id: Core.sym; ty: ty; }
 
 (* Primitive Operations *)
 
@@ -82,13 +86,13 @@ type pkg =
 (* Top-Level Statements *)
 
 type top =
-  | TopTy of { id: Core.sym; ty: ty; }
+  | TopTy of { bindings: tybinding list; }
   | TopVal of { bindings: binding list; }
   | TopMod of { topmod: topmod; }
 and topmod =
   | TopMod of { tops: top list; }
   | TopFunct of { id: Core.sym; ty: tymod; str: topmod; }
-  | TopMApp of { funct: }
+  | TopApp of { funct: }
 
 (* Files *)
 
@@ -101,6 +105,10 @@ let ty_bool = TyBool
 let ty_int = TyInt
 let ty_fun param res = TyFun { param; res; }
 let ty_constr id = TyConstr { id; }
+
+let ty_public id ty = Public { id; ty; }
+let ty_private id ty = Private { id; ty; }
+let ty_abstract id ty = Abstract { id; ty; }
 
 let prim_neg = PrimNeg
 let prim_add = PrimAdd
@@ -145,7 +153,7 @@ let binding patt ty value = Binding { patt; ty; value; }
 let pkg_library id = Library { id; }
 let pkg_executable id = Executable { id; }
 
-let top_ty id ty = TopTy { id; ty; }
+let top_ty bindings = TopTy { bindings; }
 let top_val bindings = TopVal { bindings; }
 
 let file pkg tops = File { pkg; tops; }
