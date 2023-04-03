@@ -1,6 +1,11 @@
 /* Entry Points for Testing */
 %type <Syntax.expr> parse_expr
+%type <Syntax.binding> parse_binding_list
+%type <Syntax.binding> parse_binding
+
 %start parse_expr
+%start parse_binding_list
+%start parse_binding
 
 %%
 
@@ -10,6 +15,12 @@
 
 %public parse_expr:
 | expr = expr; EOF { expr }
+
+%public parse_binding_list:
+| bindings = binding_list; EOF { bindings }
+
+%public parse_binding:
+| binding = binding; EOF { binding }
 
 /*
  * Implementation
@@ -29,12 +40,12 @@ expr_lit:
 | value = LIT_TRUE      { Actions.expr_bool $sloc true  }
 | value = LIT_FALSE     { Actions.expr_bool $sloc false }
 | value = LIT_INT       { Actions.expr_int  $sloc value }
-| id = ident            { Actions.expr_id   $sloc id }
+| name = name           { Actions.expr_id   $sloc name }
 | "("; expr = expr; ")" { expr }
 
 /* Bindings */
 %public binding_list:
 | bindings = separated_nonempty_list("and", binding) { bindings }
 
-binding:
+%public binding:
 | patt = patt; ty = ascription?; "="; value = expr { Actions.binding $sloc patt ty value }

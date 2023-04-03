@@ -4,10 +4,7 @@
 
 /* Entry Point for Testing */
 %type <Syntax.name> parse_name
-%type <Syntax.name> parse_dotted
-
 %start parse_name
-%start parse_dotted
 
 %%
 
@@ -24,8 +21,5 @@
 
 /* A simple name */
 %public name:
-| id = LIT_IDENT { Actions.name $sloc id }
-
-/* A dotted name */
-%public dotted:
+| id = LIT_IDENT              { Actions.name   $sloc id }
 | lhs = name; "."; rhs = name { Actions.dotted $sloc lhs rhs }

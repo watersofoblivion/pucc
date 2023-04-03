@@ -17,12 +17,11 @@
 
 /* Top-Level Bindings */
 %public top:
-| "let"?; "type"; id = name; params = mod_param_list?; "="; modifier = top_val_ty?; ty = ty { make_top_ty  $sloc id params modifier ty } 
-| "val"; id = ident; ty = ascription?; "="; value = expr                                 { make_top_val $sloc id ty value }
-| "def"; id = ident; "("; params = param_list; ")"; ty = ascription?; "="; body = expr   { make_top_def $sloc id params res body }
-| "mod"; id = i
-| "let"; bindings = binding_list;                                                        { make_top_let $sloc bindings }
+| local = "let"?; "type"; bindings = ty_binding_list                                 { Actions.top_ty  $sloc local bindings } 
+| "val"; binding = binding                                                           { Actions.top_val $sloc binding }
+| "def"; binding = binding                                                           { Actions.top_def $sloc binding }
+| "let"; recur = "rec"?; bindings = binding_list                                     { Actions.top_let $sloc recur bindings }
+| "mod"; name = name; params = mod_params_list; "="; elems = struct_elem_list; "end" { Actions.top_mod $sloc name params elems }
 
-top_val_ty:
-| "private"  { make_topvalty_private  $sloc }
-| "abstract" { make_topvalty_abstract $sloc }
+struct_elem_list:
+| elems = top* { elems }

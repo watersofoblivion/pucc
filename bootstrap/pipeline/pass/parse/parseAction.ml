@@ -56,13 +56,12 @@ module type ParseActions = sig
 
   (** {2 Types} *)
 
-  val ty_constr : sloc -> Syntax.name -> Syntax.ty_binding list option -> Syntax.ty
+  val ty_constr : sloc -> Syntax.name -> Syntax.ty
   (**
    * Construct a type constructor, such as [Int].
    *
    * @param sloc The source location of the type
    * @param constr The constructor
-   * @param tys The type bindings for "with"
    * @return A type constructor
    *)
 
@@ -109,7 +108,7 @@ module type ParseActions = sig
 
   (** {2 Signature Elements} *)
 
-  val sig_ty : sloc -> Syntax.name -> Syntax.mod_param list -> Syntax.ty -> Syntax.sig_elem
+  val sig_ty : sloc -> Syntax.name -> Syntax.mod_param list -> Syntax.ty option -> Syntax.sig_elem
   (**
    * Construct a type definition signature element, such as [type Foo = Int].
    *
@@ -154,12 +153,13 @@ module type ParseActions = sig
 
   (** {2 Type Bindings} *)
 
-  val ty_binding : sloc -> Syntax.name -> Syntax.ty_vis option -> Syntax.ty -> Syntax.ty_binding
+  val ty_binding : sloc -> Syntax.name -> Syntax.mod_param list -> Syntax.ty_vis option -> Syntax.ty -> Syntax.ty_binding
   (**
    * Construct a type binding, such as [T = Int].
    * 
    * @param sloc The source location of the binding
    * @param id The type identifier
+   * @param params The module parameters
    * @param vis The type visibility
    * @param ty The type definition
    * @return A type binding
@@ -167,7 +167,7 @@ module type ParseActions = sig
   
   (** {2 Module Parameters} *)
 
-  val mod_param : sloc -> Syntax.name -> Syntax.ty -> Syntax.mod_param
+  val mod_param : sloc -> Syntax.name -> Syntax.ty option -> Syntax.mod_param
   (**
    * Construct a module parameter, such as [foo: bar.Baz].
    *
@@ -432,7 +432,7 @@ module type ParseActions = sig
 
   (** {1 Parameters} *)
 
-  val param : sloc -> Syntax.patt -> Syntax.ty -> Syntax.param
+  val param : sloc -> Syntax.patt -> Syntax.ty option -> Syntax.param
   (**
    * Construct a function parameter, such as [x: Int]
    *
@@ -618,9 +618,60 @@ module type ParseActions = sig
    * @return An import statement
    *)
 
+  (** {1 Top-Level Bindings} *)
+
+  val top_ty : sloc -> unit option -> Syntax.ty_binding list -> Syntax.top
+  (**
+   * Construct a top-level type binding
+   * 
+   * @param sloc The source location of the binding
+   * @param local Whether the binding is file-local
+   * @param bindings The bound types
+   * @return A type binding
+   *)
+
+  val top_val : sloc -> Syntax.binding -> Syntax.top
+  (**
+   * Construct a top-level value binding
+   * 
+   * @param sloc The source location of the binding
+   * @param binding The binding
+   * @return A value binding
+   *)
+
+  val top_def : sloc -> Syntax.binding -> Syntax.top
+  (**
+   * Construct a top-level function binding
+   * 
+   * @param sloc The source location of the binding
+   * @param binding The binding
+   * @return A function binding
+   *)
+
+  val top_let : sloc -> unit option -> Syntax.binding list -> Syntax.top
+  (**
+   * Construct a top-level local binding
+   * 
+   * @param sloc The source location of the binding
+   * @param recur Whether the bindings are marked recursive
+   * @param binding The binding
+   * @return A local binding
+   *)
+
+  val top_mod : sloc -> Syntax.name -> Syntax.mod_param list -> Syntax.top list -> Syntax.top
+  (**
+   * Construct a top-level module binding
+   * 
+   * @param sloc The source location of the binding
+   * @param name The module name
+   * @param params The module parameters
+   * @param elems The module elements
+   * @return A module binding
+   *)
+
   (** {1 Files} *)
 
-  val file : sloc -> Syntax.pkg -> Syntax.import list -> Syntax.struct_elem list -> Syntax.file
+  val file : sloc -> Syntax.pkg -> Syntax.import list -> Syntax.top list -> Syntax.file
   (**
    * Construct a source file
    *
@@ -664,7 +715,7 @@ module Actions : ParseActions = struct
 
   (* Types *)
 
-  let ty_constr sloc constr tys =
+  let ty_constr sloc name =
     let loc = loc sloc in
     Syntax.ty_constr loc name
   
@@ -684,10 +735,6 @@ module Actions : ParseActions = struct
 
   let sig_ty sloc name params ty =
     let loc = loc sloc in
-    let params = match params with
-      | Some params -> params
-      | None -> []
-    in
     Syntax.sig_ty loc name params ty
 
   let sig_val sloc name ty =
@@ -704,9 +751,9 @@ module Actions : ParseActions = struct
   
   (* Type Bindings *)
 
-  let ty_binding sloc name vis ty =
+  let ty_binding sloc name params vis ty =
     let loc = loc sloc in
-    Syntax.ty_binding loc name vis ty
+    Syntax.ty_binding loc name params vis ty
   
   (* Module Parameters *)
   
@@ -752,7 +799,7 @@ module Actions : ParseActions = struct
     let loc = loc sloc in
     Syntax.bin_mod loc
 
-  let binbland sloc =
+  let bin_land sloc =
     let loc = loc sloc in
     Syntax.bin_land loc
 
@@ -876,7 +923,7 @@ module Actions : ParseActions = struct
 
   let expr_cond sloc cond tru fls =
     let loc = loc sloc in
-    Syntax.cond loc cond tru fls
+    Syntax.expr_cond loc cond tru fls
 
   let expr_let sloc recur bindings scope =
     let loc = loc sloc in
@@ -926,7 +973,30 @@ module Actions : ParseActions = struct
 
   (* Top-Level Bindings *)
 
+  let top_ty sloc local bindings =
+    let loc = loc sloc in
+    let local = match local with Some _ -> true | None -> false in
+    Syntax.top_ty loc local bindings
 
+  let top_val sloc binding =
+    let loc = loc sloc in
+    Syntax.top_val loc binding
+  
+  let top_def sloc binding =
+    let loc = loc sloc in
+    Syntax.top_def loc binding
+
+  let top_let sloc recur bindings =
+    let loc = loc sloc in
+    let recur = match recur with
+      | Some _ -> true
+      | None -> false
+    in
+    Syntax.top_let loc recur bindings
+  
+  let top_mod sloc name params elems =
+    let loc = loc sloc in
+    Syntax.top_mod loc name params elems
 
   (* Files *)
 

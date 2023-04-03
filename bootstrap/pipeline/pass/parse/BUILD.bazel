@@ -7,7 +7,7 @@ ocaml_module(
     name = "parseEnv",
     struct = "parseEnv.ml",
     deps = [
-        "//bootstrap/core:core"
+        "//bootstrap/core:core",
     ],
     visibility = ["//visibility:private"],
 )
@@ -15,12 +15,22 @@ ocaml_module(
 ocaml_module(
     name = "parseToken",
     struct = "parseToken.ml",
+    deps = [
+        "//bootstrap/core:core",
+        ":parseEnv",
+    ],
     visibility = ["//visibility:private"],
 )
 
 ocaml_module(
     name = "parseAction",
     struct = "parseAction.ml",
+    deps = [
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/syntax:syntax",
+        ":parseEnv",
+        ":parseToken",
+    ],
     visibility = ["//visibility:private"],
 )
 
@@ -146,11 +156,43 @@ ocaml_module(
     deps = [
         "@menhirLib//lib/menhirLib",
         "//bootstrap/core:core",
+        ":parseEnv",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/core:coreTest",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+ocaml_module(
+    name = "parseTokenTest",
+    struct = "parseTokenTest.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "//bootstrap/core:core",
+        ":parseEnv",
+        ":parseToken",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/core:coreTest",
+        ":parseEnvTest",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+ocaml_module(
+    name = "parseActionTest",
+    struct = "parseActionTest.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
+        ":parseEnv",
+        ":parseToken",
+        ":parseAction",
         "@ounit2//lib/ounit2",
         "//bootstrap/core:coreTest",
         "//bootstrap/pipeline/lang/syntax:syntaxTest",
-        ":parseEnv"
+        ":parseEnvTest",
+        ":parseTokenTest",
     ],
     visibility = ["//visibility:private"],
 )
@@ -163,11 +205,15 @@ ocaml_module(
         "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
         ":parseEnv",
+        ":parseToken",
+        ":parseAction",
         ":parser",
         "@ounit2//lib/ounit2",
         "//bootstrap/core:coreTest",
         "//bootstrap/pipeline/lang/syntax:syntaxTest",
         ":parseEnvTest",
+        ":parseTokenTest",
+        ":parseActionTest",
     ],
     visibility = ["//visibility:private"],
 )
@@ -177,11 +223,18 @@ ocaml_module(
     struct = "lexerTest.ml",
     deps = [
         "@menhirLib//lib/menhirLib",
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/syntax:syntax",
         ":parseEnv",
+        ":parseToken",
+        ":parseAction",
         ":parser",
-        ":lexer",
         "@ounit2//lib/ounit2",
+        "//bootstrap/core:coreTest",
+        "//bootstrap/pipeline/lang/syntax:syntaxTest",
         ":parseEnvTest",
+        ":parseTokenTest",
+        ":parseActionTest",
         ":parserTest",
     ],
     visibility = ["//visibility:private"],
@@ -195,13 +248,19 @@ ocaml_module(
         "@menhirLib//lib/menhirLib",
         "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
-        ":parse",
+        ":parseEnv",
+        ":parseToken",
+        ":parseAction",
+        ":parser",
+        ":lexer",
         "@ounit2//lib/ounit2",
         "//bootstrap/core:coreTest",
         "//bootstrap/pipeline/lang/syntax:syntaxTest",
         ":parseEnvTest",
+        ":parseTokenTest",
+        ":parseActionTest",
         ":parserTest",
-        ":lexerTest"
+        ":lexerTest",
     ],
     visibility = ["//bootstrap:__subpackages__"],
 )
@@ -213,9 +272,43 @@ ocaml_module(
     struct = "parseEnvSuite.ml",
     deps = [
         "@menhirLib//lib/menhirLib",
-        "@ounit2//lib/ounit2",
+        "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
         ":parse",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/core:coreTest",
+        "//bootstrap/pipeline/lang/syntax:syntaxTest",
+        ":parseTest",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+ocaml_module(
+    name = "parseTokenSuite",
+    struct = "parseTokenSuite.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/syntax:syntax",
+        ":parse",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/core:coreTest",
+        "//bootstrap/pipeline/lang/syntax:syntaxTest",
+        ":parseTest",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+ocaml_module(
+    name = "parseActionSuite",
+    struct = "parseActionSuite.ml",
+    deps = [
+        "@menhirLib//lib/menhirLib",
+        "//bootstrap/core:core",
+        "//bootstrap/pipeline/lang/syntax:syntax",
+        ":parse",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/core:coreTest",
         "//bootstrap/pipeline/lang/syntax:syntaxTest",
         ":parseTest",
     ],
@@ -227,9 +320,11 @@ ocaml_module(
     struct = "parserSuite.ml",
     deps = [
         "@menhirLib//lib/menhirLib",
-        "@ounit2//lib/ounit2",
+        "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
         ":parse",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/core:coreTest",
         "//bootstrap/pipeline/lang/syntax:syntaxTest",
         ":parseTest",
     ],
@@ -241,9 +336,11 @@ ocaml_module(
     struct = "lexerSuite.ml",
     deps = [
         "@menhirLib//lib/menhirLib",
-        "@ounit2//lib/ounit2",
+        "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
         ":parse",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/core:coreTest",
         "//bootstrap/pipeline/lang/syntax:syntaxTest",
         ":parseTest",
     ],
@@ -255,12 +352,18 @@ ocaml_module(
     struct = "parseSuite.ml",
     deps = [
         "@menhirLib//lib/menhirLib",
-        "@ounit2//lib/ounit2",
+        "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
         ":parse",
+        "@ounit2//lib/ounit2",
+        "//bootstrap/core:coreTest",
         "//bootstrap/pipeline/lang/syntax:syntaxTest",
         ":parseTest",
         ":parseEnvSuite",
+        ":parseTokenSuite",
+        ":parseActionSuite",
+        ":parserSuite",
+        ":lexerSuite",
     ],
     visibility = ["//visibility:private"],
 )

@@ -28,4 +28,4 @@
 | params = separated_nonempty_list(",", param) { params }
 
 param:
-| patt = patt; ty = ascription { Actions.param $sloc patt ty }
+| patt = patt; ty = ascription? { Actions.param $sloc patt ty }

@@ -11,11 +11,11 @@
  * Testing
  */
 
-%public parse_un:
-| un = un; EOF { un }
+%public parse_op_un:
+| op = op_un; EOF { op }
 
-%public parse_bin:
-| bin = bin; EOF { bin }
+%public parse_op_bin:
+| op = op_bin; EOF { op }
 
 /*
  * Implementation

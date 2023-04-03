@@ -78,6 +78,7 @@
 /* %token KWD_CASE "case"
 %token KWD_OF "of" */
 %token KWD_MOD "mod"
+%token KWD_WITH "with"
 %token KWD_END "end"
 %token KWD_IF "if"
 %token KWD_THEN "then"
