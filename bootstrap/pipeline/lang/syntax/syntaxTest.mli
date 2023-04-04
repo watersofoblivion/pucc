@@ -6,127 +6,198 @@
 
 open OUnit2
 
+(**
+ * {2 Location Tracking}
+ *)
+
+(**
+ * {3 Positions}
+ *)
+
+(**
+ * {4 Fixtures}
+ *)
+
+val fresh_pos : ?line:int -> ?col:int -> ?off:int -> unit -> Syntax.pos
+(**
+ * Construct a fresh position.  Any values that are not given will be
+ * automatically generated.
+ *
+ * @param ?line The line number of the position
+ * @param ?col The column number of the position
+ * @param ?off The byte offset of the position
+ * @param _ A dummy parameter if none of the optional values are given
+ * @return A fresh position
+ *)
+
+(**
+ * {4 Assertions}
+ *)
+
+val assert_pos_equal : ctxt:test_ctxt -> Syntax.pos -> Syntax.pos -> unit
+(**
+ * Assert that two positions are equal.
+ *
+ * @param ~ctxt The testing context
+ * @param expected The expected position
+ * @param actual The actual position
+ *)
+
+(**
+ * {3 Locations}
+ *)
+
+(**
+ * {4 Fixtures}
+ *)
+
+val fresh_loc : ?start:Syntax.pos -> ?stop:Syntax.pos -> unit -> Syntax.loc
+(**
+ * Construct a fresh location.  Any values that are not given will be
+ * automatically generated.
+ *
+ * @param ?start The starting position of the location
+ * @param ?stop The ending position of the location
+ * @param _ A dummy parameter if none of the optional values are given
+ * @return A fresh location
+ *)
+
+(**
+ * {4 Assertions}
+ *)
+
+val assert_loc_equal : ctxt:test_ctxt -> Syntax.loc -> Syntax.loc -> unit
+(**
+ * Assert that two locations are equal.
+ *
+ * @param ~ctxt The testing context
+ * @param expected The expected location
+ * @param actual The actual location
+ *)
+
 (** {2 Fixtures} *)
 
 (** {3 Names} *)
 
-val fresh_name : ?loc:Core.loc -> ?id:string -> unit -> Syntax.name
-val fresh_dotted : ?loc:Core.loc -> ?lhs:Syntax.name -> ?rhs:Syntax.name -> unit -> Syntax.name
+val fresh_name : ?loc:Syntax.loc -> ?id:string -> unit -> Syntax.name
+val fresh_dotted : ?loc:Syntax.loc -> ?lhs:Syntax.name -> ?rhs:Syntax.name -> unit -> Syntax.name
 
 (** {3 Types} *)
 
 (** {4 Visibility} *)
 
-val fresh_ty_vis_readonly : ?loc:Core.loc -> unit -> Syntax.ty_vis
-val fresh_ty_vis_abstract : ?loc:Core.loc -> unit -> Syntax.ty_vis
+val fresh_ty_vis_readonly : ?loc:Syntax.loc -> unit -> Syntax.ty_vis
+val fresh_ty_vis_abstract : ?loc:Syntax.loc -> unit -> Syntax.ty_vis
 
 (** {4 Types} *)
 
-val fresh_ty_constr : ?loc:Core.loc -> ?name:Syntax.name -> unit -> Syntax.ty
-val fresh_ty_fun : ?loc:Core.loc -> ?param:Syntax.ty -> ?res:Syntax.ty -> unit -> Syntax.ty
-val fresh_ty_sig : ?loc:Core.loc -> ?elems:(Syntax.sig_elem list) -> unit -> Syntax.ty
-val fresh_ty_with : ?loc:Core.loc -> ?name:Syntax.name -> ?bindings:(Syntax.ty_binding list) -> unit -> Syntax.ty
+val fresh_ty_int : ?loc:Syntax.loc -> unit -> Syntax.ty
+val fresh_ty_bool : ?loc:Syntax.loc -> unit -> Syntax.ty
+val fresh_ty_constr : ?loc:Syntax.loc -> ?name:Syntax.name -> unit -> Syntax.ty
+val fresh_ty_fun : ?loc:Syntax.loc -> ?param:Syntax.ty -> ?res:Syntax.ty -> unit -> Syntax.ty
+val fresh_ty_sig : ?loc:Syntax.loc -> ?elems:(Syntax.sig_elem list) -> unit -> Syntax.ty
+val fresh_ty_with : ?loc:Syntax.loc -> ?name:Syntax.name -> ?bindings:(Syntax.ty_binding list) -> unit -> Syntax.ty
 
 (** {4 Module Signature Elements} *)
 
-val fresh_sig_ty : ?loc:Core.loc -> ?name:Syntax.name -> ?params:(Syntax.mod_param list) -> ?ty:(Syntax.ty option) -> unit -> Syntax.sig_elem
-val fresh_sig_val : ?loc:Core.loc -> ?name:Syntax.name -> ?ty:Syntax.ty -> unit -> Syntax.sig_elem
-val fresh_sig_def : ?loc:Core.loc -> ?name:Syntax.name -> ?ty:Syntax.ty -> unit -> Syntax.sig_elem
-val fresh_sig_mod : ?loc:Core.loc -> ?name:Syntax.name -> ?params:(Syntax.mod_param list) -> ?ty:Syntax.ty -> unit -> Syntax.sig_elem
+val fresh_sig_ty : ?loc:Syntax.loc -> ?name:Syntax.name -> ?params:(Syntax.mod_param list) -> ?ty:(Syntax.ty option) -> unit -> Syntax.sig_elem
+val fresh_sig_val : ?loc:Syntax.loc -> ?name:Syntax.name -> ?ty:Syntax.ty -> unit -> Syntax.sig_elem
+val fresh_sig_def : ?loc:Syntax.loc -> ?name:Syntax.name -> ?ty:Syntax.ty -> unit -> Syntax.sig_elem
+val fresh_sig_mod : ?loc:Syntax.loc -> ?name:Syntax.name -> ?params:(Syntax.mod_param list) -> ?ty:Syntax.ty -> unit -> Syntax.sig_elem
 
 (** {4 Type Bindings} *)
 
-val fresh_ty_binding : ?loc:Core.loc -> ?name:Syntax.name -> ?params:(Syntax.mod_param list) -> ?vis:(Syntax.ty_vis option) -> ?ty:Syntax.ty -> unit -> Syntax.ty_binding 
+val fresh_ty_binding : ?loc:Syntax.loc -> ?name:Syntax.name -> ?params:(Syntax.mod_param list) -> ?vis:(Syntax.ty_vis option) -> ?ty:Syntax.ty -> unit -> Syntax.ty_binding 
 
 (** {4 Module Parameters} *)
 
-val fresh_mod_param : ?loc:Core.loc -> ?name:Syntax.name -> ?ty:(Syntax.ty option) -> unit -> Syntax.mod_param
+val fresh_mod_param : ?loc:Syntax.loc -> ?name:Syntax.name -> ?ty:(Syntax.ty option) -> unit -> Syntax.mod_param
 
 (** {3 Primitive Operations} *)
 
 (** {4 Unary Operators} *)
 
-val fresh_un_neg : ?loc:Core.loc -> unit -> Syntax.un
-val fresh_un_lnot : ?loc:Core.loc -> unit -> Syntax.un
-val fresh_un_bnot : ?loc:Core.loc -> unit -> Syntax.un
+val fresh_un_neg : ?loc:Syntax.loc -> unit -> Syntax.un
+val fresh_un_lnot : ?loc:Syntax.loc -> unit -> Syntax.un
+val fresh_un_bnot : ?loc:Syntax.loc -> unit -> Syntax.un
 
 (** {4 Binary Operators} *)
 
-val fresh_bin_add : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_sub : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_mul : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_div : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_mod : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_land : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_lor : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_band : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_bor : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_bxor : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_ssl : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_ssr : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_usl : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_usr : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_seq : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_peq : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_sneq : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_pneq : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_gte : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_gt : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_lte : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_lt : ?loc:Core.loc -> unit -> Syntax.bin
-val fresh_bin_rfa : ?loc:Core.loc -> unit -> Syntax.bin
+val fresh_bin_add : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_sub : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_mul : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_div : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_mod : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_land : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_lor : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_band : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_bor : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_bxor : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_ssl : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_ssr : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_usl : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_usr : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_seq : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_peq : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_sneq : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_pneq : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_gte : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_gt : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_lte : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_lt : ?loc:Syntax.loc -> unit -> Syntax.bin
+val fresh_bin_rfa : ?loc:Syntax.loc -> unit -> Syntax.bin
 
 (** {3 Patterns} *)
 
-val fresh_patt_ground : ?loc:Core.loc -> unit -> Syntax.patt
-val fresh_patt_bool : ?loc:Core.loc -> ?value:bool -> unit -> Syntax.patt
-val fresh_patt_int : ?loc:Core.loc -> ?lexeme:string -> unit -> Syntax.patt
-val fresh_patt_var : ?loc:Core.loc -> ?lexeme:string -> unit -> Syntax.patt
-val fresh_patt_fun : ?loc:Core.loc -> ?name:Syntax.name -> ?params:(Syntax.param list) -> unit -> Syntax.patt
+val fresh_patt_ground : ?loc:Syntax.loc -> unit -> Syntax.patt
+val fresh_patt_bool : ?loc:Syntax.loc -> ?value:bool -> unit -> Syntax.patt
+val fresh_patt_int : ?loc:Syntax.loc -> ?lexeme:string -> unit -> Syntax.patt
+val fresh_patt_var : ?loc:Syntax.loc -> ?lexeme:string -> unit -> Syntax.patt
+val fresh_patt_fun : ?loc:Syntax.loc -> ?name:Syntax.name -> ?params:(Syntax.param list) -> unit -> Syntax.patt
 
 (** {4 Parameters} *)
 
-val fresh_param : ?loc:Core.loc -> ?patt:Syntax.patt -> ?ty:(Syntax.ty option) -> unit -> Syntax.param
+val fresh_param : ?loc:Syntax.loc -> ?patt:Syntax.patt -> ?ty:(Syntax.ty option) -> unit -> Syntax.param
 
 (** {3 Expressions} *)
 
-val fresh_expr_bool : ?loc:Core.loc -> ?value:bool -> unit -> Syntax.expr
-val fresh_expr_int : ?loc:Core.loc -> ?lexeme:string -> unit -> Syntax.expr
-val fresh_expr_id : ?loc:Core.loc -> ?name:Syntax.name -> unit -> Syntax.expr
-val fresh_expr_un : ?loc:Core.loc -> ?op:Syntax.un -> ?operand:Syntax.expr -> unit -> Syntax.expr
-val fresh_expr_bin : ?loc:Core.loc -> ?op:Syntax.bin -> ?lhs:Syntax.expr -> ?rhs:Syntax.expr -> unit -> Syntax.expr
-val fresh_expr_cond : ?loc:Core.loc -> ?cond:Syntax.expr -> ?tru:Syntax.expr -> ?fls:Syntax.expr -> unit -> Syntax.expr
-val fresh_expr_let : ?loc:Core.loc -> ?recur:bool -> ?bindings:(Syntax.binding list) -> ?scope:Syntax.expr -> unit -> Syntax.expr
-val fresh_expr_abs : ?loc:Core.loc -> ?params:(Syntax.param list) -> ?ret:(Syntax.ty option) -> ?body:Syntax.expr -> unit -> Syntax.expr
-val fresh_expr_app : ?loc:Core.loc -> ?fn:Syntax.expr -> ?args:(Syntax.expr list) -> unit -> Syntax.expr
+val fresh_expr_bool : ?loc:Syntax.loc -> ?value:bool -> unit -> Syntax.expr
+val fresh_expr_int : ?loc:Syntax.loc -> ?lexeme:string -> unit -> Syntax.expr
+val fresh_expr_id : ?loc:Syntax.loc -> ?name:Syntax.name -> unit -> Syntax.expr
+val fresh_expr_un : ?loc:Syntax.loc -> ?op:Syntax.un -> ?operand:Syntax.expr -> unit -> Syntax.expr
+val fresh_expr_bin : ?loc:Syntax.loc -> ?op:Syntax.bin -> ?lhs:Syntax.expr -> ?rhs:Syntax.expr -> unit -> Syntax.expr
+val fresh_expr_cond : ?loc:Syntax.loc -> ?cond:Syntax.expr -> ?tru:Syntax.expr -> ?fls:Syntax.expr -> unit -> Syntax.expr
+val fresh_expr_let : ?loc:Syntax.loc -> ?recur:bool -> ?bindings:(Syntax.binding list) -> ?scope:Syntax.expr -> unit -> Syntax.expr
+val fresh_expr_abs : ?loc:Syntax.loc -> ?params:(Syntax.param list) -> ?ret:(Syntax.ty option) -> ?body:Syntax.expr -> unit -> Syntax.expr
+val fresh_expr_app : ?loc:Syntax.loc -> ?fn:Syntax.expr -> ?args:(Syntax.expr list) -> unit -> Syntax.expr
 
 (** {4 Bindings} *)
 
-val fresh_binding : ?loc:Core.loc -> ?patt:Syntax.patt -> ?ty:(Syntax.ty option) -> ?value:Syntax.expr -> unit -> Syntax.binding
+val fresh_binding : ?loc:Syntax.loc -> ?patt:Syntax.patt -> ?ty:(Syntax.ty option) -> ?value:Syntax.expr -> unit -> Syntax.binding
 
 (** {3 Package Statements} *)
 
-val fresh_pkg_library : ?loc:Core.loc -> ?id:Syntax.name -> unit -> Syntax.pkg
-val fresh_pkg_executable : ?loc:Core.loc -> ?id:Syntax.name -> unit -> Syntax.pkg
+val fresh_pkg_library : ?loc:Syntax.loc -> ?id:Syntax.name -> unit -> Syntax.pkg
+val fresh_pkg_executable : ?loc:Syntax.loc -> ?id:Syntax.name -> unit -> Syntax.pkg
 
 (** {3 Imports} *)
 
-val fresh_path : ?loc:Core.loc -> ?path:string -> unit -> Syntax.path
-val fresh_alias : ?loc:Core.loc -> ?local:Syntax.name -> ?path:Syntax.path -> unit -> Syntax.alias
-val fresh_pkgs : ?loc:Core.loc -> ?aliases:(Syntax.alias list) -> unit -> Syntax.pkgs
-val fresh_import : ?loc:Core.loc -> ?pkgs:Syntax.pkgs -> unit -> Syntax.import
+val fresh_path : ?loc:Syntax.loc -> ?path:string -> unit -> Syntax.path
+val fresh_alias : ?loc:Syntax.loc -> ?local:Syntax.name -> ?path:Syntax.path -> unit -> Syntax.alias
+val fresh_pkgs : ?loc:Syntax.loc -> ?aliases:(Syntax.alias list) -> unit -> Syntax.pkgs
+val fresh_import : ?loc:Syntax.loc -> ?pkgs:Syntax.pkgs -> unit -> Syntax.import
 
 (** {3 Top-Level Bindings} *)
 
-val fresh_top_ty : ?loc:Core.loc -> ?local:bool -> ?bindings:(Syntax.ty_binding list) -> unit -> Syntax.top
-val fresh_top_val : ?loc:Core.loc -> ?binding:Syntax.binding -> unit -> Syntax.top
-val fresh_top_def : ?loc:Core.loc -> ?binding:Syntax.binding -> unit -> Syntax.top
-val fresh_top_let : ?loc:Core.loc -> ?recur:bool -> ?bindings:(Syntax.binding list) -> unit -> Syntax.top
-val fresh_top_mod : ?loc:Core.loc -> ?name:Syntax.name -> ?params:(Syntax.mod_param list) -> ?elems:(Syntax.top list) -> unit -> Syntax.top
+val fresh_top_ty : ?loc:Syntax.loc -> ?local:bool -> ?bindings:(Syntax.ty_binding list) -> unit -> Syntax.top
+val fresh_top_val : ?loc:Syntax.loc -> ?binding:Syntax.binding -> unit -> Syntax.top
+val fresh_top_def : ?loc:Syntax.loc -> ?binding:Syntax.binding -> unit -> Syntax.top
+val fresh_top_let : ?loc:Syntax.loc -> ?recur:bool -> ?bindings:(Syntax.binding list) -> unit -> Syntax.top
+val fresh_top_mod : ?loc:Syntax.loc -> ?name:Syntax.name -> ?params:(Syntax.mod_param list) -> ?elems:(Syntax.top list) -> unit -> Syntax.top
 
 (** {3 Files} *)
 
-val fresh_file : ?loc:Core.loc -> ?pkg:Syntax.pkg -> ?imports:(Syntax.import list) -> ?tops:(Syntax.top list) -> unit -> Syntax.file
+val fresh_file : ?loc:Syntax.loc -> ?pkg:Syntax.pkg -> ?imports:(Syntax.import list) -> ?tops:(Syntax.top list) -> unit -> Syntax.file
 
 (** {2 Assertions} *)
 

@@ -5,7 +5,6 @@ ocaml_package(
     label = "Core",
     modules = [
         "util",
-        "loc",
         "seq",
         "sym",
     ],

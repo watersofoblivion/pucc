@@ -4,7 +4,8 @@ ocaml_package(
     name = "syntax",
     label = "Concrete Syntax",
     modules = [
-        "syntaxAst"
+        "syntaxLoc",
+        "syntaxAst",
     ],
     deps = [
         "//bootstrap/core:core",

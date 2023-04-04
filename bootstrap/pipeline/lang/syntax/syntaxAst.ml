@@ -1,5 +1,7 @@
 (* Abstract Syntax *)
 
+open SyntaxLoc
+
 (*
  * TODO:
  *
@@ -23,118 +25,120 @@
 (* Names *)
 
 type name =
-  | Name   of { loc: Core.loc; lexeme: string; }
-  | Dotted of { loc: Core.loc; lhs: name; rhs: name; }
+  | Name   of { loc: loc; lexeme: string; }
+  | Dotted of { loc: loc; lhs: name; rhs: name; }
 
 (* Types *)
 
 type ty_vis =
-  | TyVisReadonly of { loc: Core.loc }
-  | TyVisAbstract of { loc: Core.loc }
+  | TyVisReadonly of { loc: loc }
+  | TyVisAbstract of { loc: loc }
 
 type ty =
-  | TyConstr of { loc: Core.loc; name: name; }
-  | TyFun    of { loc: Core.loc; param: ty; res: ty; }
-  | TySig    of { loc: Core.loc; elems: sig_elem list; }
-  | TyWith   of { loc: Core.loc; name: name; tys: ty_binding list; }
+  | TyBool   of { loc: loc; }
+  | TyInt    of { loc: loc; }
+  | TyConstr of { loc: loc; name: name; }
+  | TyFun    of { loc: loc; param: ty; res: ty; }
+  | TySig    of { loc: loc; elems: sig_elem list; }
+  | TyWith   of { loc: loc; name: name; tys: ty_binding list; }
 and sig_elem =
-  | SigTy  of { loc: Core.loc; name: name; params: mod_param list; ty: ty option; }
-  | SigVal of { loc: Core.loc; name: name; ty: ty; }
-  | SigDef of { loc: Core.loc; name: name; ty: ty; }
-  | SigMod of { loc: Core.loc; name: name; params: mod_param list; ty: ty; }
+  | SigTy  of { loc: loc; name: name; params: mod_param list; ty: ty option; }
+  | SigVal of { loc: loc; name: name; ty: ty; }
+  | SigDef of { loc: loc; name: name; ty: ty; }
+  | SigMod of { loc: loc; name: name; params: mod_param list; ty: ty; }
 and ty_binding =
-  | TyBinding of { loc: Core.loc; name: name; params: mod_param list; vis: ty_vis option; ty: ty; }
+  | TyBinding of { loc: loc; name: name; params: mod_param list; vis: ty_vis option; ty: ty; }
 and mod_param =
-  | ModParam of { loc: Core.loc; name: name; ty: ty option; }
+  | ModParam of { loc: loc; name: name; ty: ty option; }
 
 (* Primitive Operations *)
 
 type un =
-  | UnNeg  of { loc: Core.loc }
-  | UnLNot of { loc: Core.loc }
-  | UnBNot of { loc: Core.loc }
+  | UnNeg  of { loc: loc }
+  | UnLNot of { loc: loc }
+  | UnBNot of { loc: loc }
 
 type bin =
-  | BinAdd  of { loc: Core.loc }
-  | BinSub  of { loc: Core.loc }
-  | BinMul  of { loc: Core.loc }
-  | BinDiv  of { loc: Core.loc }
-  | BinMod  of { loc: Core.loc }
-  | BinLAnd of { loc: Core.loc }
-  | BinLOr  of { loc: Core.loc }
-  | BinBAnd of { loc: Core.loc }
-  | BinBOr  of { loc: Core.loc }
-  | BinBXor of { loc: Core.loc }
-  | BinSsl  of { loc: Core.loc }
-  | BinSsr  of { loc: Core.loc }
-  | BinUsl  of { loc: Core.loc }
-  | BinUsr  of { loc: Core.loc }
-  | BinSeq  of { loc: Core.loc }
-  | BinPeq  of { loc: Core.loc }
-  | BinSneq of { loc: Core.loc }
-  | BinPneq of { loc: Core.loc }
-  | BinLte  of { loc: Core.loc }
-  | BinLt   of { loc: Core.loc }
-  | BinGte  of { loc: Core.loc }
-  | BinGt   of { loc: Core.loc }
-  | BinRfa  of { loc: Core.loc }
+  | BinAdd  of { loc: loc }
+  | BinSub  of { loc: loc }
+  | BinMul  of { loc: loc }
+  | BinDiv  of { loc: loc }
+  | BinMod  of { loc: loc }
+  | BinLAnd of { loc: loc }
+  | BinLOr  of { loc: loc }
+  | BinBAnd of { loc: loc }
+  | BinBOr  of { loc: loc }
+  | BinBXor of { loc: loc }
+  | BinSsl  of { loc: loc }
+  | BinSsr  of { loc: loc }
+  | BinUsl  of { loc: loc }
+  | BinUsr  of { loc: loc }
+  | BinSeq  of { loc: loc }
+  | BinPeq  of { loc: loc }
+  | BinSneq of { loc: loc }
+  | BinPneq of { loc: loc }
+  | BinLte  of { loc: loc }
+  | BinLt   of { loc: loc }
+  | BinGte  of { loc: loc }
+  | BinGt   of { loc: loc }
+  | BinRfa  of { loc: loc }
 
 (* Patterns *)
 
 type patt =
-  | PattGround of { loc: Core.loc; }
-  | PattBool   of { loc: Core.loc; value: bool; }
-  | PattInt    of { loc: Core.loc; lexeme: string; }
-  | PattVar    of { loc: Core.loc; lexeme: string; }
-  | PattFun    of { loc: Core.loc; name: name; params: param list; }
+  | PattGround of { loc: loc; }
+  | PattBool   of { loc: loc; value: bool; }
+  | PattInt    of { loc: loc; lexeme: string; }
+  | PattVar    of { loc: loc; lexeme: string; }
+  | PattFun    of { loc: loc; name: name; params: param list; }
 and param =
-  | Param of { loc: Core.loc; patt: patt; ty: ty option; }
+  | Param of { loc: loc; patt: patt; ty: ty option; }
 
 (* Expressions *)
 
 type expr =
-  | ExprBool of { loc: Core.loc; value: bool; }
-  | ExprInt  of { loc: Core.loc; lexeme: string; }
-  | ExprId   of { loc: Core.loc; name: name; }
-  | ExprUn   of { loc: Core.loc; op: un; operand: expr; }
-  | ExprBin  of { loc: Core.loc; op: bin; lhs: expr; rhs: expr; }
-  | ExprCond of { loc: Core.loc; cond: expr; tru: expr; fls: expr; }
-  | ExprLet  of { loc: Core.loc; recur: bool; bindings: binding list; scope: expr; }
-  | ExprAbs  of { loc: Core.loc; params: param list; ret: ty option; body: expr; }
-  | ExprApp  of { loc: Core.loc; fn: expr; args: expr list; }
+  | ExprBool of { loc: loc; value: bool; }
+  | ExprInt  of { loc: loc; lexeme: string; }
+  | ExprId   of { loc: loc; name: name; }
+  | ExprUn   of { loc: loc; op: un; operand: expr; }
+  | ExprBin  of { loc: loc; op: bin; lhs: expr; rhs: expr; }
+  | ExprCond of { loc: loc; cond: expr; tru: expr; fls: expr; }
+  | ExprLet  of { loc: loc; recur: bool; bindings: binding list; scope: expr; }
+  | ExprAbs  of { loc: loc; params: param list; ret: ty option; body: expr; }
+  | ExprApp  of { loc: loc; fn: expr; args: expr list; }
 and binding =
-  | Binding of { loc: Core.loc; patt: patt; ty: ty option; value: expr; }
+  | Binding of { loc: loc; patt: patt; ty: ty option; value: expr; }
 
 (* Package Statement *)
 
 type pkg = 
-  | Library    of { loc: Core.loc; name: name; }
-  | Executable of { loc: Core.loc; name: name; }
+  | Library    of { loc: loc; name: name; }
+  | Executable of { loc: loc; name: name; }
 
 (* Imports *)
 
 type path =
-  | Path of { loc: Core.loc; path: string; }
+  | Path of { loc: loc; path: string; }
 type alias =
-  | Alias of { loc: Core.loc; alias: name option; path: path }
+  | Alias of { loc: loc; alias: name option; path: path }
 type pkgs =
-  | Packages of { loc: Core.loc; aliases: alias list; }
+  | Packages of { loc: loc; aliases: alias list; }
 type import =
-  | Import of { loc: Core.loc; pkgs: pkgs }
+  | Import of { loc: loc; pkgs: pkgs }
 
 (* Top-Level Bindings *)
 
 type top =
-  | TopTy  of { loc: Core.loc; local: bool; bindings: ty_binding list; }
-  | TopVal of { loc: Core.loc; binding: binding; }
-  | TopDef of { loc: Core.loc; binding: binding; }
-  | TopLet of { loc: Core.loc; recur: bool; bindings: binding list; }
-  | TopMod of { loc: Core.loc; name: name; params: mod_param list; elems: top list; }
+  | TopTy  of { loc: loc; local: bool; bindings: ty_binding list; }
+  | TopVal of { loc: loc; binding: binding; }
+  | TopDef of { loc: loc; binding: binding; }
+  | TopLet of { loc: loc; recur: bool; bindings: binding list; }
+  | TopMod of { loc: loc; name: name; params: mod_param list; elems: top list; }
 
 (* Files *)
 
 type file =
-  | File of { loc: Core.loc; pkg: pkg; imports: import list; tops: top list; }
+  | File of { loc: loc; pkg: pkg; imports: import list; tops: top list; }
 
 (* Constructors *)
 
@@ -148,6 +152,8 @@ let dotted loc lhs rhs = Dotted { loc; lhs; rhs; }
 let ty_vis_readonly loc = TyVisReadonly { loc; }
 let ty_vis_abstract loc = TyVisAbstract { loc; }
 
+let ty_bool loc = TyBool { loc; }
+let ty_int loc = TyInt { loc; }
 let ty_constr loc name = TyConstr { loc; name; }
 let ty_fun loc param res = TyFun { loc; param; res; }
 let ty_sig loc elems = TySig { loc; elems; }

@@ -13,6 +13,140 @@
  *)
 
 (**
+ * {2 Location Tracking}
+ *
+ * Tracks locations within the source tree in terms of packages, files, and
+ * line, column, and byte offsets.
+ *)
+
+ (**
+  * {3 Positions}
+  *
+  * A position is a particular cursor position within a file, in terms of a
+  * line offset into the file (starting at [1],) a column offset within that
+  * line (starting at [0],) and a byte offset into the file (starting at [0].)
+  *)
+
+type pos = private {
+  line: int; (** The line within the file *)
+  col:  int; (** The column offset within the line *)
+  off:  int; (** The byte offset within the file *)
+}
+(** A position *)
+
+val pos : int -> int -> int -> pos
+(**
+ * Construct a position.
+ * 
+ * @param line The line number within the file.
+ * @param col The column offset within the line.
+ * @param off The byte offset into the file.
+ * @return A {{!pos} position} within a file
+ *)
+
+val lexing_position : Lexing.position -> pos
+(**
+ * Construct a position from a {{!lexing buffer} Lexbuf.position}.
+ *)
+
+exception PositionMismatch of {
+  expected: pos;  (** The expected position *)
+  actual:   pos;  (** The actual position *)
+  line:     bool; (** Whether the positions agree on line number *)
+  col:      bool; (** Whether the positions agree on column offset *)
+  off:      bool; (** Whether the positions agree on byte offset *)
+}
+(** Raised when two position are not equal *)
+
+val position_mismatch : pos -> pos -> ?line:bool -> ?col:bool -> ?off:bool -> unit -> exn
+(**
+ * Constructs a PositionMismatch exception.
+ *
+ * @param expected The expected position
+ * @param actual The actual position
+ * @param ?line Whether the positions agree on line number.  Defaults to [true].
+ * @param ?col Whether the positions agree on column offset.  Defaults to [true].
+ * @param ?off Whether the positions agree on byte offset.  Defaults to [true].
+ * @param _ Dummy parameter
+ * @return A PositionMismatch exception
+ *)
+
+val require_pos_equal : pos -> pos -> unit
+(**
+ * Require that two position values are equal.
+ *
+ * @param expected The expected position
+ * @param actual The actual position
+ * @raise PositionMismatch Raised if the two positions are not equal
+ *)
+
+(**
+ * {3 Locations}
+ *
+ * A location is the location of a syntactic element within a source file.  It
+ * spans two positions and is always bound to a specific file within a specific
+ * package.
+ *)
+
+type loc = private {
+  start: pos; (** The starting position within the file *)
+  stop:  pos; (** The ending position within the file *)
+}
+(** A location in the source tree *)
+
+val dummy : loc
+(** A dummy location guaranteed to be different from all valid locations. *)
+ 
+val loc : pos -> pos -> loc
+(**
+ * Construct a location.
+ *
+ * @param start The starting position of the location
+ * @param stop The ending position of the location
+ * @return A location
+ *)
+
+val span : loc -> loc -> loc
+(**
+ * Constructs a location that spans two locations.  I.e., it starts at the
+ * starting position of the first location and stops at the ending position of
+ * the second location.
+ *
+ * @param start The starting location
+ * @param stop The ending location
+ * @return A location spanning the input locations
+ *)
+
+exception LocationMismatch of {
+  expected: loc;        (** The expected location *)
+  actual:   loc;        (** The actual location *)
+  start:    exn option; (** Whether the locations differ on start position *)
+  stop:     exn option; (** Whether the locations differ on end position *)
+}
+(** Raised when two locations are not equal *)
+
+val location_mismatch : loc -> loc -> ?start:(exn option) -> ?stop:(exn option) -> unit -> exn
+(**
+ * Construct a LocationMismatch exception.
+ *
+ * @param expected The expected location
+ * @param actual The actual location
+ * @param ?start Whether the locations differ on start position.  Defaults to [None].
+ * @param ?stop Whether the locations differ on end position.  Defaults to [None].
+ * @param _ Dummy parameter
+ * @return A LocationMismatch exception
+ *)
+
+val require_loc_equal : loc -> loc -> unit
+(**
+ * Require the two locations are equal.
+ *
+ * @param expected The expected location
+ * @param actual The actual location
+ * @raise LocationMismatch Raised if the locations are not equal
+ *)
+
+(**
  * {2 Data Types}
  * 
  * The data types to represent the abstract syntax.
@@ -24,13 +158,13 @@
 
 type name = private
   | Name of {
-      loc:    Core.loc; (** The location of the name *)
-      lexeme: string;   (** The name *)
+      loc:    loc;    (** The location of the name *)
+      lexeme: string; (** The name *)
     } (** Name *)
   | Dotted of {
-      loc: Core.loc; (** The location of the name *)
-      lhs: name;     (** The left-hand side *)
-      rhs: name;     (** The right-hand side *)
+      loc: loc;  (** The location of the name *)
+      lhs: name; (** The left-hand side *)
+      rhs: name; (** The right-hand side *)
     } (** Dotted Name *)
 (** Names *)
 
@@ -40,29 +174,35 @@ type name = private
 
 type ty_vis = private
   | TyVisReadonly of {
-      loc: Core.loc; (** The location of the visibility *)
+      loc: loc; (** The location of the visibility *)
     } (** Read-Only *)
   | TyVisAbstract of {
-      loc: Core.loc; (** The location of the visibility *)
+      loc: loc; (** The location of the visibility *)
     } (** Abstract *)
 (** Type Visibility *)
 
 type ty = private
+  | TyBool of {
+      loc: loc; (** The location of the constructor *)
+    } (** Boolean *)
+  | TyInt of {
+      loc: loc; (** The location of the constructor *)
+    } (** Integer *)
   | TyConstr of {
-      loc:  Core.loc; (** The location of the contructor *)
-      name: name;     (** The name *)
+      loc:  loc;  (** The location of the contructor *)
+      name: name; (** The name *)
     } (** Constructor *)
   | TyFun of {
-      loc:   Core.loc; (** The location of the function *)
-      param: ty;       (** The parameter type *)
-      res:   ty;       (** The result type *)
+      loc:   loc; (** The location of the function *)
+      param: ty;  (** The parameter type *)
+      res:   ty;  (** The result type *)
     } (** Function *)
   | TySig of {
-      loc:   Core.loc;      (** The location of the signature *)
+      loc:   loc;           (** The location of the signature *)
       elems: sig_elem list; (** The elements *)
     } (** Module Signature *)
   | TyWith of {
-      loc:  Core.loc;        (** The location of the with clause *)
+      loc:  loc;             (** The location of the with clause *)
       name: name;            (** The module name *)
       tys:  ty_binding list; (** The bound types *)
     } (** Module With *)
@@ -70,23 +210,23 @@ type ty = private
 
 and sig_elem = private
   | SigTy of {
-      loc:    Core.loc;       (** The location of the type *)
+      loc:    loc;            (** The location of the type *)
       name:   name;           (** The type name *)
       params: mod_param list; (** The module parameters *)
       ty:     ty option;      (** the type definition *)
     } (** Type Definition *)
   | SigVal of {
-      loc:  Core.loc; (** The location of the value *)
-      name: name;     (** The value name *)
-      ty:   ty;       (** The value type *)
+      loc:  loc;  (** The location of the value *)
+      name: name; (** The value name *)
+      ty:   ty;   (** The value type *)
     } (** Value Binding *)
   | SigDef of {
-      loc:  Core.loc; (** The location of the definition *)
-      name: name;     (** The function name *)
-      ty:   ty;       (** The function type *)
+      loc:  loc;  (** The location of the definition *)
+      name: name; (** The function name *)
+      ty:   ty;   (** The function type *)
     } (** Function Definitions *)
   | SigMod of {
-      loc:    Core.loc;       (** The location of the module *)
+      loc:    loc;            (** The location of the module *)
       name:   name;           (** The module name *)
       params: mod_param list; (** The module parameters *)
       ty:     ty;             (** The module type *)
@@ -95,7 +235,7 @@ and sig_elem = private
 
 and ty_binding = private
   | TyBinding of {
-      loc:    Core.loc;       (** The location of the type binding *)
+      loc:    loc;            (** The location of the type binding *)
       name:   name;           (** The type name *)
       params: mod_param list; (** The module parameters *)
       vis:    ty_vis option;  (** The type visibility *)
@@ -105,7 +245,7 @@ and ty_binding = private
 
 and mod_param = private
   | ModParam of {
-      loc:  Core.loc;  (** The location of the module parameter *)
+      loc:  loc;       (** The location of the module parameter *)
       name: name;      (** The parameter name *)
       ty:   ty option; (** The parameter type *)
     } (** Module Parameter *)
@@ -117,85 +257,85 @@ and mod_param = private
 
 type un =
   | UnNeg of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Negation *)
   | UnLNot of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Logical NOT *)
   | UnBNot of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Bitwise NOT *)
 (** Unary Operators *)
 
 type bin =
   | BinAdd of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Addition *)
   | BinSub of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Subtration *)
   | BinMul of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Multiplication *)
   | BinDiv of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Division *)
   | BinMod of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Modulus *)
   | BinLAnd of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Logical AND *)
   | BinLOr of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Logical OR *)
   | BinBAnd of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Bitwise AND *)
   | BinBOr of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Bitwise OR *)
   | BinBXor of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Bitwise XOR *)
   | BinSsl of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Signed Shift Left *)
   | BinSsr of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Signed Shift Right *)
   | BinUsl of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Unsigned Shift Left *)
   | BinUsr of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Unsigned Shift Right *)
   | BinSeq of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Structural Equality *)
   | BinPeq of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Physical Equality *)
   | BinSneq of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Structural Inequality *)
   | BinPneq of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Physical Inequality *)
   | BinLte of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Less Then or Equal *)
   | BinLt of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Less Then *)
   | BinGte of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Greater Then or Equal *)
   | BinGt of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Greater Then *)
   | BinRfa of {
-      loc: Core.loc; (** The location of the operator *)
+      loc: loc; (** The location of the operator *)
     } (** Reverse Function Application *)
 (** Binary Operators *)
 
@@ -205,22 +345,22 @@ type bin =
 
 type patt =
   | PattGround of {
-      loc: Core.loc; (** The location of the pattern *)
+      loc: loc; (** The location of the pattern *)
     } (** Ground *)
   | PattBool of {
-      loc:   Core.loc; (** The location of the pattern *)
-      value: bool;     (** The boolean value *)
+      loc:   loc;  (** The location of the pattern *)
+      value: bool; (** The boolean value *)
     } (** Boolean Literal *)
   | PattInt of {
-      loc:    Core.loc; (** The location of the pattern *)
-      lexeme: string;   (** The integer lexeme *)
+      loc:    loc;    (** The location of the pattern *)
+      lexeme: string; (** The integer lexeme *)
     } (** Integer Literal *)
   | PattVar of {
-      loc:    Core.loc; (** The location of the pattern *)
-      lexeme: string;   (** The variable lexeme *)
+      loc:    loc;    (** The location of the pattern *)
+      lexeme: string; (** The variable lexeme *)
     } (** Variable *)
   | PattFun of {
-      loc:    Core.loc;   (** The location of the pattern *)
+      loc:    loc;        (** The location of the pattern *)
       name:   name;       (** The function name *)
       params: param list; (** The function parameters *)
     } (** Function *)
@@ -228,7 +368,7 @@ type patt =
 
 and param =
   | Param of {
-      loc:  Core.loc;  (** The location of the parameter *)
+      loc:  loc;       (** The location of the parameter *)
       patt: patt;      (** The pattern the parameter matches *)
       ty:   ty option; (** The parameter type *)
     } (** Parameter *)
@@ -240,48 +380,48 @@ and param =
 
 type expr =
   | ExprBool of {
-      loc:   Core.loc; (** The location of the expression *)
-      value: bool;     (** The boolean value *)
+      loc:   loc;  (** The location of the expression *)
+      value: bool; (** The boolean value *)
     } (** Boolean Literal *)
   | ExprInt of {
-      loc:    Core.loc; (** The location of the expression *)
-      lexeme: string;   (** The integer lexeme *)
+      loc:    loc;    (** The location of the expression *)
+      lexeme: string; (** The integer lexeme *)
     } (** Integer Literal *)
   | ExprId of {
-      loc:  Core.loc; (** The location of the expression *)
-      name: name;     (** The referenced name *)
+      loc:  loc;  (** The location of the expression *)
+      name: name; (** The referenced name *)
     } (** Identifier Literal *)
   | ExprUn of {
-      loc:     Core.loc; (** The location of the expression *)
-      op:      un;       (** The operator *)
-      operand: expr;     (** The operand *)
+      loc:     loc;  (** The location of the expression *)
+      op:      un;   (** The operator *)
+      operand: expr; (** The operand *)
     } (** Unary Operation *)
   | ExprBin of {
-      loc: Core.loc; (** The location of the expression *)
-      op:  bin;      (** The operator *)
-      lhs: expr;     (** The left-hand operand *)
-      rhs: expr;     (** The right-hand operand *)
+      loc: loc;  (** The location of the expression *)
+      op:  bin;  (** The operator *)
+      lhs: expr; (** The left-hand operand *)
+      rhs: expr; (** The right-hand operand *)
     } (** Binary Operation *)
   | ExprCond of {
-      loc:  Core.loc; (** The location of the expression *)
-      cond: expr;     (** The condition *)
-      tru:  expr;     (** The true case *)
-      fls:  expr;     (** The false case *)
+      loc:  loc;  (** The location of the expression *)
+      cond: expr; (** The condition *)
+      tru:  expr; (** The true case *)
+      fls:  expr; (** The false case *)
     } (** Condition *)
   | ExprLet of {
-      loc:      Core.loc;     (** The location of the expression *)
+      loc:      loc;          (** The location of the expression *)
       recur:    bool;         (** Whether the binding is marked recursive *)
       bindings: binding list; (** The bindings *)
       scope:    expr;         (** The scope of the bindings *)
     } (** Value Binding *)
   | ExprAbs of {
-      loc:    Core.loc;   (** The location of the expression *)
+      loc:    loc;        (** The location of the expression *)
       params: param list; (** The function parameters *)
       ret:    ty option;  (** The return type *)
       body:   expr;       (** The function body *)
     } (** Function Abstraction *)
   | ExprApp of {
-      loc:  Core.loc;  (** The location of the expression *)
+      loc:  loc;       (** The location of the expression *)
       fn:   expr;      (** The function *)
       args: expr list; (** The arguments *)
     } (** Function Application *)
@@ -289,7 +429,7 @@ type expr =
 
 and binding =
   | Binding of {
-      loc:   Core.loc;  (** The location of the binding *)
+      loc:   loc;       (** The location of the binding *)
       patt:  patt;      (** The pattern bound *)
       ty:    ty option; (** The tyoe of the bound value *)
       value: expr;      (** The bound value *)
@@ -302,12 +442,12 @@ and binding =
 
 type pkg = private
   | Library of {
-      loc:  Core.loc; (** The location of the package statement *)
-      name: name;     (** The name of the library *)
+      loc:  loc;  (** The location of the package statement *)
+      name: name; (** The name of the library *)
     } (** A library *)
   | Executable of {
-      loc:  Core.loc; (** The location of the package statement *)
-      name: name;     (** The name of the executable *)
+      loc:  loc;  (** The location of the package statement *)
+      name: name; (** The name of the executable *)
     } (** An executable *)
 (** Package Statements *)
 
@@ -317,14 +457,14 @@ type pkg = private
 
 type path = private
   | Path of {
-      loc:  Core.loc; (** The location of the package path *)
-      path: string;   (** The package path *)
+      loc:  loc;    (** The location of the package path *)
+      path: string; (** The package path *)
     } (** A package path *)
 (** Package Paths *)
 
 type alias = private
   | Alias of {
-      loc:   Core.loc;    (** The location of the alias *)
+      loc:   loc;         (** The location of the alias *)
       alias: name option; (** The local alias *)
       path:  path;        (** The package path *)
   }
@@ -332,15 +472,15 @@ type alias = private
 
 type pkgs = private
   | Packages of {
-      loc:     Core.loc;   (** The location of the package list *)
+      loc:     loc;        (** The location of the package list *)
       aliases: alias list; (** The aliased imports *)
     } (** A package alias list *)
 (** Package Alias Lists *)
 
 type import = private
   | Import of {
-      loc:  Core.loc; (** The location of the import statement *)
-      pkgs: pkgs;     (** The import list *)
+      loc:  loc;  (** The location of the import statement *)
+      pkgs: pkgs; (** The import list *)
     }
 (** Import Statements *)
 
@@ -350,25 +490,25 @@ type import = private
 
 type top =
   | TopTy of {
-      loc:      Core.loc;        (** The location of the binding *)
+      loc:      loc;             (** The location of the binding *)
       local:    bool;            (** Whether the binding is local *)
       bindings: ty_binding list; (** The type bindings *)
     } (** Type Binding *)
   | TopVal of {
-      loc:     Core.loc; (** The location of the binding *)
-      binding: binding;  (** The value binding *)
+      loc:     loc;     (** The location of the binding *)
+      binding: binding; (** The value binding *)
     } (** Value Binding *)
   | TopDef of {
-      loc:     Core.loc; (** The location of the binding *)
-      binding: binding;  (** The function definition *)
+      loc:     loc;     (** The location of the binding *)
+      binding: binding; (** The function definition *)
     } (** Function Definition *)
   | TopLet of {
-      loc:      Core.loc;     (** The location of the binding *)
+      loc:      loc;          (** The location of the binding *)
       recur:    bool;         (** Whether the bindings are recursive *)
       bindings: binding list; (** The value bindings *)
     } (** Local Binding *)
   | TopMod of {
-      loc:    Core.loc;       (** The location of the module *)
+      loc:    loc;            (** The location of the module *)
       name:   name;           (** The module name *)
       params: mod_param list; (** The module parameters *)
       elems:  top list;       (** The structure elements *)
@@ -381,7 +521,7 @@ type top =
 
 type file = private
   | File of {
-      loc:     Core.loc;    (** The location of the file *)
+      loc:     loc;         (** The location of the file *)
       pkg:     pkg;         (** The package statement *)
       imports: import list; (** The import statements *)
       tops:    top list;    (** The top-level bindings *)
@@ -398,7 +538,7 @@ type file = private
  * {3 Names}
  *)
 
-val name : Core.loc -> string -> name
+val name : loc -> string -> name
 (**
  * Construct a name.
  *
@@ -408,7 +548,7 @@ val name : Core.loc -> string -> name
  *)
 
 
-val dotted : Core.loc -> name -> name -> name
+val dotted : loc -> name -> name -> name
 (**
  * Construct a dotted name.
  *
@@ -426,7 +566,7 @@ val dotted : Core.loc -> name -> name -> name
  * {4 Visibilities}
  *)
 
-val ty_vis_readonly : Core.loc -> ty_vis
+val ty_vis_readonly : loc -> ty_vis
 (**
  * Construct a read-only visibility.
  *
@@ -434,7 +574,7 @@ val ty_vis_readonly : Core.loc -> ty_vis
  * @return A type visibility
  *)
 
-val ty_vis_abstract : Core.loc -> ty_vis
+val ty_vis_abstract : loc -> ty_vis
 (**
  * Construct an abstract visibility
  *
@@ -446,7 +586,23 @@ val ty_vis_abstract : Core.loc -> ty_vis
  * {4 Types}
  *)
 
-val ty_constr : Core.loc -> name -> ty
+val ty_bool : loc -> ty
+(**
+ * Construct a boolean type constructor
+ *
+ * @param loc The location of the type
+ * @return A boolean constructor
+ *)
+
+val ty_int : loc -> ty
+(**
+ * Construct an integer type constructor
+ *
+ * @param loc The location of the type
+ * @return An integer constructor
+ *)
+
+val ty_constr : loc -> name -> ty
 (**
  * Construct a type constructor
  * 
@@ -455,7 +611,7 @@ val ty_constr : Core.loc -> name -> ty
  * @return A type constructor
  *)
 
-val ty_fun : Core.loc -> ty -> ty -> ty
+val ty_fun : loc -> ty -> ty -> ty
 (**
  * Construct a function type
  * 
@@ -465,7 +621,7 @@ val ty_fun : Core.loc -> ty -> ty -> ty
  * @return A function type
  *)
 
-val ty_sig : Core.loc -> sig_elem list -> ty
+val ty_sig : loc -> sig_elem list -> ty
 (**
  * Construct a module signature
  *
@@ -474,7 +630,7 @@ val ty_sig : Core.loc -> sig_elem list -> ty
  * @return A module signature
  *)
 
-val ty_with : Core.loc -> name -> ty_binding list -> ty
+val ty_with : loc -> name -> ty_binding list -> ty
 (**
  * Construct a module signature with types bound
  *
@@ -488,7 +644,7 @@ val ty_with : Core.loc -> name -> ty_binding list -> ty
  * {4 Signature Elements}
  *)
 
-val sig_ty : Core.loc -> name -> mod_param list -> ty option -> sig_elem
+val sig_ty : loc -> name -> mod_param list -> ty option -> sig_elem
 (**
  * Construct a type binding signature element
  *
@@ -499,7 +655,7 @@ val sig_ty : Core.loc -> name -> mod_param list -> ty option -> sig_elem
  * @return A type binding signature element
  *)
 
-val sig_val : Core.loc -> name -> ty -> sig_elem
+val sig_val : loc -> name -> ty -> sig_elem
 (**
  * Construct a value binding signature element
  *
@@ -509,7 +665,7 @@ val sig_val : Core.loc -> name -> ty -> sig_elem
  * @return A value binding signature element
  *)
 
-val sig_def : Core.loc -> name -> ty -> sig_elem
+val sig_def : loc -> name -> ty -> sig_elem
 (**
  * Construct a function definition signature element
  * 
@@ -519,7 +675,7 @@ val sig_def : Core.loc -> name -> ty -> sig_elem
  * @return A function definition signature element
  *)
 
-val sig_mod : Core.loc -> name -> mod_param list -> ty -> sig_elem
+val sig_mod : loc -> name -> mod_param list -> ty -> sig_elem
 (**
  * Construct a module definition signature element
  * 
@@ -534,7 +690,7 @@ val sig_mod : Core.loc -> name -> mod_param list -> ty -> sig_elem
  * {4 Type Bindings}
  *)
 
-val ty_binding : Core.loc -> name -> mod_param list -> ty_vis option -> ty -> ty_binding
+val ty_binding : loc -> name -> mod_param list -> ty_vis option -> ty -> ty_binding
 (**
  * Construct a type binding
  *
@@ -550,7 +706,7 @@ val ty_binding : Core.loc -> name -> mod_param list -> ty_vis option -> ty -> ty
  * {4 Module Parameters}
  *)
 
-val mod_param : Core.loc -> name -> ty option -> mod_param
+val mod_param : loc -> name -> ty option -> mod_param
 (**
  * Construct a module parameter
  *
@@ -568,7 +724,7 @@ val mod_param : Core.loc -> name -> ty option -> mod_param
  * {4 Unary Operators}
  *)
 
-val un_neg : Core.loc -> un
+val un_neg : loc -> un
 (**
  * Construct a negation operator
  * 
@@ -576,7 +732,7 @@ val un_neg : Core.loc -> un
  * @return A negation operator
  *)
 
-val un_lnot : Core.loc -> un
+val un_lnot : loc -> un
 (**
  * Construct a logical NOT operator
  * 
@@ -584,7 +740,7 @@ val un_lnot : Core.loc -> un
  * @return A logical NOT operator
  *)
 
-val un_bnot : Core.loc -> un
+val un_bnot : loc -> un
 (**
  * Construct a bitwise NOT operator
  * 
@@ -596,7 +752,7 @@ val un_bnot : Core.loc -> un
  * {4 Binary Operators}
  *)
 
-val bin_add : Core.loc -> bin
+val bin_add : loc -> bin
 (**
  * Construct an addition operator
  *
@@ -604,7 +760,7 @@ val bin_add : Core.loc -> bin
  * @return An addition operator
  *)
 
-val bin_sub : Core.loc -> bin
+val bin_sub : loc -> bin
 (**
  * Construct a subtration operator
  *
@@ -612,7 +768,7 @@ val bin_sub : Core.loc -> bin
  * @return A subtration operator
  *)
 
-val bin_mul : Core.loc -> bin
+val bin_mul : loc -> bin
 (**
  * Construct a multiplication operator
  *
@@ -620,7 +776,7 @@ val bin_mul : Core.loc -> bin
  * @return A multiplication operator
  *)
 
-val bin_div : Core.loc -> bin
+val bin_div : loc -> bin
 (**
  * Construct a division operator
  *
@@ -628,7 +784,7 @@ val bin_div : Core.loc -> bin
  * @return A division operator
  *)
 
-val bin_mod : Core.loc -> bin
+val bin_mod : loc -> bin
 (**
  * Construct a modulus operator
  *
@@ -636,7 +792,7 @@ val bin_mod : Core.loc -> bin
  * @return A modulus operator
  *)
 
-val bin_land : Core.loc -> bin
+val bin_land : loc -> bin
 (**
  * Construct a logical AND operator
  *
@@ -644,7 +800,7 @@ val bin_land : Core.loc -> bin
  * @return A logical AND operator
  *)
 
-val bin_lor : Core.loc -> bin
+val bin_lor : loc -> bin
 (**
  * Construct a logical OR operator
  *
@@ -652,7 +808,7 @@ val bin_lor : Core.loc -> bin
  * @return A logical OR operator
  *)
 
-val bin_band : Core.loc -> bin
+val bin_band : loc -> bin
 (**
  * Construct a bitwise AND operator
  *
@@ -660,7 +816,7 @@ val bin_band : Core.loc -> bin
  * @return A bitwise AND operator
  *)
 
-val bin_bor : Core.loc -> bin
+val bin_bor : loc -> bin
 (**
  * Construct a bitwise OR operator
  *
@@ -668,7 +824,7 @@ val bin_bor : Core.loc -> bin
  * @return A bitwise OR operator
  *)
 
-val bin_bxor : Core.loc -> bin
+val bin_bxor : loc -> bin
 (**
  * Construct a bitwise XOR operator
  *
@@ -676,7 +832,7 @@ val bin_bxor : Core.loc -> bin
  * @return A bitwise XOR operator
  *)
 
-val bin_ssl : Core.loc -> bin
+val bin_ssl : loc -> bin
 (**
  * Construct a signed shift left operator
  *
@@ -684,7 +840,7 @@ val bin_ssl : Core.loc -> bin
  * @return A signed shift left operator
  *)
 
-val bin_ssr : Core.loc -> bin
+val bin_ssr : loc -> bin
 (**
  * Construct a signed shift right operator
  *
@@ -692,7 +848,7 @@ val bin_ssr : Core.loc -> bin
  * @return A signed shift right operator
  *)
 
-val bin_usl : Core.loc -> bin
+val bin_usl : loc -> bin
 (**
  * Construct an unsigned shift left operator
  *
@@ -700,7 +856,7 @@ val bin_usl : Core.loc -> bin
  * @return An unsigned shift left operator
  *)
 
-val bin_usr : Core.loc -> bin
+val bin_usr : loc -> bin
 (**
  * Construct an unsigned shift right operator
  *
@@ -708,7 +864,7 @@ val bin_usr : Core.loc -> bin
  * @return An unsigned shift right operator
  *)
 
-val bin_seq : Core.loc -> bin
+val bin_seq : loc -> bin
 (**
  * Construct a structural equality operator
  *
@@ -716,7 +872,7 @@ val bin_seq : Core.loc -> bin
  * @return A structural equality operator
  *)
 
-val bin_peq : Core.loc -> bin
+val bin_peq : loc -> bin
 (**
  * Construct a physical equality operator
  *
@@ -724,7 +880,7 @@ val bin_peq : Core.loc -> bin
  * @return A physical equality operator
  *)
 
-val bin_sneq : Core.loc -> bin
+val bin_sneq : loc -> bin
 (**
  * Construct a structural inequality operator
  *
@@ -732,7 +888,7 @@ val bin_sneq : Core.loc -> bin
  * @return A structural inequality operator
  *)
 
-val bin_pneq : Core.loc -> bin
+val bin_pneq : loc -> bin
 (**
  * Construct a physical inequality operator
  *
@@ -740,7 +896,7 @@ val bin_pneq : Core.loc -> bin
  * @return A physical inequality operator
  *)
 
-val bin_lte : Core.loc -> bin
+val bin_lte : loc -> bin
 (**
  * Construct a less than or equal operator
  *
@@ -748,7 +904,7 @@ val bin_lte : Core.loc -> bin
  * @return A less than or equal operator
  *)
 
-val bin_lt : Core.loc -> bin
+val bin_lt : loc -> bin
 (**
  * Construct a less than operator
  *
@@ -756,7 +912,7 @@ val bin_lt : Core.loc -> bin
  * @return A less than operator
  *)
 
-val bin_gte : Core.loc -> bin
+val bin_gte : loc -> bin
 (**
  * Construct a greater than or equal operator
  *
@@ -764,7 +920,7 @@ val bin_gte : Core.loc -> bin
  * @return A greater than or equal operator
  *)
 
-val bin_gt : Core.loc -> bin
+val bin_gt : loc -> bin
 (**
  * Construct a greater than operator
  *
@@ -772,7 +928,7 @@ val bin_gt : Core.loc -> bin
  * @return A greater than operator
  *)
 
-val bin_rfa : Core.loc -> bin
+val bin_rfa : loc -> bin
 (**
  * Construct a reverse function application operator
  *
@@ -784,7 +940,7 @@ val bin_rfa : Core.loc -> bin
  * {3 Patterns}
  *)
 
-val patt_ground : Core.loc -> patt
+val patt_ground : loc -> patt
 (**
  * Construct a ground pattern
  *
@@ -792,7 +948,7 @@ val patt_ground : Core.loc -> patt
  * @return A ground pattern
  *)
 
-val patt_bool : Core.loc -> bool -> patt
+val patt_bool : loc -> bool -> patt
 (**
  * Construct a boolean literal pattern
  *
@@ -801,7 +957,7 @@ val patt_bool : Core.loc -> bool -> patt
  * @return A boolean literal pattern
  *)
 
-val patt_int : Core.loc -> string -> patt
+val patt_int : loc -> string -> patt
 (**
  * Construct an integer literal pattern
  *
@@ -810,7 +966,7 @@ val patt_int : Core.loc -> string -> patt
  * @return An integer literal pattern
  *)
 
-val patt_var : Core.loc -> string -> patt
+val patt_var : loc -> string -> patt
 (**
  * Construct a variable pattern
  *
@@ -819,7 +975,7 @@ val patt_var : Core.loc -> string -> patt
  * @return A variable pattern
  *)
 
-val patt_fun : Core.loc -> name -> param list -> patt
+val patt_fun : loc -> name -> param list -> patt
 (**
  * Construct a function pattern
  * 
@@ -833,7 +989,7 @@ val patt_fun : Core.loc -> name -> param list -> patt
  * {3 Parameters}
  *)
 
-val param : Core.loc -> patt -> ty option -> param
+val param : loc -> patt -> ty option -> param
 (**
  * Construct a function parameter
  * 
@@ -847,7 +1003,7 @@ val param : Core.loc -> patt -> ty option -> param
  * {3 Expressions}
  *)
 
-val expr_bool : Core.loc -> bool -> expr
+val expr_bool : loc -> bool -> expr
 (**
  * Construct a boolean literal expression
  *
@@ -856,7 +1012,7 @@ val expr_bool : Core.loc -> bool -> expr
  * @return A boolean literal expression
  *)
 
-val expr_int : Core.loc -> string -> expr
+val expr_int : loc -> string -> expr
 (**
  * Construct an integer literal expression
  *
@@ -865,7 +1021,7 @@ val expr_int : Core.loc -> string -> expr
  * @return An integer literal expression
  *)
 
-val expr_id : Core.loc -> name -> expr
+val expr_id : loc -> name -> expr
 (**
  * Construct an identifier literal expression
  *
@@ -874,7 +1030,7 @@ val expr_id : Core.loc -> name -> expr
  * @return An identifier literal expression
  *)
 
-val expr_un : Core.loc -> un -> expr -> expr
+val expr_un : loc -> un -> expr -> expr
 (**
  * Construct a unary operation expression
  *
@@ -884,7 +1040,7 @@ val expr_un : Core.loc -> un -> expr -> expr
  * @return The unary operation expression
  *)
 
-val expr_bin : Core.loc -> bin -> expr -> expr -> expr
+val expr_bin : loc -> bin -> expr -> expr -> expr
 (**
  * Construct a binary operation expression
  *
@@ -895,7 +1051,7 @@ val expr_bin : Core.loc -> bin -> expr -> expr -> expr
  * @return A binary operation expression
  *)
 
-val expr_cond : Core.loc -> expr -> expr -> expr -> expr
+val expr_cond : loc -> expr -> expr -> expr -> expr
 (**
  * Construct a condition expression
  *
@@ -906,7 +1062,7 @@ val expr_cond : Core.loc -> expr -> expr -> expr -> expr
  * @return A condition expression
  *)
 
-val expr_let : Core.loc -> bool -> binding list -> expr -> expr
+val expr_let : loc -> bool -> binding list -> expr -> expr
 (**
  * Construct a value binding expression
  *
@@ -917,7 +1073,7 @@ val expr_let : Core.loc -> bool -> binding list -> expr -> expr
  * @return A value binding expression
  *)
 
-val expr_abs : Core.loc -> param list -> ty option -> expr -> expr
+val expr_abs : loc -> param list -> ty option -> expr -> expr
 (**
  * Construct a function abstraction
  *
@@ -928,7 +1084,7 @@ val expr_abs : Core.loc -> param list -> ty option -> expr -> expr
  * @return A function abstraction expression
  *)
 
-val expr_app : Core.loc -> expr -> expr list -> expr
+val expr_app : loc -> expr -> expr list -> expr
 (**
  * Construct a function application
  *
@@ -942,7 +1098,7 @@ val expr_app : Core.loc -> expr -> expr list -> expr
  * {3 Bindings}
  *)
 
-val binding : Core.loc -> patt -> ty option -> expr -> binding
+val binding : loc -> patt -> ty option -> expr -> binding
 (**
  * Construct a value binding
  *
@@ -957,7 +1113,7 @@ val binding : Core.loc -> patt -> ty option -> expr -> binding
  * {3 Package Statements}
  *)
 
-val pkg_library : Core.loc -> name -> pkg
+val pkg_library : loc -> name -> pkg
 (**
  * Construct a library package.
  *
@@ -966,7 +1122,7 @@ val pkg_library : Core.loc -> name -> pkg
  * @return A library package
  *)
 
-val pkg_executable : Core.loc -> name -> pkg
+val pkg_executable : loc -> name -> pkg
 (**
  * Construct an executable package.
  *
@@ -979,7 +1135,7 @@ val pkg_executable : Core.loc -> name -> pkg
  * {3 Imports}
  *)
 
-val path : Core.loc -> string -> path
+val path : loc -> string -> path
 (**
  * Construct a package path.
  * 
@@ -988,7 +1144,7 @@ val path : Core.loc -> string -> path
  * @return A package path
  *)
 
-val alias : Core.loc -> name option -> path -> alias
+val alias : loc -> name option -> path -> alias
 (**
  * Construct a package alias clause with an optional local name.
  *
@@ -998,7 +1154,7 @@ val alias : Core.loc -> name option -> path -> alias
  * @return An alias clause
  *)
 
-val alias_named : Core.loc -> name -> path -> alias
+val alias_named : loc -> name -> path -> alias
 (**
  * Construct a locally named alias clause.  This is an alias for
  * [alias loc (Some name) path].
@@ -1009,7 +1165,7 @@ val alias_named : Core.loc -> name -> path -> alias
  * @return An alias clause
  *)
 
-val alias_unnamed : Core.loc -> path -> alias
+val alias_unnamed : loc -> path -> alias
 (**
  * Construct an alias clause using the default package name.  This is an alias
  * for [alias loc None path].
@@ -1019,7 +1175,7 @@ val alias_unnamed : Core.loc -> path -> alias
  * @return An alias clause
  *)
 
-val pkgs : Core.loc -> alias list -> pkgs
+val pkgs : loc -> alias list -> pkgs
 (**
  * Construct a package alias list.
  *
@@ -1028,7 +1184,7 @@ val pkgs : Core.loc -> alias list -> pkgs
  * @return A package alias list 
  *)
 
-val import : Core.loc -> pkgs -> import
+val import : loc -> pkgs -> import
 (**
  * Construct an import statement.
  *
@@ -1041,7 +1197,7 @@ val import : Core.loc -> pkgs -> import
  * {3 Top-Level Bindings}
  *)
 
-val top_ty : Core.loc -> bool -> ty_binding list -> top
+val top_ty : loc -> bool -> ty_binding list -> top
 (**
  * Construct a top-level type binding
  *
@@ -1051,7 +1207,7 @@ val top_ty : Core.loc -> bool -> ty_binding list -> top
  * @return A top-level type binding
  *)
 
-val top_val : Core.loc -> binding -> top
+val top_val : loc -> binding -> top
 (**
  * Construct a top-level value binding
  *
@@ -1060,7 +1216,7 @@ val top_val : Core.loc -> binding -> top
  * @return A top-level value binding
  *)
 
-val top_def : Core.loc -> binding -> top
+val top_def : loc -> binding -> top
 (**
  * Construct a top-level function definition
  *
@@ -1069,7 +1225,7 @@ val top_def : Core.loc -> binding -> top
  * @return A top-level function definition
  *)
 
-val top_let : Core.loc -> bool -> binding list -> top
+val top_let : loc -> bool -> binding list -> top
 (**
  * Construct a top-level local binding
  *
@@ -1079,7 +1235,7 @@ val top_let : Core.loc -> bool -> binding list -> top
  * @return A top-level local binding
  *)
 
-val top_mod : Core.loc -> name -> mod_param list -> top list -> top
+val top_mod : loc -> name -> mod_param list -> top list -> top
 (**
  * Construct a top-level module definition
  *
@@ -1094,7 +1250,7 @@ val top_mod : Core.loc -> name -> mod_param list -> top list -> top
  * {3 Files}
  *)
 
-val file : Core.loc -> pkg -> import list -> top list -> file
+val file : loc -> pkg -> import list -> top list -> file
 (**
  * Constructs a source file.
  * 
