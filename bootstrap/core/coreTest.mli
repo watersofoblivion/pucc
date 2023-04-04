@@ -12,6 +12,8 @@ open OUnit2
 
 val assert_optional_equal : ctxt:test_ctxt -> string -> (ctxt:test_ctxt -> 'a -> 'a -> unit) -> 'a option -> 'a option -> unit
 
+val assert_list_equal : ctxt:test_ctxt -> (ctxt:test_ctxt -> 'a -> 'a -> unit) -> 'a list -> 'a list -> unit
+
 val fail_constr : string -> ('a -> string) -> ctxt:test_ctxt -> 'a -> 'a -> unit
 
 (**

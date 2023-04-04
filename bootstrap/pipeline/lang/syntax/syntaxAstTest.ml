@@ -4,6 +4,7 @@ open Format
 
 open OUnit2
 
+open CoreTest
 open SyntaxLocTest
 
 (* Fixtures *)
@@ -264,7 +265,7 @@ let fresh_file ?loc:(loc = fresh_loc ()) ?pkg:(pkg = fresh_pkg_library ()) ?impo
 
 (* Names *)
 
-let fail_name_constr = CoreTest.fail_constr "Name" (function
+let fail_name_constr = fail_constr "Name" (function
   | Syntax.Name _ -> "Name"
   | Syntax.Dotted _ -> "Dotted"
 ) 
@@ -281,12 +282,12 @@ let rec assert_name_equal ~ctxt ?loc:(loc = true) expected actual = match (expec
 
 (* Types *)
 
-let fail_ty_vis_constr = CoreTest.fail_constr "Type visibility" (function
+let fail_ty_vis_constr = fail_constr "Type visibility" (function
   | Syntax.TyVisReadonly _ -> "TyVisReadonly"
   | Syntax.TyVisAbstract _ -> "TyVisAbstract"
 )
 
-let fail_ty_constr = CoreTest.fail_constr "Type" (function
+let fail_ty_constr = fail_constr "Type" (function
   | Syntax.TyBool _ -> "TyBool"
   | Syntax.TyInt _ -> "TyInt"
   | Syntax.TyConstr _ -> "TyConstr"
@@ -295,7 +296,7 @@ let fail_ty_constr = CoreTest.fail_constr "Type" (function
   | Syntax.TyWith _ -> "TyWith"
 )
 
-let fail_sig_elem_constr = CoreTest.fail_constr "Signature element" (function
+let fail_sig_elem_constr = fail_constr "Signature element" (function
   | Syntax.SigTy _ -> "SigTy"
   | Syntax.SigVal _ -> "SigVal"
   | Syntax.SigDef _ -> "SigDef"
@@ -323,19 +324,19 @@ let rec assert_ty_equal ~ctxt ?loc:(loc = true) expected actual = match (expecte
       assert_ty_equal ~ctxt ~loc expected.res actual.res
   | Syntax.TySig expected, Syntax.TySig actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
-      List.iter2 (assert_sig_elem_equal ~ctxt ~loc) expected.elems actual.elems
+      assert_list_equal ~ctxt (assert_sig_elem_equal ~loc) expected.elems actual.elems
   | Syntax.TyWith expected, Syntax.TyWith actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_name_equal ~ctxt ~loc expected.name actual.name;
-      List.iter2 (assert_ty_binding_equal ~ctxt ~loc) expected.tys actual.tys
+      assert_list_equal ~ctxt (assert_ty_binding_equal ~loc) expected.tys actual.tys
   | expected, actual -> fail_ty_constr ~ctxt expected actual
 
 and assert_sig_elem_equal ~ctxt ?loc:(loc = true) expected actual = match (expected, actual) with
   | Syntax.SigTy expected, Syntax.SigTy actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_name_equal ~ctxt ~loc expected.name actual.name;
-      List.iter2 (assert_mod_param_equal ~ctxt ~loc) expected.params actual.params;
-      CoreTest.assert_optional_equal ~ctxt "Type definitions" (assert_ty_equal ~loc) expected.ty actual.ty
+      assert_list_equal ~ctxt (assert_mod_param_equal ~loc) expected.params actual.params;
+      assert_optional_equal ~ctxt "Type definitions" (assert_ty_equal ~loc) expected.ty actual.ty
   | Syntax.SigVal expected, Syntax.SigVal actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_name_equal ~ctxt ~loc expected.name actual.name;
@@ -347,7 +348,7 @@ and assert_sig_elem_equal ~ctxt ?loc:(loc = true) expected actual = match (expec
   | Syntax.SigMod expected, Syntax.SigMod actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_name_equal ~ctxt ~loc expected.name actual.name;
-      List.iter2 (assert_mod_param_equal ~ctxt ~loc) expected.params actual.params;
+      assert_list_equal ~ctxt (assert_mod_param_equal ~loc) expected.params actual.params;
       assert_ty_equal ~ctxt ~loc expected.ty actual.ty
   | expected, actual -> fail_sig_elem_constr ~ctxt expected actual
 
@@ -355,25 +356,25 @@ and assert_ty_binding_equal ~ctxt ?loc:(loc = true) expected actual = match (exp
   | Syntax.TyBinding expected, Syntax.TyBinding actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_name_equal ~ctxt ~loc expected.name actual.name;
-      List.iter2 (assert_mod_param_equal ~ctxt ~loc) expected.params actual.params;
-      CoreTest.assert_optional_equal ~ctxt "Type visibilities" (assert_ty_vis_equal ~loc) expected.vis actual.vis;
+      assert_list_equal ~ctxt (assert_mod_param_equal ~loc) expected.params actual.params;
+      assert_optional_equal ~ctxt "Type visibilities" (assert_ty_vis_equal ~loc) expected.vis actual.vis;
       assert_ty_equal ~ctxt ~loc expected.ty actual.ty
 
 and assert_mod_param_equal ~ctxt ?loc:(loc = true) expected actual = match (expected, actual) with
   | Syntax.ModParam expected, Syntax.ModParam actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_name_equal ~ctxt ~loc expected.name actual.name;
-      CoreTest.assert_optional_equal ~ctxt "Module parameter types" (assert_ty_equal ~loc) expected.ty actual.ty
+      assert_optional_equal ~ctxt "Module parameter types" (assert_ty_equal ~loc) expected.ty actual.ty
 
 (* Primitive Operations *)
 
-let fail_un_constr = CoreTest.fail_constr "Unary operator" (function
+let fail_un_constr = fail_constr "Unary operator" (function
   | Syntax.UnNeg _ -> "UnNeg"
   | Syntax.UnLNot _ -> "UnLNot"
   | Syntax.UnBNot _ -> "UnBNot"
 )
 
-let fail_bin_constr = CoreTest.fail_constr "Binary operator" (function
+let fail_bin_constr = fail_constr "Binary operator" (function
   | Syntax.BinAdd _ -> "BinAdd"
   | Syntax.BinSub _ -> "BinSub"
   | Syntax.BinMul _ -> "BinMul"
@@ -459,7 +460,7 @@ let assert_bin_equal ~ctxt ?loc:(loc = true) expected actual = match (expected, 
              
 (* Patterns *)
 
-let fail_patt_constr = CoreTest.fail_constr "Pattern" (function
+let fail_patt_constr = fail_constr "Pattern" (function
   | Syntax.PattGround _ -> "PattGround"
   | Syntax.PattBool _ -> "PattBool"
   | Syntax.PattInt _ -> "PattInt"
@@ -482,18 +483,18 @@ let rec assert_patt_equal ~ctxt ?loc:(loc = true) expected actual = match (expec
   | Syntax.PattFun expected, Syntax.PattFun actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_name_equal ~ctxt ~loc expected.name actual.name;
-      List.iter2 (assert_param_equal ~ctxt ~loc) expected.params actual.params
+      assert_list_equal ~ctxt (assert_param_equal ~loc) expected.params actual.params
   | expected, actual -> fail_patt_constr ~ctxt expected actual
 
 and assert_param_equal ~ctxt ?loc:(loc = true) expected actual = match (expected, actual) with
   | Syntax.Param expected, Syntax.Param actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_patt_equal ~ctxt ~loc expected.patt actual.patt;
-      CoreTest.assert_optional_equal ~ctxt "Parameter types" (assert_ty_equal ~loc) expected.ty actual.ty
+      assert_optional_equal ~ctxt "Parameter types" (assert_ty_equal ~loc) expected.ty actual.ty
 
 (* Expressions *)
 
-let fail_expr_constr = CoreTest.fail_constr "Expression" (function
+let fail_expr_constr = fail_constr "Expression" (function
   | Syntax.ExprBool _ -> "ExprBool"
   | Syntax.ExprInt _ -> "ExprInt"
   | Syntax.ExprId _ -> "ExprId"
@@ -532,28 +533,28 @@ let rec assert_expr_equal ~ctxt ?loc:(loc = true) expected actual = match (expec
   | Syntax.ExprLet expected, Syntax.ExprLet actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_equal ~ctxt ~msg:"Recursion markers are not equal" ~printer:string_of_bool expected.recur actual.recur;
-      List.iter2 (assert_binding_equal ~ctxt ~loc) expected.bindings actual.bindings
+      assert_list_equal ~ctxt (assert_binding_equal ~loc) expected.bindings actual.bindings
   | Syntax.ExprAbs expected, Syntax.ExprAbs actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
-      List.iter2 (assert_param_equal ~ctxt ~loc) expected.params actual.params;
-      CoreTest.assert_optional_equal ~ctxt "Return types" (assert_ty_equal ~loc) expected.ret actual.ret;
+      assert_list_equal ~ctxt (assert_param_equal ~loc) expected.params actual.params;
+      assert_optional_equal ~ctxt "Return types" (assert_ty_equal ~loc) expected.ret actual.ret;
       assert_expr_equal ~ctxt ~loc expected.body actual.body
   | Syntax.ExprApp expected, Syntax.ExprApp actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_expr_equal ~ctxt expected.fn actual.fn;
-      List.iter2 (assert_expr_equal ~ctxt ~loc) expected.args actual.args
+      assert_list_equal ~ctxt (assert_expr_equal ~loc) expected.args actual.args
   | expected, actual -> fail_expr_constr ~ctxt expected actual
 
 and assert_binding_equal ~ctxt ?loc:(loc = true) expected actual = match (expected, actual) with
   | Syntax.Binding expected, Syntax.Binding actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_patt_equal ~ctxt ~loc expected.patt actual.patt;
-      CoreTest.assert_optional_equal ~ctxt "Binding types" (assert_ty_equal ~loc) expected.ty actual.ty;
+      assert_optional_equal ~ctxt "Binding types" (assert_ty_equal ~loc) expected.ty actual.ty;
       assert_expr_equal ~ctxt ~loc expected.value actual.value
 
 (* Package Statements *)
 
-let fail_pkg_constr = CoreTest.fail_constr "Package statement" (function
+let fail_pkg_constr = fail_constr "Package statement" (function
   | Syntax.Library _ -> "Library"
   | Syntax.Executable _ -> "Executable"
 )
@@ -577,13 +578,13 @@ let assert_path_equal ~ctxt ?loc:(loc = true) expected actual = match (expected,
 let assert_alias_equal ~ctxt ?loc:(loc = true) expected actual = match (expected, actual) with
   | Syntax.Alias expected, Syntax.Alias actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
-      CoreTest.assert_optional_equal ~ctxt "local alias" (assert_name_equal ~loc) expected.alias actual.alias;
+      assert_optional_equal ~ctxt "local alias" (assert_name_equal ~loc) expected.alias actual.alias;
       assert_path_equal ~ctxt ~loc expected.path actual.path
 
 let assert_pkgs_equal ~ctxt ?loc:(loc = true) expected actual = match (expected, actual) with
   | Syntax.Packages expected, Syntax.Packages actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
-      List.iter2 (assert_alias_equal ~ctxt ~loc) expected.aliases actual.aliases
+      assert_list_equal ~ctxt (assert_alias_equal ~loc) expected.aliases actual.aliases
 
 let assert_import_equal ~ctxt ?loc:(loc = true) expected actual = match (expected, actual) with
   | Syntax.Import expected, Syntax.Import actual ->
@@ -592,7 +593,7 @@ let assert_import_equal ~ctxt ?loc:(loc = true) expected actual = match (expecte
 
 (* Top-Level Bindings *)
 
-let fail_top_constr = CoreTest.fail_constr "Top-level binding" (function
+let fail_top_constr = fail_constr "Top-level binding" (function
   | Syntax.TopTy _ -> "TopTy"
   | Syntax.TopVal _ -> "TopVal"
   | Syntax.TopDef _ -> "TopDef"
@@ -604,7 +605,7 @@ let rec assert_top_equal ~ctxt ?loc:(loc = true) expected actual = match (expect
   | Syntax.TopTy expected, Syntax.TopTy actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_equal ~ctxt ~msg:"Local markings are not equal" ~printer:string_of_bool expected.local actual.local;
-      List.iter2 (assert_ty_binding_equal ~ctxt ~loc) expected.bindings actual.bindings
+      assert_list_equal ~ctxt (assert_ty_binding_equal ~loc) expected.bindings actual.bindings
   | Syntax.TopVal expected, Syntax.TopVal actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_binding_equal ~ctxt ~loc expected.binding actual.binding
@@ -614,12 +615,12 @@ let rec assert_top_equal ~ctxt ?loc:(loc = true) expected actual = match (expect
   | Syntax.TopLet expected, Syntax.TopLet actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_equal ~ctxt ~msg:"Recursion markings are not equal" ~printer:string_of_bool expected.recur actual.recur;
-      List.iter2 (assert_binding_equal ~ctxt ~loc) expected.bindings actual.bindings
+      assert_list_equal ~ctxt (assert_binding_equal ~loc) expected.bindings actual.bindings
   | Syntax.TopMod expected, Syntax.TopMod actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_name_equal ~ctxt ~loc expected.name actual.name;
-      List.iter2 (assert_mod_param_equal ~ctxt ~loc) expected.params actual.params;
-      List.iter2 (assert_top_equal ~ctxt ~loc) expected.elems actual.elems
+      assert_list_equal ~ctxt (assert_mod_param_equal ~loc) expected.params actual.params;
+      assert_list_equal ~ctxt (assert_top_equal ~loc) expected.elems actual.elems
   | expected, actual -> fail_top_constr ~ctxt expected actual
 
 (* Files *)
@@ -628,5 +629,5 @@ let assert_file_equal ~ctxt ?loc:(loc = true) expected actual = match (expected,
   | Syntax.File expected, Syntax.File actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_pkg_equal ~ctxt ~loc expected.pkg actual.pkg;
-      List.iter2 (assert_import_equal ~ctxt ~loc) expected.imports actual.imports;
-      List.iter2 (assert_top_equal ~ctxt ~loc) expected.tops actual.tops
+      assert_list_equal ~ctxt (assert_import_equal ~loc) expected.imports actual.imports;
+      assert_list_equal ~ctxt (assert_top_equal ~loc) expected.tops actual.tops

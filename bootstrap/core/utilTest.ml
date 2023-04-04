@@ -18,6 +18,9 @@ let assert_optional_equal ~ctxt id assert_equal expected actual = match (expecte
       |> sprintf "Unexpected %s present"
       |> assert_failure
 
+let assert_list_equal ~ctxt assert_equal expected actual =
+  List.iter2 (assert_equal ~ctxt) expected actual
+
 let fail_constr msg printer ~ctxt expected actual =
   let msg = sprintf "%s constructors do not match" msg in
   assert_equal ~ctxt ~cmp:(fun _ _ -> false) ~msg ~printer expected actual
