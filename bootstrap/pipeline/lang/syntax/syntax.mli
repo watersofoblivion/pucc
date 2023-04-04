@@ -39,10 +39,10 @@ type name = private
  *)
 
 type ty_vis = private
-  | TyReadonly of {
+  | TyVisReadonly of {
       loc: Core.loc; (** The location of the visibility *)
     } (** Read-Only *)
-  | TyAbstract of {
+  | TyVisAbstract of {
       loc: Core.loc; (** The location of the visibility *)
     } (** Abstract *)
 (** Type Visibility *)

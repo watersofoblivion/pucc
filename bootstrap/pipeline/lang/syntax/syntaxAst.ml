@@ -10,6 +10,7 @@
  * - Pattern matching
  * - Records, Structs, and Variants
  * - Type parameters (polymorphism)
+ * - Strings and Blobs
  * - Function overloading
  * - Operator overloading
  * - Local types
@@ -28,8 +29,8 @@ type name =
 (* Types *)
 
 type ty_vis =
-  | TyReadonly of { loc: Core.loc }
-  | TyAbstract of { loc: Core.loc }
+  | TyVisReadonly of { loc: Core.loc }
+  | TyVisAbstract of { loc: Core.loc }
 
 type ty =
   | TyConstr of { loc: Core.loc; name: name; }
@@ -114,13 +115,10 @@ type pkg =
 
 type path =
   | Path of { loc: Core.loc; path: string; }
-
 type alias =
   | Alias of { loc: Core.loc; alias: name option; path: path }
-
 type pkgs =
   | Packages of { loc: Core.loc; aliases: alias list; }
-
 type import =
   | Import of { loc: Core.loc; pkgs: pkgs }
 
@@ -147,8 +145,8 @@ let dotted loc lhs rhs = Dotted { loc; lhs; rhs; }
 
 (* Types *)
 
-let ty_vis_readonly loc = TyReadonly { loc; }
-let ty_vis_abstract loc = TyAbstract { loc; }
+let ty_vis_readonly loc = TyVisReadonly { loc; }
+let ty_vis_abstract loc = TyVisAbstract { loc; }
 
 let ty_constr loc name = TyConstr { loc; name; }
 let ty_fun loc param res = TyFun { loc; param; res; }

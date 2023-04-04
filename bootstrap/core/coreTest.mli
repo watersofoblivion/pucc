@@ -7,6 +7,14 @@
 open OUnit2
 
 (**
+ * {2 Assertions}
+ *)
+
+val assert_optional_equal : ctxt:test_ctxt -> string -> (ctxt:test_ctxt -> 'a -> 'a -> unit) -> 'a option -> 'a option -> unit
+
+val fail_constr : string -> ('a -> string) -> ctxt:test_ctxt -> 'a -> 'a -> unit
+
+(**
  * {2 Location Tracking}
  *)
 

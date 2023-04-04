@@ -4,6 +4,7 @@ ocaml_package(
     name = "core",
     label = "Core",
     modules = [
+        "util",
         "loc",
         "seq",
         "sym",
