@@ -1,4 +1,4 @@
-(* Location Tracking Tests *)
+(* Location Tracking *)
 
 open OUnit2
 
