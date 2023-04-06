@@ -7,8 +7,22 @@
 open OUnit2
 
 (**
- * {2 Assertions}
+ * {2 Helpers}
  *)
+
+type ('a, 'b) kont = Core.seq -> 'a -> 'b
+type ('a, 'b) fixture = Core.seq -> ('a, 'b) kont -> 'b
+
+val fresh : ?value:'a -> ('a, 'b) fixture -> ('a, 'b) fixture
+val fresh_int : ?value:int -> (int, 'a) fixture
+val fresh_string : ?value:string -> (string, 'a) fixture
+
+(**
+ * {2 General-Purpose Assertions}
+ *)
+
+val assert_bool_equal : ctxt:test_ctxt -> ?msg:string -> bool -> bool -> unit
+val assert_int_equal : ctxt:test_ctxt -> ?msg:string -> int -> int -> unit
 
 val assert_optional_equal : ctxt:test_ctxt -> string -> (ctxt:test_ctxt -> 'a -> 'a -> unit) -> 'a option -> 'a option -> unit
 

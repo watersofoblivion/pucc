@@ -8,6 +8,7 @@ ocaml_package(
         "syntaxAst",
     ],
     deps = [
+        "@fpath//lib/fpath",
         "//bootstrap/core:core",
     ],
     test_deps = [

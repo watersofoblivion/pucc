@@ -12,15 +12,12 @@
  *
  * A sequence takes an initial value and a function that can take a value and
  * generate the "next" value in the sequence.
- *
- * Sequences use mutability because it makes creating test fixtures orders of
- * magnitude simpler.
  *)
 
-type 'a seq
+type seq
 (** A sequence of values *)
 
-val seq : (int -> 'a) -> 'a seq
+val seq : seq
 (**
  * Construct a sequence of values derivable from the natural numbers.
  *
@@ -28,42 +25,14 @@ val seq : (int -> 'a) -> 'a seq
  * @return A sequence of values
  *)
 
-val map_seq : ('a -> 'b) -> 'a seq -> 'b seq
-(**
- * Transforms the values in a sequence.
- *
- * @param f A function to transform values
- * @param seq A sequence of values
- * @return A sequence of transformed values
- *)
-
-val gen : 'a seq -> 'a
+val gen : seq -> (seq -> int -> 'a) -> 'a
 (**
  * Generate the next value in the sequence.
  *
  * @param seq The sequence of values
- * @return The next value in the sequence
- *)
-
-val seq_nat : ?initial:int -> ?step:int -> unit -> int seq
-(**
- * A sequence of natural numbers.
- *
- * @param ?initial The initial value.  Defaults to [0].
- * @param ?step The amount to increment each step.  Defaults to [1].
- * @param _ A dummy parameter
- * @return A sequence of natural numbers
- *)
-
-val seq_str : ?prefix:string -> ?suffix:string -> unit -> string seq
-(**
- * A sequence of strings.  Defaults to turning the natural numbers into
- * strings, a la {!string_of_int}.
- *
- * @param ?prefix A prefix placed before the number
- * @param ?suffix A suffix placed after the number
- * @param _ A dummy parameter
- * @return A sequence of strings
+ * @param kontinue A continuation that is passed the updated sequence and the
+ *   next value
+ * @return The result of the continuation
  *)
  
 (**
@@ -81,16 +50,15 @@ type sym = private {
 }
 (** A symbolized name *)
  
-val gensym : ?name:string -> ?seq:(int seq) -> unit -> sym
+val gensym : seq -> ?name:string -> (seq -> sym -> 'a) -> 'a
 (**
  * Generates a fresh symbol using the given sequence.
  *
+ * @param seq The sequence to use when generating the symbol.
  * @param ?name The hunam-readable name of the symbol.  Defaults to the empty
  *   string.
- * @param ?seq The sequence to use when generating the symbol.  Defaults to a
- *   global integer sequence.
- * @param _ A dummy parameter
- * @return The generated symbol
+ * @param kontinue A contination that is passed the updated sequence and the symbol
+ * @return The result of the continuation
  *)
 
 exception SymbolMismatch of {
@@ -101,7 +69,7 @@ exception SymbolMismatch of {
 }
 (** Raised when two symbols are not equal *)
 
-val symbol_mismatch : sym -> sym -> ?name:bool -> ?idx:bool -> unit -> exn
+val symbol_mismatch : sym -> sym -> ?name:bool -> ?idx:bool -> (exn -> 'a) -> 'a
 (**
  * Construct a SymbolMismatch exception
  *
@@ -109,15 +77,18 @@ val symbol_mismatch : sym -> sym -> ?name:bool -> ?idx:bool -> unit -> exn
  * @param actual The actual symbol
  * @param ?name Whether the symbols agree on name.  Defaults to [true].
  * @param ?idx Whether the symbols agree on index.  Defaults to [true].
- * @param _ Dummy parameter
- * @return A SymbolMismatch exception
+ * @param kontinue A continuation that is passed the exception
+ * @return The result of the continuation
  *)
  
-val require_sym_equal : sym -> sym -> unit
+val require_sym_equal : sym -> sym -> (sym -> 'a) -> 'a
 (**
  * Require that two symbols are equal.
  *
  * @param expected The expected symbol
  * @param actual The actual symbol
+ * @param kontinue A continuation that is passed the symbol (specifically, the
+ *   [actual] symbol.)
+ * @return The result of the continuation
  * @raise SymbolMismatch Raised if the symbols are not equal
  *)

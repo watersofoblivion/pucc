@@ -111,9 +111,9 @@ and binding =
 
 (* Package Statement *)
 
-type pkg = 
-  | Library    of { loc: loc; name: name; }
-  | Executable of { loc: loc; name: name; }
+type pkg_stmt = 
+  | PkgLibrary    of { loc: loc; name: name; }
+  | PkgExecutable of { loc: loc; name: name; }
 
 (* Imports *)
 
@@ -144,8 +144,12 @@ type file =
 
 (* Names *)
 
-let name loc lexeme = Name { loc; lexeme; }
-let dotted loc lhs rhs = Dotted { loc; lhs; rhs; }
+let name loc lexeme kontinue =
+  Name { loc; lexeme; }
+    |> kontinue
+let dotted loc lhs rhs kontinue =
+  Dotted { loc; lhs; rhs; }
+    |> kontinue
 
 (* Types *)
 
@@ -224,8 +228,8 @@ let binding loc patt ty value = Binding { loc; patt; ty; value; }
 
 (* Package Statements *)
 
-let pkg_library loc name = Library { loc; name; }
-let pkg_executable loc name = Executable { loc; name; }
+let pkg_library loc name = PkgLibrary { loc; name; }
+let pkg_executable loc name = PkgExecutable { loc; name; }
 
 (* Import *)
 

@@ -15,17 +15,55 @@
 (**
  * {2 Location Tracking}
  *
- * Tracks locations within the source tree in terms of packages, files, and
- * line, column, and byte offsets.
+ * Tracks locations within the source tree in terms of workspaces, packages,
+ * files, and line, column, and byte offsets.
  *)
 
- (**
-  * {3 Positions}
-  *
-  * A position is a particular cursor position within a file, in terms of a
-  * line offset into the file (starting at [1],) a column offset within that
-  * line (starting at [0],) and a byte offset into the file (starting at [0].)
-  *)
+(**
+ * {3 Workspaces}
+ *
+ * The workspace the source lives in.
+ *)
+
+type ws = private Fpath.t
+(** A workspace, represented by the root *)
+
+val ws : Fpath.t -> (ws -> 'a) -> 'a
+(**
+ * Construct a workspace.
+ *
+ * @param root The root of the workspace
+ * @param kontinue A contination that is passed the created workspace
+ * @return The result of the continuation
+ *)
+
+(**
+ * {3 Packages}
+ *)
+
+type pkg = private {
+  ws:   ws;      (** The workspace the package is in *)
+  path: Fpath.t; (** The package path *)
+}
+(** A package in a workspace *)
+
+val pkg : ws -> Fpath.t -> (pkg -> 'a) -> 'a
+(**
+ * Construct a package within a workspace.
+ *
+ * @param ws The workspace the package is in
+ * @param path The package path
+ * @param kontinue A continuation that is passed the package
+ * @return The result of the continuation
+ *)
+
+(**
+ * {3 Positions}
+ *
+ * A position is a particular cursor position within a file, in terms of a
+ * line offset into the file (starting at [1],) a column offset within that
+ * line (starting at [0],) and a byte offset into the file (starting at [0].)
+ *)
 
 type pos = private {
   line: int; (** The line within the file *)
@@ -34,19 +72,24 @@ type pos = private {
 }
 (** A position *)
 
-val pos : int -> int -> int -> pos
+val pos : int -> int -> int -> (pos -> 'a) -> 'a
 (**
  * Construct a position.
  * 
  * @param line The line number within the file.
  * @param col The column offset within the line.
  * @param off The byte offset into the file.
- * @return A {{!pos} position} within a file
+ * @param A contination that is passed the position within a file
+ * @return The result of the continuation
  *)
 
-val lexing_position : Lexing.position -> pos
+val lexing_position : Lexing.position -> (pos -> 'a) -> 'a
 (**
  * Construct a position from a {{!lexing buffer} Lexbuf.position}.
+ *
+ * @param pos The lexing position
+ * @param kontinue A continuation that is passed the position
+ * @return The result of the continuation
  *)
 
 exception PositionMismatch of {
@@ -58,7 +101,7 @@ exception PositionMismatch of {
 }
 (** Raised when two position are not equal *)
 
-val position_mismatch : pos -> pos -> ?line:bool -> ?col:bool -> ?off:bool -> unit -> exn
+val position_mismatch : pos -> pos -> ?line:bool -> ?col:bool -> ?off:bool -> (exn -> 'a) -> 'a
 (**
  * Constructs a PositionMismatch exception.
  *
@@ -67,16 +110,19 @@ val position_mismatch : pos -> pos -> ?line:bool -> ?col:bool -> ?off:bool -> un
  * @param ?line Whether the positions agree on line number.  Defaults to [true].
  * @param ?col Whether the positions agree on column offset.  Defaults to [true].
  * @param ?off Whether the positions agree on byte offset.  Defaults to [true].
- * @param _ Dummy parameter
- * @return A PositionMismatch exception
+ * @param kontinue A contination that is passed the exception
+ * @return The result of the continuation
  *)
 
-val require_pos_equal : pos -> pos -> unit
+val require_pos_equal : pos -> pos -> (pos -> 'a) -> 'a
 (**
  * Require that two position values are equal.
  *
  * @param expected The expected position
  * @param actual The actual position
+ * @param kontinue A continuation that is passed the position.  Specifically,
+ *   it is passed the [actual] position.
+ * @return The result of the continuation
  * @raise PositionMismatch Raised if the two positions are not equal
  *)
 
@@ -97,16 +143,17 @@ type loc = private {
 val dummy : loc
 (** A dummy location guaranteed to be different from all valid locations. *)
  
-val loc : pos -> pos -> loc
+val loc : pos -> pos -> (loc -> 'a) -> 'a
 (**
  * Construct a location.
  *
  * @param start The starting position of the location
  * @param stop The ending position of the location
- * @return A location
+ * @param kontinue A continuation that is passed the location
+ * @return The result of the continuation
  *)
 
-val span : loc -> loc -> loc
+val span : loc -> loc -> (loc -> 'a) -> 'a
 (**
  * Constructs a location that spans two locations.  I.e., it starts at the
  * starting position of the first location and stops at the ending position of
@@ -114,7 +161,8 @@ val span : loc -> loc -> loc
  *
  * @param start The starting location
  * @param stop The ending location
- * @return A location spanning the input locations
+ * @param kontinue A continuation that is passed the location
+ * @return The result of the continuation
  *)
 
 exception LocationMismatch of {
@@ -125,7 +173,7 @@ exception LocationMismatch of {
 }
 (** Raised when two locations are not equal *)
 
-val location_mismatch : loc -> loc -> ?start:(exn option) -> ?stop:(exn option) -> unit -> exn
+val location_mismatch : loc -> loc -> ?start:(exn option) -> ?stop:(exn option) -> (exn -> 'a) -> 'a
 (**
  * Construct a LocationMismatch exception.
  *
@@ -133,16 +181,18 @@ val location_mismatch : loc -> loc -> ?start:(exn option) -> ?stop:(exn option) 
  * @param actual The actual location
  * @param ?start Whether the locations differ on start position.  Defaults to [None].
  * @param ?stop Whether the locations differ on end position.  Defaults to [None].
- * @param _ Dummy parameter
- * @return A LocationMismatch exception
+ * @param kontinue A continuation that is passed the exception
+ * @return The result of the continuation
  *)
 
-val require_loc_equal : loc -> loc -> unit
+val require_loc_equal : loc -> loc -> (loc -> 'a) -> 'a
 (**
  * Require the two locations are equal.
  *
  * @param expected The expected location
  * @param actual The actual location
+ * @param kontinue A continuation that is passed the location.  Specifically,
+ *   it is passed the [actual] location.
  * @raise LocationMismatch Raised if the locations are not equal
  *)
 
@@ -440,12 +490,12 @@ and binding =
  * {3 Package Statements}
  *)
 
-type pkg = private
-  | Library of {
+type pkg_stmt = private
+  | PkgLibrary of {
       loc:  loc;  (** The location of the package statement *)
       name: name; (** The name of the library *)
     } (** A library *)
-  | Executable of {
+  | PkgExecutable of {
       loc:  loc;  (** The location of the package statement *)
       name: name; (** The name of the executable *)
     } (** An executable *)
@@ -538,7 +588,7 @@ type file = private
  * {3 Names}
  *)
 
-val name : loc -> string -> name
+val name : loc -> string -> (name -> 'a) -> 'a
 (**
  * Construct a name.
  *
@@ -548,7 +598,7 @@ val name : loc -> string -> name
  *)
 
 
-val dotted : loc -> name -> name -> name
+val dotted : loc -> name -> name -> (name -> 'a) -> 'a
 (**
  * Construct a dotted name.
  *
@@ -1113,7 +1163,7 @@ val binding : loc -> patt -> ty option -> expr -> binding
  * {3 Package Statements}
  *)
 
-val pkg_library : loc -> name -> pkg
+val pkg_library : loc -> name -> pkg_stmt
 (**
  * Construct a library package.
  *
@@ -1122,7 +1172,7 @@ val pkg_library : loc -> name -> pkg
  * @return A library package
  *)
 
-val pkg_executable : loc -> name -> pkg
+val pkg_executable : loc -> name -> pkg_stmt
 (**
  * Construct an executable package.
  *

@@ -770,7 +770,7 @@ let test_pkg_library ctxt =
   let name = fresh_name () in
   let expected = Syntax.pkg_library loc name in
   match expected with
-    | Syntax.Library pkg ->
+    | Syntax.PkgLibrary pkg ->
         assert_loc_equal ~ctxt loc pkg.loc;
         assert_name_equal ~ctxt name pkg.name
     | actual -> fail_pkg_constr ~ctxt expected actual
@@ -780,7 +780,7 @@ let test_pkg_executable ctxt =
   let name = fresh_name () in
   let expected = Syntax.pkg_executable loc name in
   match expected with
-    | Syntax.Executable pkg ->
+    | Syntax.PkgExecutable pkg ->
         assert_loc_equal ~ctxt loc pkg.loc;
         assert_name_equal ~ctxt name pkg.name
     | actual -> fail_pkg_constr ~ctxt expected actual

@@ -12,41 +12,111 @@ open SyntaxLocTest
 (* Names *)
 
 let name_seq = Core.seq_str ~prefix:"gensym" ()
-let fresh_name ?loc:(loc = fresh_loc ()) ?id:(id = Core.gen name_seq) _ =
-  Syntax.name loc id
 
-let fresh_dotted ?loc:(loc = fresh_loc ()) ?lhs:(lhs = fresh_name ()) ?rhs:(rhs = fresh_name ()) _ =
-  Syntax.dotted loc lhs rhs
+let fresh_name ?name ?loc ?id seq kontinue =
+  let fresh_name seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh Core.gen id name_seq (fun name_seq id ->
+        seq
+          |> kontinue
+          |> Syntax.name loc id))
+  in
+  fresh fresh_name name seq kontinue
+
+let fresh_dotted ?name ?loc ?lhs ?rhs seq kontinue =
+  let fresh_dotted seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name:lhs seq (fun seq lhs ->
+        fresh_name ?name:rhs seq (fun seq rhs ->
+          seq
+            |> kontinue
+            |> Syntax.dotted loc lhs rhs)))
+  in
+  fresh fresh_dotted name seq kontinue  
 
 (* Types *)
 
 (* Type Visibility *)
 
-let fresh_ty_vis_readonly ?loc:(loc = fresh_loc ()) _ =
-  Syntax.ty_vis_readonly loc
+let fresh_ty_vis_readonly ?vis ?loc seq kontinue =
+  let fresh_ty_vis_readonly seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      seq
+        |> kontinue
+        |> Syntax.ty_vis_readonly loc)
+  in
+  fresh fresh_ty_vis_readonly vis seq kontinue
 
-let fresh_ty_vis_abstract ?loc:(loc = fresh_loc ()) _ =
-  Syntax.ty_vis_abstract loc
+let fresh_ty_vis_abstract ?vis ?loc seq kontinue =
+  let fresh_ty_vis_abstract seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      seq
+        |> kontinue
+        |> Syntax.ty_vis_abstract loc)
+  in
+  fresh fresh_ty_vis_abstract vis seq kontinue
 
 (* Types *)
 
-let fresh_ty_bool ?loc:(loc = fresh_loc ()) _ =
-  Syntax.ty_bool loc
+let fresh_ty_bool ?ty ?loc seq kontinue =
+  let fresh_ty_bool seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      seq
+        |> kontinue
+        |> Syntax.ty_bool loc)
+  in
+  fresh fresh_ty_bool ty seq continue
 
-let fresh_ty_int ?loc:(loc = fresh_loc ()) _ =
-  Syntax.ty_int loc
+let fresh_ty_int ?ty ?loc seq kontinue =
+  let fresh_ty_int seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      seq
+        |> kontinue
+        |> Syntax.ty_int loc)
+  in
+  fresh fresh_ty_int ty seq continue
 
-let fresh_ty_constr ?loc:(loc = fresh_loc ()) ?name:(name = fresh_name ()) _ =
-  Syntax.ty_constr loc name
+let fresh_ty_constr ?ty ?loc ?name seq kontinue =
+  let fresh_ty_constr seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name seq (fun seq name ->
+        seq
+          |> kontinue
+          |> Syntax.ty_constr loc name))
+  in
+  fresh fresh_ty_constr ty seq kontinue
 
-let fresh_ty_fun ?loc:(loc = fresh_loc ()) ?param:(param = fresh_ty_constr ()) ?res:(res = fresh_ty_constr ()) _ =
-  Syntax.ty_fun loc param res
+let fresh_ty_fun ?ty ?loc ?param ?res seq kontinue =
+  let fresh_ty_fun seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_ty_constr ?ty:param seq (fun seq param ->
+        fresh_ty_constr ?ty:res seq (fun seq res ->
+          seq
+            |> kontinue
+            |> Syntax.ty_fun loc param res)))
+  in
+  fresh fresh_ty_fun ty seq kontinue
 
-let fresh_ty_sig ?loc:(loc = fresh_loc ()) ?elems:(elems = []) _ =
-  Syntax.ty_sig loc elems
+let fresh_ty_sig ?ty ?loc ?elems:(elems = []) seq kontinue =
+  let fresh_ty_sig seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      (* TODO: Fresh Elems *)
+      seq
+        |> kontinue
+        |> Syntax.ty_sig loc elems)
+  in
+  fresh fresh_ty_sig ty seq kontinue
 
-let fresh_ty_with ?loc:(loc = fresh_loc ()) ?name:(name = fresh_name ()) ?bindings:(bindings = []) _ =
-  Syntax.ty_with loc name bindings
+let fresh_ty_with ?ty ?loc ?name ?bindings:(bindings = []) seq kontinue =
+  let fresh_ty_with seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name seq (fun seq name ->
+        (* TODO: Fresh Bindings *)
+        seq
+          |> kontinue
+          |> Syntax.ty_sig loc name bindings))
+  in
+  fresh fresh_ty_sig ty seq kontinue
 
 (* Signature Elements *)
 
@@ -555,15 +625,15 @@ and assert_binding_equal ~ctxt ?loc:(loc = true) expected actual = match (expect
 (* Package Statements *)
 
 let fail_pkg_constr = fail_constr "Package statement" (function
-  | Syntax.Library _ -> "Library"
-  | Syntax.Executable _ -> "Executable"
+  | Syntax.PkgLibrary _ -> "PkgLibrary"
+  | Syntax.PkgExecutable _ -> "PkgExecutable"
 )
 
 let assert_pkg_equal ~ctxt ?loc:(loc = true) expected actual = match (expected, actual) with
-  | Syntax.Library expected, Syntax.Library actual ->
+  | Syntax.PkgLibrary expected, Syntax.PkgLibrary actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_name_equal ~ctxt ~loc expected.name actual.name
-  | Syntax.Executable expected, Syntax.Executable actual ->
+  | Syntax.PkgExecutable expected, Syntax.PkgExecutable actual ->
       if loc then assert_loc_equal ~ctxt expected.loc actual.loc;
       assert_name_equal ~ctxt ~loc expected.name actual.name
   | expected, actual -> fail_pkg_constr ~ctxt expected actual

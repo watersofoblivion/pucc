@@ -6,23 +6,18 @@
 
 open OUnit2
 
-(**
- * {2 Location Tracking}
- *)
+(** {2 Fixtures} *)
 
 (**
- * {3 Positions}
+ * {3 Location Tracking}
  *)
 
-(**
- * {4 Fixtures}
- *)
-
-val fresh_pos : ?line:int -> ?col:int -> ?off:int -> unit -> Syntax.pos
+val fresh_pos : ?pos:(Syntax.pos CoreTest.fixture) -> ?line:(int CoreTest.fixture) -> ?col:(int CoreTest.fixture) -> ?off:(int CoreTest.fixture) -> (int, Syntax.pos, 'a) CoreTest.fixture
 (**
  * Construct a fresh position.  Any values that are not given will be
  * automatically generated.
  *
+ * 
  * @param ?line The line number of the position
  * @param ?col The column number of the position
  * @param ?off The byte offset of the position
@@ -30,28 +25,7 @@ val fresh_pos : ?line:int -> ?col:int -> ?off:int -> unit -> Syntax.pos
  * @return A fresh position
  *)
 
-(**
- * {4 Assertions}
- *)
-
-val assert_pos_equal : ctxt:test_ctxt -> Syntax.pos -> Syntax.pos -> unit
-(**
- * Assert that two positions are equal.
- *
- * @param ~ctxt The testing context
- * @param expected The expected position
- * @param actual The actual position
- *)
-
-(**
- * {3 Locations}
- *)
-
-(**
- * {4 Fixtures}
- *)
-
-val fresh_loc : ?start:Syntax.pos -> ?stop:Syntax.pos -> unit -> Syntax.loc
+val fresh_loc : ?loc:Syntax.loc -> ?start:Syntax.pos -> ?stop:Syntax.pos -> int Core.seq -> (int Core.seq -> Syntax.loc -> 'a) -> 'a
 (**
  * Construct a fresh location.  Any values that are not given will be
  * automatically generated.
@@ -62,41 +36,26 @@ val fresh_loc : ?start:Syntax.pos -> ?stop:Syntax.pos -> unit -> Syntax.loc
  * @return A fresh location
  *)
 
-(**
- * {4 Assertions}
- *)
-
-val assert_loc_equal : ctxt:test_ctxt -> Syntax.loc -> Syntax.loc -> unit
-(**
- * Assert that two locations are equal.
- *
- * @param ~ctxt The testing context
- * @param expected The expected location
- * @param actual The actual location
- *)
-
-(** {2 Fixtures} *)
-
 (** {3 Names} *)
 
-val fresh_name : ?loc:Syntax.loc -> ?id:string -> unit -> Syntax.name
-val fresh_dotted : ?loc:Syntax.loc -> ?lhs:Syntax.name -> ?rhs:Syntax.name -> unit -> Syntax.name
+val fresh_name : ?name:Syntax.name -> ?loc:Syntax.loc -> ?id:string -> int Core.seq -> (int Core.seq -> Syntax.name -> 'a) -> 'a
+val fresh_dotted : ?name:Syntax.name -> ?loc:Syntax.loc -> ?lhs:Syntax.name -> ?rhs:Syntax.name -> int Core.seq -> (int Core.seq -> Syntax.name -> 'a) -> 'a
 
 (** {3 Types} *)
 
 (** {4 Visibility} *)
 
-val fresh_ty_vis_readonly : ?loc:Syntax.loc -> unit -> Syntax.ty_vis
-val fresh_ty_vis_abstract : ?loc:Syntax.loc -> unit -> Syntax.ty_vis
+val fresh_ty_vis_readonly : ?vis:Syntax.ty_vis -> ?loc:Syntax.loc -> int Core.seq -> (int Core.seq -> Syntax.ty_vis -> 'a) -> 'a
+val fresh_ty_vis_abstract : ?vis:Syntax.ty_vis -> ?loc:Syntax.loc ->  -> int Core.seq -> (int Core.seq -> Syntax.ty_vis -> 'a) -> 'a
 
 (** {4 Types} *)
 
-val fresh_ty_int : ?loc:Syntax.loc -> unit -> Syntax.ty
-val fresh_ty_bool : ?loc:Syntax.loc -> unit -> Syntax.ty
-val fresh_ty_constr : ?loc:Syntax.loc -> ?name:Syntax.name -> unit -> Syntax.ty
-val fresh_ty_fun : ?loc:Syntax.loc -> ?param:Syntax.ty -> ?res:Syntax.ty -> unit -> Syntax.ty
-val fresh_ty_sig : ?loc:Syntax.loc -> ?elems:(Syntax.sig_elem list) -> unit -> Syntax.ty
-val fresh_ty_with : ?loc:Syntax.loc -> ?name:Syntax.name -> ?bindings:(Syntax.ty_binding list) -> unit -> Syntax.ty
+val fresh_ty_int : ?ty:Syntax.ty -> ?loc:Syntax.loc -> int Core.seq -> (int Core.seq -> Syntax.ty -> 'a) -> 'a
+val fresh_ty_bool : ?ty:Syntax.ty -> ?loc:Syntax.loc -> int Core.seq -> (int Core.seq -> Syntax.ty -> 'a) -> 'a
+val fresh_ty_constr : ?ty:Syntax.ty -> ?loc:Syntax.loc -> ?name:Syntax.name -> int Core.seq -> (int Core.seq -> Syntax.ty -> 'a) -> 'a
+val fresh_ty_fun : ?ty:Syntax.ty -> ?loc:Syntax.loc -> ?param:Syntax.ty -> ?res:Syntax.ty -> int Core.seq -> (int Core.seq -> Syntax.ty -> 'a) -> 'a
+val fresh_ty_sig : ?ty:Syntax.ty -> ?loc:Syntax.loc -> ?elems:(Syntax.sig_elem list) -> int Core.seq -> (int Core.seq -> Syntax.ty -> 'a) -> 'a
+val fresh_ty_with : ?ty:Syntax.ty -> ?loc:Syntax.loc -> ?name:Syntax.name -> ?bindings:(Syntax.ty_binding list) -> int Core.seq -> (int Core.seq -> Syntax.ty -> 'a) -> 'a
 
 (** {4 Module Signature Elements} *)
 
@@ -177,8 +136,8 @@ val fresh_binding : ?loc:Syntax.loc -> ?patt:Syntax.patt -> ?ty:(Syntax.ty optio
 
 (** {3 Package Statements} *)
 
-val fresh_pkg_library : ?loc:Syntax.loc -> ?id:Syntax.name -> unit -> Syntax.pkg
-val fresh_pkg_executable : ?loc:Syntax.loc -> ?id:Syntax.name -> unit -> Syntax.pkg
+val fresh_pkg_library : ?loc:Syntax.loc -> ?id:Syntax.name -> unit -> Syntax.pkg_stmt
+val fresh_pkg_executable : ?loc:Syntax.loc -> ?id:Syntax.name -> unit -> Syntax.pkg_stmt
 
 (** {3 Imports} *)
 
@@ -222,6 +181,28 @@ val fail_top_constr : ctxt:test_ctxt -> Syntax.top -> Syntax.top -> unit
 
 (** {3 Equality} *)
 
+(**
+ * {4 Location Tracking}
+ *)
+
+ val assert_pos_equal : ctxt:test_ctxt -> Syntax.pos -> Syntax.pos -> unit
+ (**
+  * Assert that two positions are equal.
+  *
+  * @param ~ctxt The testing context
+  * @param expected The expected position
+  * @param actual The actual position
+  *)
+ 
+ val assert_loc_equal : ctxt:test_ctxt -> Syntax.loc -> Syntax.loc -> unit
+ (**
+  * Assert that two locations are equal.
+  *
+  * @param ~ctxt The testing context
+  * @param expected The expected location
+  * @param actual The actual location
+  *)
+ 
 (** {4 Names} *)
 
 val assert_name_equal : ctxt:test_ctxt -> ?loc:bool -> Syntax.name -> Syntax.name -> unit

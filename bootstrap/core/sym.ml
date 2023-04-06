@@ -5,19 +5,18 @@ type sym = {
   idx:  int;
 }
 
-let default_seq = Seq.seq_nat ()
-
-let gensym ?name ?seq:(seq = default_seq) _ =
-  let idx = Seq.gen seq in
-  let sym = { name; idx } in
-  sym
+let gensym seq ?name kontinue =
+  Seq.gen seq (fun seq idx ->
+    { name; idx }
+      |> kontinue seq)
 
 exception SymbolMismatch of { expected: sym; actual: sym; name: bool; idx: bool; }
 
-let symbol_mismatch expected actual ?name:(name = true) ?idx:(idx = true) _ =
+let symbol_mismatch expected actual ?name:(name = true) ?idx:(idx = true) kontinue =
   SymbolMismatch { expected; actual; name; idx; }
+    |> kontinue
 
-let require_sym_equal expected actual =
+let require_sym_equal expected actual kontinue =
   let name = match (expected.name, actual.name) with
     | None, None -> true
     | Some expected, Some actual when expected = actual -> true
@@ -25,7 +24,5 @@ let require_sym_equal expected actual =
   in
   let idx = expected.idx = actual.idx in
   if name && idx
-  then ()
-  else 
-    symbol_mismatch expected actual ~name ~idx ()
-      |> raise
+  then kontinue actual
+  else symbol_mismatch expected actual ~name ~idx raise
