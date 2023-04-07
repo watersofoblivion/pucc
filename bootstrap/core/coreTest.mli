@@ -14,6 +14,7 @@ type ('a, 'b) kont = Core.seq -> 'a -> 'b
 type ('a, 'b) fixture = Core.seq -> ('a, 'b) kont -> 'b
 
 val fresh : ?value:'a -> ('a, 'b) fixture -> ('a, 'b) fixture
+val fresh_bool : ?value:bool -> (bool, 'a) fixture
 val fresh_int : ?value:int -> (int, 'a) fixture
 val fresh_string : ?value:string -> (string, 'a) fixture
 

@@ -990,7 +990,7 @@ val bin_rfa : loc -> (bin -> 'a) -> 'a
  * {3 Patterns}
  *)
 
-val patt_ground : loc -> patt
+val patt_ground : loc -> (patt -> 'a) -> 'a
 (**
  * Construct a ground pattern
  *
@@ -998,7 +998,7 @@ val patt_ground : loc -> patt
  * @return A ground pattern
  *)
 
-val patt_bool : loc -> bool -> patt
+val patt_bool : loc -> bool -> (patt -> 'a) -> 'a
 (**
  * Construct a boolean literal pattern
  *
@@ -1007,7 +1007,7 @@ val patt_bool : loc -> bool -> patt
  * @return A boolean literal pattern
  *)
 
-val patt_int : loc -> string -> patt
+val patt_int : loc -> string -> (patt -> 'a) -> 'a
 (**
  * Construct an integer literal pattern
  *
@@ -1016,7 +1016,7 @@ val patt_int : loc -> string -> patt
  * @return An integer literal pattern
  *)
 
-val patt_var : loc -> string -> patt
+val patt_var : loc -> string -> (patt -> 'a) -> 'a
 (**
  * Construct a variable pattern
  *
@@ -1025,7 +1025,7 @@ val patt_var : loc -> string -> patt
  * @return A variable pattern
  *)
 
-val patt_fun : loc -> name -> param list -> patt
+val patt_fun : loc -> name -> param list -> (patt -> 'a) -> 'a
 (**
  * Construct a function pattern
  * 
@@ -1039,7 +1039,7 @@ val patt_fun : loc -> name -> param list -> patt
  * {3 Parameters}
  *)
 
-val param : loc -> patt -> ty option -> param
+val param : loc -> patt -> ty option -> (param -> 'a) -> 'a
 (**
  * Construct a function parameter
  * 
@@ -1053,7 +1053,7 @@ val param : loc -> patt -> ty option -> param
  * {3 Expressions}
  *)
 
-val expr_bool : loc -> bool -> expr
+val expr_bool : loc -> bool -> (expr -> 'a) -> 'a
 (**
  * Construct a boolean literal expression
  *
@@ -1062,7 +1062,7 @@ val expr_bool : loc -> bool -> expr
  * @return A boolean literal expression
  *)
 
-val expr_int : loc -> string -> expr
+val expr_int : loc -> string -> (expr -> 'a) -> 'a
 (**
  * Construct an integer literal expression
  *
@@ -1071,7 +1071,7 @@ val expr_int : loc -> string -> expr
  * @return An integer literal expression
  *)
 
-val expr_id : loc -> name -> expr
+val expr_id : loc -> name -> (expr -> 'a) -> 'a
 (**
  * Construct an identifier literal expression
  *
@@ -1080,7 +1080,7 @@ val expr_id : loc -> name -> expr
  * @return An identifier literal expression
  *)
 
-val expr_un : loc -> un -> expr -> expr
+val expr_un : loc -> un -> expr -> (expr -> 'a) -> 'a
 (**
  * Construct a unary operation expression
  *
@@ -1090,7 +1090,7 @@ val expr_un : loc -> un -> expr -> expr
  * @return The unary operation expression
  *)
 
-val expr_bin : loc -> bin -> expr -> expr -> expr
+val expr_bin : loc -> bin -> expr -> expr -> (expr -> 'a) -> 'a
 (**
  * Construct a binary operation expression
  *
@@ -1101,7 +1101,7 @@ val expr_bin : loc -> bin -> expr -> expr -> expr
  * @return A binary operation expression
  *)
 
-val expr_cond : loc -> expr -> expr -> expr -> expr
+val expr_cond : loc -> expr -> expr -> expr -> (expr -> 'a) -> 'a
 (**
  * Construct a condition expression
  *
@@ -1112,7 +1112,7 @@ val expr_cond : loc -> expr -> expr -> expr -> expr
  * @return A condition expression
  *)
 
-val expr_let : loc -> bool -> binding list -> expr -> expr
+val expr_let : loc -> bool -> binding list -> expr -> (expr -> 'a) -> 'a
 (**
  * Construct a value binding expression
  *
@@ -1123,7 +1123,7 @@ val expr_let : loc -> bool -> binding list -> expr -> expr
  * @return A value binding expression
  *)
 
-val expr_abs : loc -> param list -> ty option -> expr -> expr
+val expr_abs : loc -> param list -> ty option -> expr -> (expr -> 'a) -> 'a
 (**
  * Construct a function abstraction
  *
@@ -1134,7 +1134,7 @@ val expr_abs : loc -> param list -> ty option -> expr -> expr
  * @return A function abstraction expression
  *)
 
-val expr_app : loc -> expr -> expr list -> expr
+val expr_app : loc -> expr -> expr list -> (expr -> 'a) -> 'a
 (**
  * Construct a function application
  *

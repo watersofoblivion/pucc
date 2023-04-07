@@ -9,21 +9,36 @@ open SyntaxLocTest
 
 (* Fixtures *)
 
+let next_int_lexeme seq kontinue =
+  let next seq value =
+    value
+      |> string_of_int
+      |> kontinue seq
+  in
+  Core.gen seq next
+
+let next_gensym seq kontinue =
+  let next seq value =
+    value
+      |> sprintf "gensym-%d"
+      |> kontinue seq
+  in
+  Core.gen seq next
+
 (* Names *)
 
 let fresh_name ?name ?loc ?id =
-  let fresh_name seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
-      fresh Core.gen seq (fun seq id ->
-        let id = sprintf "gensym-%d" id in
+      fresh ?value:id next_gensym seq (fun seq id ->
         seq
           |> kontinue
           |> Syntax.name loc id))
   in
-  fresh ?value:name fresh_name
+  fresh ?value:name next
 
 let fresh_dotted ?name ?loc ?lhs ?rhs =
-  let fresh_dotted seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_name ?name:lhs seq (fun seq lhs ->
         fresh_name ?name:rhs seq (fun seq rhs ->
@@ -31,59 +46,59 @@ let fresh_dotted ?name ?loc ?lhs ?rhs =
             |> kontinue
             |> Syntax.dotted loc lhs rhs)))
   in
-  fresh ?value:name fresh_dotted  
+  fresh ?value:name next  
 
 (* Types *)
 
 (* Type Visibility *)
 
 let fresh_ty_vis_readonly ?vis ?loc =
-  let fresh_ty_vis_readonly seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       seq
         |> kontinue
         |> Syntax.ty_vis_readonly loc)
   in
-  fresh ?value:vis fresh_ty_vis_readonly
+  fresh ?value:vis next
 
 let fresh_ty_vis_abstract ?vis ?loc =
-  let fresh_ty_vis_abstract seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       seq
         |> kontinue
         |> Syntax.ty_vis_abstract loc)
   in
-  fresh ?value:vis fresh_ty_vis_abstract
+  fresh ?value:vis next
 
 (* Types *)
 
 let fresh_ty_bool ?ty ?loc =
-  let fresh_ty_bool seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       seq
         |> kontinue
         |> Syntax.ty_bool loc)
   in
-  fresh ?value:ty fresh_ty_bool
+  fresh ?value:ty next
 
 let fresh_ty_int ?ty ?loc =
-  let fresh_ty_int seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       seq
         |> kontinue
         |> Syntax.ty_int loc)
   in
-  fresh ?value:ty fresh_ty_int
+  fresh ?value:ty next
 
 let fresh_ty_constr ?ty ?loc ?name =
-  let fresh_ty_constr seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_name ?name seq (fun seq name ->
         seq
           |> kontinue
           |> Syntax.ty_constr loc name))
   in
-  fresh ?value:ty fresh_ty_constr
+  fresh ?value:ty next
 
 let fresh_ty_fun ?ty ?loc ?param ?res =
   let fresh_ty_fun seq kontinue =
@@ -97,17 +112,17 @@ let fresh_ty_fun ?ty ?loc ?param ?res =
   fresh ?value:ty fresh_ty_fun
 
 let fresh_ty_sig ?ty ?loc ?elems:(elems = []) =
-  let fresh_ty_sig seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       (* TODO: Fresh Elems List *)
       seq
         |> kontinue
         |> Syntax.ty_sig loc elems)
   in
-  fresh ?value:ty fresh_ty_sig
+  fresh ?value:ty next
 
 let fresh_ty_with ?ty ?loc ?name ?bindings:(bindings = []) =
-  let fresh_ty_with seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_name ?name seq (fun seq name ->
         (* TODO: Fresh Bindings List *)
@@ -115,12 +130,12 @@ let fresh_ty_with ?ty ?loc ?name ?bindings:(bindings = []) =
           |> kontinue
           |> Syntax.ty_with loc name bindings))
   in
-  fresh ?value:ty fresh_ty_with
+  fresh ?value:ty next
 
 (* Signature Elements *)
 
 let fresh_sig_ty ?sig_elem ?loc ?name ?params:(params = []) ?ty:(ty = None) =
-  let fresh_sig_ty seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_name ?name seq (fun seq name ->
         (* TODO: Fresh Params List *)
@@ -129,10 +144,10 @@ let fresh_sig_ty ?sig_elem ?loc ?name ?params:(params = []) ?ty:(ty = None) =
           |> kontinue
           |> Syntax.sig_ty loc name params ty))
   in
-  fresh ?value:sig_elem fresh_sig_ty
+  fresh ?value:sig_elem next
 
 let fresh_sig_val ?sig_elem ?loc ?name ?ty =
-  let fresh_sig_val seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_name ?name seq (fun seq name ->
         fresh_ty_constr ?ty seq (fun seq ty ->
@@ -140,10 +155,10 @@ let fresh_sig_val ?sig_elem ?loc ?name ?ty =
             |> kontinue
             |> Syntax.sig_val loc name ty)))
   in
-  fresh ?value:sig_elem fresh_sig_val
+  fresh ?value:sig_elem next
 
 let fresh_sig_def ?sig_elem ?loc ?name ?ty =
-  let fresh_sig_def seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_name ?name seq (fun seq name ->
         fresh_ty_constr ?ty seq (fun seq ty ->
@@ -151,10 +166,10 @@ let fresh_sig_def ?sig_elem ?loc ?name ?ty =
             |> kontinue
             |> Syntax.sig_def loc name ty)))
   in
-  fresh ?value:sig_elem fresh_sig_def
+  fresh ?value:sig_elem next
   
 let fresh_sig_mod ?sig_elem ?loc ?name ?params:(params = []) ?ty =
-  let fresh_sig_mod seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_name ?name seq (fun seq name ->
         (* TODO: Fresh Params List *)
@@ -163,12 +178,12 @@ let fresh_sig_mod ?sig_elem ?loc ?name ?params:(params = []) ?ty =
             |> kontinue
             |> Syntax.sig_mod loc name params ty)))
   in
-  fresh ?value:sig_elem fresh_sig_mod
+  fresh ?value:sig_elem next
 
 (* Type Bindings *)
 
 let fresh_ty_binding ?ty_binding ?loc ?name ?params:(params = []) ?vis:(vis = None) ?ty =
-  let fresh_ty_binding seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_name ?name seq (fun seq name ->
         (* TODO: Fresh Params List *)
@@ -178,12 +193,12 @@ let fresh_ty_binding ?ty_binding ?loc ?name ?params:(params = []) ?vis:(vis = No
             |> kontinue
             |> Syntax.ty_binding loc name params vis ty)))
   in
-  fresh ?value:ty_binding 
+  fresh ?value:ty_binding next
 
 (* Module Parameters *)
 
 let fresh_mod_param ?mod_param ?loc ?name ?ty:(ty = None) =
-  let fresh_mod_param seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_name ?name seq (fun seq name ->
         (* TODO: Fresh Ty Option *)
@@ -191,20 +206,20 @@ let fresh_mod_param ?mod_param ?loc ?name ?ty:(ty = None) =
           |> kontinue
           |> Syntax.mod_param loc name ty))
   in
-  fresh ?value:mod_param fresh_mod_param
+  fresh ?value:mod_param next
 
 (* Primitive Operations *)
 
 (* Unary Operators *)
 
 let fresh_un constr ?un ?loc =
-  let fresh_un seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       seq
         |> kontinue
         |> constr loc)
   in
-  fresh ?value:un fresh_un
+  fresh ?value:un next
 
 let fresh_un_neg = fresh_un Syntax.un_neg
 let fresh_un_lnot = fresh_un Syntax.un_lnot
@@ -213,13 +228,13 @@ let fresh_un_bnot = fresh_un Syntax.un_bnot
 (* Binary Operators *)
 
 let fresh_bin constr ?bin ?loc =
-  let fresh_bin seq kontinue =
+  let next seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       seq
         |> kontinue
         |> constr loc)
   in
-  fresh ?value:bin fresh_bin
+  fresh ?value:bin next
 
 let fresh_bin_add = fresh_bin Syntax.bin_add
 let fresh_bin_sub = fresh_bin Syntax.bin_sub
@@ -247,57 +262,170 @@ let fresh_bin_rfa = fresh_bin Syntax.bin_rfa
 
 (* Patterns *)
 
-let fresh_patt_ground ?loc:(loc = fresh_loc ()) _ =
-  Syntax.patt_ground loc
+let fresh_patt_ground ?patt ?loc =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      seq
+        |> kontinue
+        |> Syntax.patt_ground loc)
+  in
+  fresh ?value:patt next
 
-let fresh_patt_bool ?loc:(loc = fresh_loc ()) ?value:(value = true) _ =
-  Syntax.patt_bool loc value
+let fresh_patt_bool ?patt ?loc ?value =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_bool ?value seq (fun seq value ->
+        seq
+          |> kontinue
+          |> Syntax.patt_bool loc value))
+  in
+  fresh ?value:patt next
 
-let int_patt_seq = Core.seq_str ()
-let fresh_patt_int ?loc:(loc = fresh_loc ()) ?lexeme:(lexeme = Core.gen int_patt_seq) _ =
-  Syntax.patt_int loc lexeme
+let fresh_patt_int ?patt ?loc ?lexeme =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh ?value:lexeme next_int_lexeme seq (fun seq lexeme ->
+        seq
+          |> kontinue
+          |> Syntax.patt_int loc lexeme))
+  in
+  fresh ?value:patt next
 
-let var_patt_seq = Core.seq_str ~prefix:"x" ()
-let fresh_patt_var ?loc:(loc = fresh_loc ()) ?lexeme:(lexeme = Core.gen var_patt_seq) _ =
-  Syntax.patt_var loc lexeme
+let fresh_patt_var ?patt ?loc ?lexeme =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh ?value:lexeme next_gensym seq (fun seq lexeme ->
+        seq
+          |> kontinue
+          |> Syntax.patt_var loc lexeme))
+  in
+  fresh ?value:patt next
 
-let fresh_patt_fun ?loc:(loc = fresh_loc ()) ?name:(name = fresh_name ()) ?params:(params = []) _ =
-  Syntax.patt_fun loc name params
+let fresh_patt_fun ?patt ?loc ?name ?params:(params = []) =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name seq (fun seq name ->
+        (* TODO: Fresh Params List *)
+        seq
+          |> kontinue
+          |> Syntax.patt_fun loc name params))
+  in
+  fresh ?value:patt next
 
 (* Parameters *)
 
-let fresh_param ?loc:(loc = fresh_loc ()) ?patt:(patt = fresh_patt_ground ()) ?ty:(ty = None) _ =
-  Syntax.param loc patt ty
+let fresh_param ?param ?loc ?patt ?ty:(ty = None) =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_patt_ground ?patt seq (fun seq patt ->
+        (* TODO: Fresh Ty Option *)
+        seq
+          |> kontinue
+          |> Syntax.param loc patt ty))
+  in
+  fresh ?value:param next
 
 (* Expressions *)
 
-let fresh_expr_bool ?loc:(loc = fresh_loc ()) ?value:(value = true) _ =
-  Syntax.expr_bool loc value
+let fresh_expr_bool ?expr ?loc ?value =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_bool ?value seq (fun seq value ->
+        seq
+          |> kontinue
+          |> Syntax.expr_bool loc value))
+  in
+  fresh ?value:expr next
 
-let int_expr_seq = Core.seq_str ()
-let fresh_expr_int ?loc:(loc = fresh_loc ()) ?lexeme:(lexeme = Core.gen int_expr_seq) _ =
-  Syntax.expr_int loc lexeme
+let fresh_expr_int ?expr ?loc ?lexeme =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh ?value:lexeme next_int_lexeme seq (fun seq lexeme ->
+        seq
+          |> kontinue
+          |> Syntax.expr_int loc lexeme))
+  in
+  fresh ?value:expr next
 
-let fresh_expr_id ?loc:(loc = fresh_loc ()) ?name:(name = fresh_name ()) _ =
-  Syntax.expr_id loc name
+let fresh_expr_id ?expr ?loc ?name =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name seq (fun seq name ->
+        seq
+          |> kontinue
+          |> Syntax.expr_id loc name))
+  in
+  fresh ?value:expr next
 
-let fresh_expr_un ?loc:(loc = fresh_loc ()) ?op:(op = fresh_un_lnot ()) ?operand:(operand = fresh_expr_bool ()) _ =
-  Syntax.expr_un loc op operand
+let fresh_expr_un ?expr ?loc ?op ?operand =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_un_lnot ?un:op seq (fun seq op ->
+        fresh_expr_bool ?expr:operand seq (fun seq operand ->
+          seq
+            |> kontinue
+            |> Syntax.expr_un loc op operand)))
+  in
+  fresh ?value:expr next
 
-let fresh_expr_bin ?loc:(loc = fresh_loc ()) ?op:(op = fresh_bin_band ()) ?lhs:(lhs = fresh_expr_bool ()) ?rhs:(rhs = fresh_expr_bool ()) _ =
-  Syntax.expr_bin loc op lhs rhs
+let fresh_expr_bin ?expr ?loc ?op ?lhs ?rhs =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_bin_band ?bin:op seq (fun seq op ->
+        fresh_expr_bool ?expr:lhs seq (fun seq lhs ->
+          fresh_expr_bool ?expr:rhs seq (fun seq rhs ->
+            seq
+              |> kontinue
+              |> Syntax.expr_bin loc op lhs rhs))))
+  in
+  fresh ?value:expr next
 
-let fresh_expr_cond ?loc:(loc = fresh_loc ()) ?cond:(cond = fresh_expr_bool ()) ?tru:(tru = fresh_expr_int ()) ?fls:(fls = fresh_expr_int ()) _ =
-  Syntax.expr_cond loc cond tru fls
+let fresh_expr_cond ?expr ?loc ?cond ?tru ?fls =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_expr_bool ?expr:cond seq (fun seq cond ->
+        fresh_expr_int ?expr:tru seq (fun seq tru ->
+          fresh_expr_int ?expr:fls seq (fun seq fls ->
+            seq
+              |> kontinue
+              |> Syntax.expr_cond loc cond tru fls))))
+  in
+  fresh ?value:expr next
 
-let fresh_expr_let ?loc:(loc = fresh_loc ()) ?recur:(recur = false) ?bindings:(bindings = []) ?scope:(scope = fresh_expr_int ()) _ =
-  Syntax.expr_let loc recur bindings scope
+let fresh_expr_let ?expr ?loc ?recur ?bindings:(bindings = []) ?scope =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_bool ?value:recur seq (fun seq recur ->
+        (* TODO: Fresh Binding List *)
+        fresh_expr_int ?expr:scope seq (fun seq scope ->
+          seq
+            |> kontinue
+            |> Syntax.expr_let loc recur bindings scope)))
+  in
+  fresh ?value:expr next
 
-let fresh_expr_abs ?loc:(loc = fresh_loc ()) ?params:(params = []) ?ret:(ret = None) ?body:(body = fresh_expr_int ()) _ =
-  Syntax.expr_abs loc params ret body
+let fresh_expr_abs ?expr ?loc ?params:(params = []) ?ret:(ret = None) ?body =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      (* TODO: Fresh Params List*)
+      (* TODO: Fresh Ty Option *)
+      fresh_expr_int ?expr:body seq (fun seq body ->
+        seq
+          |> kontinue
+          |> Syntax.expr_abs loc params ret body))
+  in
+  fresh ?value:expr next
 
-let fresh_expr_app ?loc:(loc = fresh_loc ()) ?fn:(fn = fresh_expr_abs ()) ?args:(args = []) _ =
-  Syntax.expr_app loc fn args
+let fresh_expr_app ?expr ?loc ?fn ?args:(args = []) =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_expr_abs ?expr:fn seq (fun seq fn ->
+        (* TODO: Fresh Expr List *)
+        seq
+          |> kontinue
+          |> Syntax.expr_app loc fn args))
+  in
+  fresh ?value:expr next
 
 (* Bindings*)
 

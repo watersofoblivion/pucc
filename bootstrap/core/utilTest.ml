@@ -13,15 +13,22 @@ let fresh ?value fn seq kontinue = match value with
   | Some value -> kontinue seq value
   | None -> fn seq kontinue
 
+let fresh_bool ?value =
+  let next seq kontinue =
+    Core.gen seq (fun seq value ->
+      value mod 2 = 0
+        |> kontinue seq)
+  in
+  fresh ?value next
 let fresh_int ?value = fresh ?value Core.gen 
 let fresh_string ?value =
-  let gen seq kontinue =
+  let next seq kontinue =
     Core.gen seq (fun seq n ->
       n
         |> Format.sprintf "gensym%d"
         |> kontinue seq)
   in
-  fresh ?value gen
+  fresh ?value next
 
 (* Assertions *)
 

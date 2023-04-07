@@ -284,25 +284,55 @@ let bin_rfa loc kontinue =
 
 (* Patterns *)
 
-let patt_ground loc = PattGround { loc; }
-let patt_bool loc value = PattBool { loc; value; }
-let patt_int loc lexeme = PattInt { loc; lexeme; }
-let patt_var loc lexeme = PattVar { loc; lexeme; }
-let patt_fun loc name params = PattFun { loc; name; params; }
+let patt_ground loc kontinue =
+  PattGround { loc; }
+    |> kontinue
+let patt_bool loc value kontinue =
+  PattBool { loc; value; }
+    |> kontinue
+let patt_int loc lexeme kontinue =
+  PattInt { loc; lexeme; }
+    |> kontinue
+let patt_var loc lexeme kontinue =
+  PattVar { loc; lexeme; }
+    |> kontinue
+let patt_fun loc name params kontinue =
+  PattFun { loc; name; params; }
+    |> kontinue
 
-let param loc patt ty = Param { loc; patt; ty; }
+let param loc patt ty kontinue =
+  Param { loc; patt; ty; }
+    |> kontinue
 
 (* Expressions *)
 
-let expr_bool loc value = ExprBool { loc; value; }
-let expr_int loc lexeme = ExprInt { loc; lexeme; }
-let expr_id loc name = ExprId { loc; name; }
-let expr_un loc op operand = ExprUn { loc; op; operand; }
-let expr_bin loc op lhs rhs = ExprBin { loc; op; lhs; rhs; }
-let expr_cond loc cond tru fls = ExprCond { loc; cond; tru; fls; }
-let expr_let loc recur bindings scope = ExprLet { loc; recur; bindings; scope; }
-let expr_abs loc params ret body = ExprAbs { loc; params; ret; body; }
-let expr_app loc fn args = ExprApp { loc; fn; args; }
+let expr_bool loc value kontinue =
+  ExprBool { loc; value; }
+    |> kontinue
+let expr_int loc lexeme kontinue =
+  ExprInt { loc; lexeme; }
+    |> kontinue
+let expr_id loc name kontinue =
+  ExprId { loc; name; }
+    |> kontinue
+let expr_un loc op operand kontinue =
+  ExprUn { loc; op; operand; }
+    |> kontinue
+let expr_bin loc op lhs rhs kontinue =
+  ExprBin { loc; op; lhs; rhs; }
+    |> kontinue
+let expr_cond loc cond tru fls kontinue =
+  ExprCond { loc; cond; tru; fls; }
+    |> kontinue
+let expr_let loc recur bindings scope kontinue =
+  ExprLet { loc; recur; bindings; scope; }
+    |> kontinue
+let expr_abs loc params ret body kontinue =
+  ExprAbs { loc; params; ret; body; }
+    |> kontinue
+let expr_app loc fn args kontinue =
+  ExprApp { loc; fn; args; }
+    |> kontinue
 
 let binding loc patt ty value = Binding { loc; patt; ty; value; }
 
