@@ -8,7 +8,7 @@
 #ifndef HDUB_CORE_THRU_WIRE_TEST
 #define HDUB_CORE_THRU_WIRE_TEST
 
-namespace hdub::core {
+namespace cores {
     class ThruWireUnitTest : public ::testing::Test {
     protected:
         std::unique_ptr<VUnitTestTop> model;

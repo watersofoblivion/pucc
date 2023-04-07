@@ -5,11 +5,10 @@ load("@rules_verilator//verilator:defs.bzl", "verilator_cc_library")
 # Source
 
 verilog_module(
-    name = "src",
-    top = "HDubCoreThruWire",
+    name = "thru-wire",
+    top = "ThruWireImpl",
     srcs = [
-        "HDubCoreThruWireIf.sv",
-        "HDubCoreThruWire.sv"
+        "thru-wire.sv",
     ],
     visibility = ["//visibility:public"]
 )
@@ -18,12 +17,8 @@ verilog_module(
 
 verilog_module(
     name = "unit-test-top",
-    top = "UnitTestTop",
-    srcs = [
-        "UnitTestHarness.sv",
-        "UnitTestTop.sv"
-    ],
-    deps = [":src"],
+    top = "ThruWireUnitTest",
+    deps = [":thru-wire"],
     visibility = ["//visibility:private"]
 )
 
@@ -42,8 +37,8 @@ cc_test(
         "unit-test-main.cc",
     ],
     deps = [
-        ":unit-test-verilated",
         "@com_google_googletest//:gtest",
+        ":unit-test-verilated",
     ],
     visibility = ["//visibility:public"]
 )
@@ -52,12 +47,8 @@ cc_test(
 
 verilog_module(
     name = "integration-test-top",
-    top = "IntegrationTestTop",
-    srcs = [
-        "IntegrationTestHarness.sv",
-        "IntegrationTestTop.sv"
-    ],
-    deps = [":src"],
+    top = "ThruWireIntegrationTest",
+    deps = [":thru-wire"],
     visibility = ["//visibility:private"]
 )
 

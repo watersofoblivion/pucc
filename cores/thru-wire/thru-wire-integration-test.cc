@@ -10,7 +10,7 @@
 
 using ::testing::Eq;
 
-namespace hdub::core {
+namespace cores {
     void ThruWireIntegrationTest::SetUp() {
         model = std::unique_ptr<VIntegrationTestTop>(new VIntegrationTestTop("IntegrationTestTop"));
     }

@@ -11,7 +11,7 @@
 
 using ::testing::Eq;
 
-namespace hdub::core {
+namespace cores {
     void ThruWireUnitTest::SetUp() {
         model = std::unique_ptr<VUnitTestTop>(new VUnitTestTop("UnitTestTop"));
     }

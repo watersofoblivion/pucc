@@ -1,0 +1,8 @@
+load("@//rules:verilog.bzl", "build_all_the_things")
+
+build_all_the_things(
+  name = "add-op",
+  impls = [
+    "native",
+  ],
+)

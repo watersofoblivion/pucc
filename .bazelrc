@@ -25,3 +25,5 @@ common:ocamlopt.opt --host_platform=@ocaml//platforms/build:sys
 common:ocamlopt.opt --platforms=@ocaml//platforms/target:sys
 
 try-import .config/user.bazelrc
+
+build --cxxopt=-std=c++20
