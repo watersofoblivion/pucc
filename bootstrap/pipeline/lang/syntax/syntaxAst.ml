@@ -153,24 +153,52 @@ let dotted loc lhs rhs kontinue =
 
 (* Types *)
 
-let ty_vis_readonly loc = TyVisReadonly { loc; }
-let ty_vis_abstract loc = TyVisAbstract { loc; }
+let ty_vis_readonly loc kontinue =
+  TyVisReadonly { loc; }
+    |> kontinue
+let ty_vis_abstract loc kontinue =
+  TyVisAbstract { loc; }
+    |> kontinue
 
-let ty_bool loc = TyBool { loc; }
-let ty_int loc = TyInt { loc; }
-let ty_constr loc name = TyConstr { loc; name; }
-let ty_fun loc param res = TyFun { loc; param; res; }
-let ty_sig loc elems = TySig { loc; elems; }
-let ty_with loc name tys = TyWith { loc; name; tys; }
+let ty_bool loc kontinue =
+  TyBool { loc; }
+    |> kontinue
+let ty_int loc kontinue =
+  TyInt { loc; }
+    |> kontinue
+let ty_constr loc name kontinue =
+  TyConstr { loc; name; }
+    |> kontinue
+let ty_fun loc param res kontinue =
+  TyFun { loc; param; res; }
+    |> kontinue
+let ty_sig loc elems kontinue =
+  TySig { loc; elems; }
+    |> kontinue
+let ty_with loc name tys kontinue =
+  TyWith { loc; name; tys; }
+    |> kontinue
 
-let sig_ty loc name params ty = SigTy { loc; name; params; ty; }
-let sig_val loc name ty = SigVal { loc; name; ty; }
-let sig_def loc name ty = SigDef { loc; name; ty; }
-let sig_mod loc name params ty = SigMod { loc; name; params; ty; }
+let sig_ty loc name params ty kontinue =
+  SigTy { loc; name; params; ty; }
+    |> kontinue
+let sig_val loc name ty kontinue =
+  SigVal { loc; name; ty; }
+    |> kontinue
+let sig_def loc name ty kontinue =
+  SigDef { loc; name; ty; }
+    |> kontinue
+let sig_mod loc name params ty kontinue =
+  SigMod { loc; name; params; ty; }
+    |> kontinue
 
-let ty_binding loc name params vis ty = TyBinding { loc; name; params; vis; ty; }
+let ty_binding loc name params vis ty kontinue =
+  TyBinding { loc; name; params; vis; ty; }
+    |> kontinue
 
-let mod_param loc name ty = ModParam { loc; name; ty; }
+let mod_param loc name ty kontinue =
+  ModParam { loc; name; ty; }
+    |> kontinue
 
 (* Primitive Operations *)
 

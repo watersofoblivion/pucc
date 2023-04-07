@@ -616,7 +616,7 @@ val dotted : loc -> name -> name -> (name -> 'a) -> 'a
  * {4 Visibilities}
  *)
 
-val ty_vis_readonly : loc -> ty_vis
+val ty_vis_readonly : loc -> (ty_vis -> 'a) -> 'a
 (**
  * Construct a read-only visibility.
  *
@@ -624,7 +624,7 @@ val ty_vis_readonly : loc -> ty_vis
  * @return A type visibility
  *)
 
-val ty_vis_abstract : loc -> ty_vis
+val ty_vis_abstract : loc -> (ty_vis -> 'a) -> 'a
 (**
  * Construct an abstract visibility
  *
@@ -636,7 +636,7 @@ val ty_vis_abstract : loc -> ty_vis
  * {4 Types}
  *)
 
-val ty_bool : loc -> ty
+val ty_bool : loc -> (ty -> 'a) -> 'a
 (**
  * Construct a boolean type constructor
  *
@@ -644,7 +644,7 @@ val ty_bool : loc -> ty
  * @return A boolean constructor
  *)
 
-val ty_int : loc -> ty
+val ty_int : loc -> (ty -> 'a) -> 'a
 (**
  * Construct an integer type constructor
  *
@@ -652,7 +652,7 @@ val ty_int : loc -> ty
  * @return An integer constructor
  *)
 
-val ty_constr : loc -> name -> ty
+val ty_constr : loc -> name -> (ty -> 'a) -> 'a
 (**
  * Construct a type constructor
  * 
@@ -661,7 +661,7 @@ val ty_constr : loc -> name -> ty
  * @return A type constructor
  *)
 
-val ty_fun : loc -> ty -> ty -> ty
+val ty_fun : loc -> ty -> ty -> (ty -> 'a) -> 'a
 (**
  * Construct a function type
  * 
@@ -671,7 +671,7 @@ val ty_fun : loc -> ty -> ty -> ty
  * @return A function type
  *)
 
-val ty_sig : loc -> sig_elem list -> ty
+val ty_sig : loc -> sig_elem list -> (ty -> 'a) -> 'a
 (**
  * Construct a module signature
  *
@@ -680,7 +680,7 @@ val ty_sig : loc -> sig_elem list -> ty
  * @return A module signature
  *)
 
-val ty_with : loc -> name -> ty_binding list -> ty
+val ty_with : loc -> name -> ty_binding list -> (ty -> 'a) -> 'a
 (**
  * Construct a module signature with types bound
  *
@@ -694,7 +694,7 @@ val ty_with : loc -> name -> ty_binding list -> ty
  * {4 Signature Elements}
  *)
 
-val sig_ty : loc -> name -> mod_param list -> ty option -> sig_elem
+val sig_ty : loc -> name -> mod_param list -> ty option -> (sig_elem -> 'a) -> 'a
 (**
  * Construct a type binding signature element
  *
@@ -705,7 +705,7 @@ val sig_ty : loc -> name -> mod_param list -> ty option -> sig_elem
  * @return A type binding signature element
  *)
 
-val sig_val : loc -> name -> ty -> sig_elem
+val sig_val : loc -> name -> ty -> (sig_elem -> 'a) -> 'a
 (**
  * Construct a value binding signature element
  *
@@ -715,7 +715,7 @@ val sig_val : loc -> name -> ty -> sig_elem
  * @return A value binding signature element
  *)
 
-val sig_def : loc -> name -> ty -> sig_elem
+val sig_def : loc -> name -> ty -> (sig_elem -> 'a) -> 'a
 (**
  * Construct a function definition signature element
  * 
@@ -725,7 +725,7 @@ val sig_def : loc -> name -> ty -> sig_elem
  * @return A function definition signature element
  *)
 
-val sig_mod : loc -> name -> mod_param list -> ty -> sig_elem
+val sig_mod : loc -> name -> mod_param list -> ty -> (sig_elem -> 'a) -> 'a
 (**
  * Construct a module definition signature element
  * 
@@ -740,7 +740,7 @@ val sig_mod : loc -> name -> mod_param list -> ty -> sig_elem
  * {4 Type Bindings}
  *)
 
-val ty_binding : loc -> name -> mod_param list -> ty_vis option -> ty -> ty_binding
+val ty_binding : loc -> name -> mod_param list -> ty_vis option -> ty -> (ty_binding -> 'a) -> 'a
 (**
  * Construct a type binding
  *
@@ -756,7 +756,7 @@ val ty_binding : loc -> name -> mod_param list -> ty_vis option -> ty -> ty_bind
  * {4 Module Parameters}
  *)
 
-val mod_param : loc -> name -> ty option -> mod_param
+val mod_param : loc -> name -> ty option -> (mod_param -> 'a) -> 'a
 (**
  * Construct a module parameter
  *

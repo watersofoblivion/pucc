@@ -1,6 +1,5 @@
 open OUnit2
 
-open CoreTest
 open SyntaxTest
 
 (* Positions *)
@@ -24,7 +23,7 @@ let test_lexing_position ctxt =
     Lexing.pos_lnum = 1;
     Lexing.pos_bol = 2;
     Lexing.pos_cnum = 4; }
-    |> Syntax.lexing_position
+    |> lexing_position
     |> assert_pos_equal ~ctxt expected
 
 

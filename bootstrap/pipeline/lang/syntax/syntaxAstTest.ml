@@ -11,19 +11,18 @@ open SyntaxLocTest
 
 (* Names *)
 
-let name_seq = Core.seq_str ~prefix:"gensym" ()
-
-let fresh_name ?name ?loc ?id seq kontinue =
+let fresh_name ?name ?loc ?id =
   let fresh_name seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
-      fresh Core.gen id name_seq (fun name_seq id ->
+      fresh Core.gen seq (fun seq id ->
+        let id = sprintf "gensym-%d" id in
         seq
           |> kontinue
           |> Syntax.name loc id))
   in
-  fresh fresh_name name seq kontinue
+  fresh ?value:name fresh_name
 
-let fresh_dotted ?name ?loc ?lhs ?rhs seq kontinue =
+let fresh_dotted ?name ?loc ?lhs ?rhs =
   let fresh_dotted seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_name ?name:lhs seq (fun seq lhs ->
@@ -32,51 +31,51 @@ let fresh_dotted ?name ?loc ?lhs ?rhs seq kontinue =
             |> kontinue
             |> Syntax.dotted loc lhs rhs)))
   in
-  fresh fresh_dotted name seq kontinue  
+  fresh ?value:name fresh_dotted  
 
 (* Types *)
 
 (* Type Visibility *)
 
-let fresh_ty_vis_readonly ?vis ?loc seq kontinue =
+let fresh_ty_vis_readonly ?vis ?loc =
   let fresh_ty_vis_readonly seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       seq
         |> kontinue
         |> Syntax.ty_vis_readonly loc)
   in
-  fresh fresh_ty_vis_readonly vis seq kontinue
+  fresh ?value:vis fresh_ty_vis_readonly
 
-let fresh_ty_vis_abstract ?vis ?loc seq kontinue =
+let fresh_ty_vis_abstract ?vis ?loc =
   let fresh_ty_vis_abstract seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       seq
         |> kontinue
         |> Syntax.ty_vis_abstract loc)
   in
-  fresh fresh_ty_vis_abstract vis seq kontinue
+  fresh ?value:vis fresh_ty_vis_abstract
 
 (* Types *)
 
-let fresh_ty_bool ?ty ?loc seq kontinue =
+let fresh_ty_bool ?ty ?loc =
   let fresh_ty_bool seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       seq
         |> kontinue
         |> Syntax.ty_bool loc)
   in
-  fresh fresh_ty_bool ty seq continue
+  fresh ?value:ty fresh_ty_bool
 
-let fresh_ty_int ?ty ?loc seq kontinue =
+let fresh_ty_int ?ty ?loc =
   let fresh_ty_int seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       seq
         |> kontinue
         |> Syntax.ty_int loc)
   in
-  fresh fresh_ty_int ty seq continue
+  fresh ?value:ty fresh_ty_int
 
-let fresh_ty_constr ?ty ?loc ?name seq kontinue =
+let fresh_ty_constr ?ty ?loc ?name =
   let fresh_ty_constr seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_name ?name seq (fun seq name ->
@@ -84,9 +83,9 @@ let fresh_ty_constr ?ty ?loc ?name seq kontinue =
           |> kontinue
           |> Syntax.ty_constr loc name))
   in
-  fresh fresh_ty_constr ty seq kontinue
+  fresh ?value:ty fresh_ty_constr
 
-let fresh_ty_fun ?ty ?loc ?param ?res seq kontinue =
+let fresh_ty_fun ?ty ?loc ?param ?res =
   let fresh_ty_fun seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_ty_constr ?ty:param seq (fun seq param ->
@@ -95,9 +94,9 @@ let fresh_ty_fun ?ty ?loc ?param ?res seq kontinue =
             |> kontinue
             |> Syntax.ty_fun loc param res)))
   in
-  fresh fresh_ty_fun ty seq kontinue
+  fresh ?value:ty fresh_ty_fun
 
-let fresh_ty_sig ?ty ?loc ?elems:(elems = []) seq kontinue =
+let fresh_ty_sig ?ty ?loc ?elems:(elems = []) =
   let fresh_ty_sig seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       (* TODO: Fresh Elems *)
@@ -105,18 +104,18 @@ let fresh_ty_sig ?ty ?loc ?elems:(elems = []) seq kontinue =
         |> kontinue
         |> Syntax.ty_sig loc elems)
   in
-  fresh fresh_ty_sig ty seq kontinue
+  fresh ?value:ty fresh_ty_sig
 
-let fresh_ty_with ?ty ?loc ?name ?bindings:(bindings = []) seq kontinue =
+let fresh_ty_with ?ty ?loc ?name ?bindings:(bindings = []) =
   let fresh_ty_with seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_name ?name seq (fun seq name ->
         (* TODO: Fresh Bindings *)
         seq
           |> kontinue
-          |> Syntax.ty_sig loc name bindings))
+          |> Syntax.ty_with loc name bindings))
   in
-  fresh fresh_ty_sig ty seq kontinue
+  fresh ?value:ty fresh_ty_with
 
 (* Signature Elements *)
 
