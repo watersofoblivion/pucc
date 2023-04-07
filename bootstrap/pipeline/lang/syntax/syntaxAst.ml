@@ -202,33 +202,85 @@ let mod_param loc name ty kontinue =
 
 (* Primitive Operations *)
 
-let un_neg loc = UnNeg { loc; }
-let un_lnot loc = UnLNot { loc; }
-let un_bnot loc = UnBNot { loc; }
+let un_neg loc kontinue =
+  UnNeg { loc; }
+    |> kontinue
+let un_lnot loc kontinue =
+  UnLNot { loc; }
+    |> kontinue
+let un_bnot loc kontinue =
+  UnBNot { loc; }
+    |> kontinue
 
-let bin_add loc = BinAdd { loc; }
-let bin_sub loc = BinSub { loc; }
-let bin_mul loc = BinMul { loc; }
-let bin_div loc = BinDiv { loc; }
-let bin_mod loc = BinMod { loc; }
-let bin_land loc = BinLAnd { loc; }
-let bin_lor loc = BinLOr { loc; }
-let bin_band loc = BinBAnd { loc; }
-let bin_bor loc = BinBOr { loc; }
-let bin_bxor loc = BinBXor { loc; }
-let bin_ssl loc = BinSsl { loc; }
-let bin_ssr loc = BinSsr { loc; }
-let bin_usl loc = BinUsl { loc; }
-let bin_usr loc = BinUsr { loc; }
-let bin_seq loc = BinSeq { loc; }
-let bin_peq loc = BinPeq { loc; }
-let bin_sneq loc = BinSneq { loc; }
-let bin_pneq loc = BinPneq { loc; }
-let bin_lte loc = BinLte { loc; }
-let bin_lt loc = BinLt { loc; }
-let bin_gte loc = BinGte { loc; }
-let bin_gt loc = BinGt { loc; }
-let bin_rfa loc = BinRfa { loc; }
+let bin_add loc kontinue =
+  BinAdd { loc; }
+    |> kontinue
+let bin_sub loc kontinue =
+  BinSub { loc; }
+    |> kontinue
+let bin_mul loc kontinue =
+  BinMul { loc; }
+    |> kontinue
+let bin_div loc kontinue =
+  BinDiv { loc; }
+    |> kontinue
+let bin_mod loc kontinue =
+  BinMod { loc; }
+    |> kontinue
+let bin_land loc kontinue =
+  BinLAnd { loc; }
+    |> kontinue
+let bin_lor loc kontinue =
+  BinLOr { loc; }
+    |> kontinue
+let bin_band loc kontinue =
+  BinBAnd { loc; }
+    |> kontinue
+let bin_bor loc kontinue =
+  BinBOr { loc; }
+    |> kontinue
+let bin_bxor loc kontinue =
+  BinBXor { loc; }
+    |> kontinue
+let bin_ssl loc kontinue =
+  BinSsl { loc; }
+    |> kontinue
+let bin_ssr loc kontinue =
+  BinSsr { loc; }
+    |> kontinue
+let bin_usl loc kontinue =
+  BinUsl { loc; }
+    |> kontinue
+let bin_usr loc kontinue =
+  BinUsr { loc; }
+    |> kontinue
+let bin_seq loc kontinue =
+  BinSeq { loc; }
+    |> kontinue
+let bin_peq loc kontinue =
+  BinPeq { loc; }
+    |> kontinue
+let bin_sneq loc kontinue =
+  BinSneq { loc; }
+    |> kontinue
+let bin_pneq loc kontinue =
+  BinPneq { loc; }
+    |> kontinue
+let bin_lte loc kontinue =
+  BinLte { loc; }
+    |> kontinue
+let bin_lt loc kontinue =
+  BinLt { loc; }
+    |> kontinue
+let bin_gte loc kontinue =
+  BinGte { loc; }
+    |> kontinue
+let bin_gt loc kontinue =
+  BinGt { loc; }
+    |> kontinue
+let bin_rfa loc kontinue =
+  BinRfa { loc; }
+    |> kontinue
 
 (* Patterns *)
 

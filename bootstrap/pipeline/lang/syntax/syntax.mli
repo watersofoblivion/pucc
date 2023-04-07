@@ -774,7 +774,7 @@ val mod_param : loc -> name -> ty option -> (mod_param -> 'a) -> 'a
  * {4 Unary Operators}
  *)
 
-val un_neg : loc -> un
+val un_neg : loc -> (un -> 'a) -> 'a
 (**
  * Construct a negation operator
  * 
@@ -782,7 +782,7 @@ val un_neg : loc -> un
  * @return A negation operator
  *)
 
-val un_lnot : loc -> un
+val un_lnot : loc -> (un -> 'a) -> 'a
 (**
  * Construct a logical NOT operator
  * 
@@ -790,7 +790,7 @@ val un_lnot : loc -> un
  * @return A logical NOT operator
  *)
 
-val un_bnot : loc -> un
+val un_bnot : loc -> (un -> 'a) -> 'a
 (**
  * Construct a bitwise NOT operator
  * 
@@ -802,7 +802,7 @@ val un_bnot : loc -> un
  * {4 Binary Operators}
  *)
 
-val bin_add : loc -> bin
+val bin_add : loc -> (bin -> 'a) -> 'a
 (**
  * Construct an addition operator
  *
@@ -810,7 +810,7 @@ val bin_add : loc -> bin
  * @return An addition operator
  *)
 
-val bin_sub : loc -> bin
+val bin_sub : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a subtration operator
  *
@@ -818,7 +818,7 @@ val bin_sub : loc -> bin
  * @return A subtration operator
  *)
 
-val bin_mul : loc -> bin
+val bin_mul : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a multiplication operator
  *
@@ -826,7 +826,7 @@ val bin_mul : loc -> bin
  * @return A multiplication operator
  *)
 
-val bin_div : loc -> bin
+val bin_div : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a division operator
  *
@@ -834,7 +834,7 @@ val bin_div : loc -> bin
  * @return A division operator
  *)
 
-val bin_mod : loc -> bin
+val bin_mod : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a modulus operator
  *
@@ -842,7 +842,7 @@ val bin_mod : loc -> bin
  * @return A modulus operator
  *)
 
-val bin_land : loc -> bin
+val bin_land : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a logical AND operator
  *
@@ -850,7 +850,7 @@ val bin_land : loc -> bin
  * @return A logical AND operator
  *)
 
-val bin_lor : loc -> bin
+val bin_lor : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a logical OR operator
  *
@@ -858,7 +858,7 @@ val bin_lor : loc -> bin
  * @return A logical OR operator
  *)
 
-val bin_band : loc -> bin
+val bin_band : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a bitwise AND operator
  *
@@ -866,7 +866,7 @@ val bin_band : loc -> bin
  * @return A bitwise AND operator
  *)
 
-val bin_bor : loc -> bin
+val bin_bor : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a bitwise OR operator
  *
@@ -874,7 +874,7 @@ val bin_bor : loc -> bin
  * @return A bitwise OR operator
  *)
 
-val bin_bxor : loc -> bin
+val bin_bxor : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a bitwise XOR operator
  *
@@ -882,7 +882,7 @@ val bin_bxor : loc -> bin
  * @return A bitwise XOR operator
  *)
 
-val bin_ssl : loc -> bin
+val bin_ssl : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a signed shift left operator
  *
@@ -890,7 +890,7 @@ val bin_ssl : loc -> bin
  * @return A signed shift left operator
  *)
 
-val bin_ssr : loc -> bin
+val bin_ssr : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a signed shift right operator
  *
@@ -898,7 +898,7 @@ val bin_ssr : loc -> bin
  * @return A signed shift right operator
  *)
 
-val bin_usl : loc -> bin
+val bin_usl : loc -> (bin -> 'a) -> 'a
 (**
  * Construct an unsigned shift left operator
  *
@@ -906,7 +906,7 @@ val bin_usl : loc -> bin
  * @return An unsigned shift left operator
  *)
 
-val bin_usr : loc -> bin
+val bin_usr : loc -> (bin -> 'a) -> 'a
 (**
  * Construct an unsigned shift right operator
  *
@@ -914,7 +914,7 @@ val bin_usr : loc -> bin
  * @return An unsigned shift right operator
  *)
 
-val bin_seq : loc -> bin
+val bin_seq : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a structural equality operator
  *
@@ -922,7 +922,7 @@ val bin_seq : loc -> bin
  * @return A structural equality operator
  *)
 
-val bin_peq : loc -> bin
+val bin_peq : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a physical equality operator
  *
@@ -930,7 +930,7 @@ val bin_peq : loc -> bin
  * @return A physical equality operator
  *)
 
-val bin_sneq : loc -> bin
+val bin_sneq : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a structural inequality operator
  *
@@ -938,7 +938,7 @@ val bin_sneq : loc -> bin
  * @return A structural inequality operator
  *)
 
-val bin_pneq : loc -> bin
+val bin_pneq : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a physical inequality operator
  *
@@ -946,7 +946,7 @@ val bin_pneq : loc -> bin
  * @return A physical inequality operator
  *)
 
-val bin_lte : loc -> bin
+val bin_lte : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a less than or equal operator
  *
@@ -954,7 +954,7 @@ val bin_lte : loc -> bin
  * @return A less than or equal operator
  *)
 
-val bin_lt : loc -> bin
+val bin_lt : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a less than operator
  *
@@ -962,7 +962,7 @@ val bin_lt : loc -> bin
  * @return A less than operator
  *)
 
-val bin_gte : loc -> bin
+val bin_gte : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a greater than or equal operator
  *
@@ -970,7 +970,7 @@ val bin_gte : loc -> bin
  * @return A greater than or equal operator
  *)
 
-val bin_gt : loc -> bin
+val bin_gt : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a greater than operator
  *
@@ -978,7 +978,7 @@ val bin_gt : loc -> bin
  * @return A greater than operator
  *)
 
-val bin_rfa : loc -> bin
+val bin_rfa : loc -> (bin -> 'a) -> 'a
 (**
  * Construct a reverse function application operator
  *

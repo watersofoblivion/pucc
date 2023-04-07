@@ -99,7 +99,7 @@ let fresh_ty_fun ?ty ?loc ?param ?res =
 let fresh_ty_sig ?ty ?loc ?elems:(elems = []) =
   let fresh_ty_sig seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
-      (* TODO: Fresh Elems *)
+      (* TODO: Fresh Elems List *)
       seq
         |> kontinue
         |> Syntax.ty_sig loc elems)
@@ -110,7 +110,7 @@ let fresh_ty_with ?ty ?loc ?name ?bindings:(bindings = []) =
   let fresh_ty_with seq kontinue =
     fresh_loc ?loc seq (fun seq loc ->
       fresh_name ?name seq (fun seq name ->
-        (* TODO: Fresh Bindings *)
+        (* TODO: Fresh Bindings List *)
         seq
           |> kontinue
           |> Syntax.ty_with loc name bindings))
@@ -119,111 +119,131 @@ let fresh_ty_with ?ty ?loc ?name ?bindings:(bindings = []) =
 
 (* Signature Elements *)
 
-let fresh_sig_ty ?loc:(loc = fresh_loc ()) ?name:(name = fresh_name ()) ?params:(params = []) ?ty:(ty = None) _ =
-  Syntax.sig_ty loc name params ty
+let fresh_sig_ty ?sig_elem ?loc ?name ?params:(params = []) ?ty:(ty = None) =
+  let fresh_sig_ty seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name seq (fun seq name ->
+        (* TODO: Fresh Params List *)
+        (* TODO: Fresh Ty Option *)
+        seq
+          |> kontinue
+          |> Syntax.sig_ty loc name params ty))
+  in
+  fresh ?value:sig_elem fresh_sig_ty
 
-let fresh_sig_val ?loc:(loc = fresh_loc ()) ?name:(name = fresh_name ()) ?ty:(ty = fresh_ty_constr ()) _ =
-  Syntax.sig_val loc name ty
+let fresh_sig_val ?sig_elem ?loc ?name ?ty =
+  let fresh_sig_val seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name seq (fun seq name ->
+        fresh_ty_constr ?ty seq (fun seq ty ->
+          seq
+            |> kontinue
+            |> Syntax.sig_val loc name ty)))
+  in
+  fresh ?value:sig_elem fresh_sig_val
 
-let fresh_sig_def ?loc:(loc = fresh_loc ()) ?name:(name = fresh_name ()) ?ty:(ty = fresh_ty_constr ()) _ =
-  Syntax.sig_def loc name ty
+let fresh_sig_def ?sig_elem ?loc ?name ?ty =
+  let fresh_sig_def seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name seq (fun seq name ->
+        fresh_ty_constr ?ty seq (fun seq ty ->
+          seq
+            |> kontinue
+            |> Syntax.sig_def loc name ty)))
+  in
+  fresh ?value:sig_elem fresh_sig_def
   
-let fresh_sig_mod ?loc:(loc = fresh_loc ()) ?name:(name = fresh_name ()) ?params:(params = []) ?ty:(ty = fresh_ty_sig ()) _ =
-  Syntax.sig_mod loc name params ty
+let fresh_sig_mod ?sig_elem ?loc ?name ?params:(params = []) ?ty =
+  let fresh_sig_mod seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name seq (fun seq name ->
+        (* TODO: Fresh Params List *)
+        fresh_ty_constr ?ty seq (fun seq ty ->
+          seq
+            |> kontinue
+            |> Syntax.sig_mod loc name params ty)))
+  in
+  fresh ?value:sig_elem fresh_sig_mod
 
 (* Type Bindings *)
 
-let fresh_ty_binding ?loc:(loc = fresh_loc ()) ?name:(name = fresh_name ()) ?params:(params = []) ?vis:(vis = None) ?ty:(ty = fresh_ty_constr ()) _ =
-  Syntax.ty_binding loc name params vis ty
+let fresh_ty_binding ?ty_binding ?loc ?name ?params:(params = []) ?vis:(vis = None) ?ty =
+  let fresh_ty_binding seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name seq (fun seq name ->
+        (* TODO: Fresh Params List *)
+        (* TODO: Fresh Vis Option *)
+        fresh_ty_constr ?ty seq (fun seq ty ->
+          seq
+            |> kontinue
+            |> Syntax.ty_binding loc name params vis ty)))
+  in
+  fresh ?value:ty_binding 
 
 (* Module Parameters *)
 
-let fresh_mod_param ?loc:(loc = fresh_loc ()) ?name:(name = fresh_name ()) ?ty:(ty = None) _ =
-  Syntax.mod_param loc name ty
+let fresh_mod_param ?mod_param ?loc ?name ?ty:(ty = None) =
+  let fresh_mod_param seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name seq (fun seq name ->
+        (* TODO: Fresh Ty Option *)
+        seq
+          |> kontinue
+          |> Syntax.mod_param loc name ty))
+  in
+  fresh ?value:mod_param fresh_mod_param
 
 (* Primitive Operations *)
 
 (* Unary Operators *)
 
-let fresh_un_neg ?loc:(loc = fresh_loc ()) _ =
-  Syntax.un_neg loc
+let fresh_un constr ?un ?loc =
+  let fresh_un seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      seq
+        |> kontinue
+        |> constr loc)
+  in
+  fresh ?value:un fresh_un
 
-let fresh_un_lnot ?loc:(loc = fresh_loc ()) _ =
-  Syntax.un_lnot loc
+let fresh_un_neg = fresh_un Syntax.un_neg
+let fresh_un_lnot = fresh_un Syntax.un_lnot
+let fresh_un_bnot = fresh_un Syntax.un_bnot
 
-let fresh_un_bnot ?loc:(loc = fresh_loc ()) _ =
-  Syntax.un_bnot loc
-    
 (* Binary Operators *)
 
-let fresh_bin_add ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_add loc
+let fresh_bin constr ?bin ?loc =
+  let fresh_bin seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      seq
+        |> kontinue
+        |> constr loc)
+  in
+  fresh ?value:bin fresh_bin
 
-let fresh_bin_sub ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_sub loc
-
-let fresh_bin_mul ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_mul loc
-
-let fresh_bin_div ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_div loc
-
-let fresh_bin_mod ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_mod loc        
-
-let fresh_bin_land ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_land loc
-
-let fresh_bin_lor ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_lor loc
-
-let fresh_bin_band ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_band loc
-
-let fresh_bin_bor ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_bor loc
-
-let fresh_bin_bxor ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_bxor loc
-
-let fresh_bin_ssl ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_ssl loc
-  
-let fresh_bin_ssr ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_ssr loc
-    
-let fresh_bin_usl ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_usl loc
-      
-let fresh_bin_usr ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_usr loc
-
-let fresh_bin_seq ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_seq loc
-    
-let fresh_bin_peq ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_peq loc
-      
-let fresh_bin_sneq ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_sneq loc
-        
-let fresh_bin_pneq ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_pneq loc
-                      
-let fresh_bin_lte ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_lte loc
-        
-let fresh_bin_lt ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_lt loc
-        
-let fresh_bin_gte ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_gte loc
-        
-let fresh_bin_gt ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_gt loc
-                    
-let fresh_bin_rfa ?loc:(loc = fresh_loc ()) _ =
-  Syntax.bin_rfa loc
+let fresh_bin_add = fresh_bin Syntax.bin_add
+let fresh_bin_sub = fresh_bin Syntax.bin_sub
+let fresh_bin_mul = fresh_bin Syntax.bin_mul
+let fresh_bin_div = fresh_bin Syntax.bin_div
+let fresh_bin_mod = fresh_bin Syntax.bin_mod
+let fresh_bin_land = fresh_bin Syntax.bin_land
+let fresh_bin_lor = fresh_bin Syntax.bin_lor
+let fresh_bin_band = fresh_bin Syntax.bin_band
+let fresh_bin_bor = fresh_bin Syntax.bin_bor
+let fresh_bin_bxor = fresh_bin Syntax.bin_bxor
+let fresh_bin_ssl = fresh_bin Syntax.bin_ssl  
+let fresh_bin_ssr = fresh_bin Syntax.bin_ssr    
+let fresh_bin_usl = fresh_bin Syntax.bin_usl      
+let fresh_bin_usr = fresh_bin Syntax.bin_usr
+let fresh_bin_seq = fresh_bin Syntax.bin_seq    
+let fresh_bin_peq = fresh_bin Syntax.bin_peq      
+let fresh_bin_sneq = fresh_bin Syntax.bin_sneq        
+let fresh_bin_pneq = fresh_bin Syntax.bin_pneq                      
+let fresh_bin_lte = fresh_bin Syntax.bin_lte        
+let fresh_bin_lt = fresh_bin Syntax.bin_lt        
+let fresh_bin_gte = fresh_bin Syntax.bin_gte        
+let fresh_bin_gt = fresh_bin Syntax.bin_gt                    
+let fresh_bin_rfa = fresh_bin Syntax.bin_rfa
 
 (* Patterns *)
 
@@ -281,8 +301,7 @@ let fresh_expr_app ?loc:(loc = fresh_loc ()) ?fn:(fn = fresh_expr_abs ()) ?args:
 
 (* Bindings*)
 
-let fresh_binding ?loc:(loc = fresh_loc ()) ?patt:(patt = fresh_patt_ground ()) ?ty:(ty = None) ?value:(value = fresh_expr_int ()) _ =
-  Syntax.binding loc patt ty value
+(* let fresh_binding = fresh_bin Syntax.let fresh_binding ?bin ?loc:(patt = fresh_patt_ground ()) ?ty:(ty = None) ?value:(value  ?bin ?loc:(patt = fresh_patt_ground ()) ?ty:(ty = None) ?value:(value  *)
 
 (* Package Statements *)
 
