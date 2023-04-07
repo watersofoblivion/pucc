@@ -55,7 +55,6 @@ menhir(
     ],
     token = ":parseToken",
     deps = [
-        "//bootstrap/toolchain/workspace:workspace",
         "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
         ":parseEnv",
@@ -79,7 +78,6 @@ ocaml_module(
     struct = "parser.ml",
     deps = [
         "@menhirLib//lib/menhirLib",
-        "//bootstrap/toolchain/workspace:workspace",
         "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
         ":parseEnv",
@@ -117,7 +115,6 @@ ocaml_module(
     struct = "parseEntry.ml",
     deps = [
         "@menhirLib//lib/menhirLib",
-        "//bootstrap/toolchain/workspace:workspace",
         "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
         ":parseEnv",
@@ -135,7 +132,6 @@ ocaml_module(
     struct = "parse.ml",
     deps = [
         "@menhirLib//lib/menhirLib",
-        "//bootstrap/toolchain/workspace:workspace",
         "//bootstrap/core:core",
         "//bootstrap/pipeline/lang/syntax:syntax",
         ":parseEnv",
