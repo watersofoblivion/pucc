@@ -138,7 +138,7 @@ type top =
 (* Files *)
 
 type file =
-  | File of { loc: loc; pkg: pkg; imports: import list; tops: top list; }
+  | File of { loc: loc; pkg: pkg_stmt; imports: import list; tops: top list; }
 
 (* Constructors *)
 
@@ -334,30 +334,56 @@ let expr_app loc fn args kontinue =
   ExprApp { loc; fn; args; }
     |> kontinue
 
-let binding loc patt ty value = Binding { loc; patt; ty; value; }
+let binding loc patt ty value kontinue =
+  Binding { loc; patt; ty; value; }
+    |> kontinue
 
 (* Package Statements *)
 
-let pkg_library loc name = PkgLibrary { loc; name; }
-let pkg_executable loc name = PkgExecutable { loc; name; }
+let pkg_library loc name kontinue =
+  PkgLibrary { loc; name; }
+    |> kontinue
+let pkg_executable loc name kontinue =
+  PkgExecutable { loc; name; }
+    |> kontinue
 
 (* Import *)
 
-let path loc path = Path { loc; path; }
-let alias loc alias path = Alias { loc; alias; path; }
-let alias_named loc local path = alias loc (Some local) path
-let alias_unnamed loc path = alias loc None path
-let pkgs loc aliases = Packages { loc; aliases; }
-let import loc pkgs = Import { loc; pkgs; }
+let path loc path kontinue =
+  Path { loc; path; }
+    |> kontinue
+let alias loc alias path kontinue =
+  Alias { loc; alias; path; }
+    |> kontinue
+let alias_named loc local path kontinue = alias loc (Some local) path kontinue
+let alias_unnamed loc path kontinue = alias loc None path kontinue
+let pkgs loc aliases kontinue =
+  Packages { loc; aliases; }
+    |> kontinue
+let import loc pkgs kontinue =
+  Import { loc; pkgs; }
+    |> kontinue
 
 (* Top-Level Bindings *)
 
-let top_ty loc local bindings = TopTy { loc; local; bindings; }
-let top_val loc binding = TopVal { loc; binding; }
-let top_def loc binding = TopDef { loc; binding; }
-let top_let loc recur bindings = TopLet { loc; recur; bindings; }
-let top_mod loc name params elems = TopMod { loc; name; params; elems; }
+let top_ty loc local bindings kontinue =
+  TopTy { loc; local; bindings; }
+    |> kontinue
+let top_val loc binding kontinue =
+  TopVal { loc; binding; }
+    |> kontinue
+let top_def loc binding kontinue =
+  TopDef { loc; binding; }
+    |> kontinue
+let top_let loc recur bindings kontinue =
+  TopLet { loc; recur; bindings; }
+    |> kontinue
+let top_mod loc name params elems kontinue =
+  TopMod { loc; name; params; elems; }
+    |> kontinue
 
 (* Files *)
 
-let file loc pkg imports tops = File { loc; pkg; imports; tops; }
+let file loc pkg imports tops kontinue =
+  File { loc; pkg; imports; tops; }
+    |> kontinue

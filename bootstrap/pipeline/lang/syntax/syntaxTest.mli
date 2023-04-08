@@ -17,7 +17,7 @@ open CoreTest
  * {3 Location Tracking}
  *)
 
-val fresh_pos : ?pos:((pos, 'a) fixture) -> ?line:((int, 'a) fixture) -> ?col:((int, 'a) fixture) -> ?off:((int, 'a) fixture) -> (pos, 'a) fixture
+val fresh_pos : ?pos:pos -> ?line:int -> ?col:int -> ?off:int -> (pos, 'a) fixture
 (**
  * Construct a fresh position.  Any values that are not given will be
  * automatically generated.
@@ -30,7 +30,7 @@ val fresh_pos : ?pos:((pos, 'a) fixture) -> ?line:((int, 'a) fixture) -> ?col:((
  * @return A fresh position
  *)
 
-val fresh_loc : ?loc:((loc, 'a) fixture) -> ?start:((pos, 'a) fixture) -> ?stop:((pos, 'a) fixture) -> (loc, 'a) fixture
+val fresh_loc : ?loc:loc -> ?start:pos -> ?stop:pos -> (loc, 'a) fixture
 (**
  * Construct a fresh location.  Any values that are not given will be
  * automatically generated.
@@ -43,125 +43,125 @@ val fresh_loc : ?loc:((loc, 'a) fixture) -> ?start:((pos, 'a) fixture) -> ?stop:
 
 (** {3 Names} *)
 
-val fresh_name : ?name:((name, 'a) fixture) -> ?loc:((loc, 'a) fixture) -> ?id:((string, 'a) fixture) -> (name, 'a) fixture
-val fresh_dotted : ?name:((name, 'a) fixture) -> ?loc:((loc, 'a) fixture) -> ?lhs:((name, 'a) fixture) -> ?rhs:((name, 'a) fixture) -> (name, 'a) fixture
+val fresh_name : ?name:name -> ?loc:loc -> ?id:string -> (name, 'a) fixture
+val fresh_dotted : ?name:name -> ?loc:loc -> ?lhs:name -> ?rhs:name -> (name, 'a) fixture
 
 (** {3 Types} *)
 
 (** {4 Visibility} *)
 
-val fresh_ty_vis_readonly : ?vis:ty_vis -> ?loc:((loc, 'a) fixture) -> (ty_vis, 'a) fixture
-val fresh_ty_vis_abstract : ?vis:ty_vis -> ?loc:((loc, 'a) fixture) ->  -> (ty_vis, 'a) fixture
+val fresh_ty_vis_readonly : ?vis:ty_vis -> ?loc:loc -> (ty_vis, 'a) fixture
+val fresh_ty_vis_abstract : ?vis:ty_vis -> ?loc:loc -> (ty_vis, 'a) fixture
 
 (** {4 Types} *)
 
-val fresh_ty_int : ?ty:((ty, 'a) fixture) -> ?loc:((loc, 'a) fixture) -> (ty, 'a) fixture
-val fresh_ty_bool : ?ty:((ty, 'a) fixture) -> ?loc:((loc, 'a) fixture) -> (ty, 'a) fixture
-val fresh_ty_constr : ?ty:((ty, 'a) fixture) -> ?loc:((loc, 'a) fixture) -> ?name:((name, 'a) fixture) -> (ty, 'a) fixture
-val fresh_ty_fun : ?ty:((ty, 'a) fixture) -> ?loc:((loc, 'a) fixture) -> ?param:((ty, 'a) fixture) -> ?res:((ty, 'a) fixture) -> (ty, 'a) fixture
-val fresh_ty_sig : ?ty:((ty, 'a) fixture) -> ?loc:((loc, 'a) fixture) -> ?elems:(sig_elem list) -> (ty, 'a) fixture
-val fresh_ty_with : ?ty:((ty, 'a) fixture) -> ?loc:((loc, 'a) fixture) -> ?name:((name, 'a) fixture) -> ?bindings:(ty_binding list) -> (ty, 'a) fixture
+val fresh_ty_int : ?ty:ty -> ?loc:loc -> (ty, 'a) fixture
+val fresh_ty_bool : ?ty:ty -> ?loc:loc -> (ty, 'a) fixture
+val fresh_ty_constr : ?ty:ty -> ?loc:loc -> ?name:name -> (ty, 'a) fixture
+val fresh_ty_fun : ?ty:ty -> ?loc:loc -> ?param:ty -> ?res:ty -> (ty, 'a) fixture
+val fresh_ty_sig : ?ty:ty -> ?loc:loc -> ?elems:(sig_elem list) -> (ty, 'a) fixture
+val fresh_ty_with : ?ty:ty -> ?loc:loc -> ?name:name -> ?bindings:(ty_binding list) -> (ty, 'a) fixture
 
 (** {4 Module Signature Elements} *)
 
-val fresh_sig_ty : ?loc:((loc, 'a) fixture) -> ?name:((name, 'a) fixture) -> ?params:(mod_param list) -> ?ty:((ty option, 'a) fixture) -> (sig_elem, 'a) fixture
-val fresh_sig_val : ?loc:((loc, 'a) fixture) -> ?name:((name, 'a) fixture) -> ?ty:((ty, 'a) fixture) -> (sig_elem, 'a) fixture
-val fresh_sig_def : ?loc:((loc, 'a) fixture) -> ?name:((name, 'a) fixture) -> ?ty:((ty, 'a) fixture) -> (sig_elem, 'a) fixture
-val fresh_sig_mod : ?loc:((loc, 'a) fixture) -> ?name:((name, 'a) fixture) -> ?params:(mod_param list) -> ?ty:((ty, 'a) fixture) -> (sig_elem, 'a) fixture
+val fresh_sig_ty : ?sig_elem:sig_elem -> ?loc:loc -> ?name:name -> ?params:(mod_param list) -> ?ty:(ty option) -> (sig_elem, 'a) fixture
+val fresh_sig_val : ?sig_elem:sig_elem -> ?loc:loc -> ?name:name -> ?ty:ty -> (sig_elem, 'a) fixture
+val fresh_sig_def : ?sig_elem:sig_elem -> ?loc:loc -> ?name:name -> ?ty:ty -> (sig_elem, 'a) fixture
+val fresh_sig_mod : ?sig_elem:sig_elem -> ?loc:loc -> ?name:name -> ?params:(mod_param list) -> ?ty:ty -> (sig_elem, 'a) fixture
 
 (** {4 Type Bindings} *)
 
-val fresh_ty_binding : ?loc:((loc, 'a) fixture) -> ?name:((name, 'a) fixture) -> ?params:((mod_param list, 'a) fixture) -> ?vis:((ty_vis option, 'a) fixture) -> ?ty:((ty, 'a) fixture) -> (ty_binding, 'a) fixture
+val fresh_ty_binding : ?ty_binding:ty_binding -> ?loc:loc -> ?name:name -> ?params:(mod_param list) -> ?vis:(ty_vis option) -> ?ty:ty -> (ty_binding, 'a) fixture
 
 (** {4 Module Parameters} *)
 
-val fresh_mod_param : ?loc:((loc, 'a) fixture) -> ?name:((name, 'a) fixture) -> ?ty:((ty option, 'a) fixture) -> (mod_param, 'a) fixture
+val fresh_mod_param : ?mod_param:mod_param -> ?loc:loc -> ?name:name -> ?ty:(ty option) -> (mod_param, 'a) fixture
 
 (** {3 Primitive Operations} *)
 
 (** {4 Unary Operators} *)
 
-val fresh_un_neg : ?loc:((loc, 'a) fixture) -> (unit, 'a) fixture
-val fresh_un_lnot : ?loc:((loc, 'a) fixture) -> (unit, 'a) fixture
-val fresh_un_bnot : ?loc:((loc, 'a) fixture) -> (unit, 'a) fixture
+val fresh_un_neg : ?un:un -> ?loc:loc -> (unit, 'a) fixture
+val fresh_un_lnot : ?un:un -> ?loc:loc -> (unit, 'a) fixture
+val fresh_un_bnot : ?un:un -> ?loc:loc -> (unit, 'a) fixture
 
 (** {4 Binary Operators} *)
 
-val fresh_bin_add : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_sub : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_mul : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_div : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_mod : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_land : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_lor : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_band : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_bor : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_bxor : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_ssl : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_ssr : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_usl : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_usr : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_seq : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_peq : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_sneq : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_pneq : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_gte : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_gt : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_lte : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_lt : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
-val fresh_bin_rfa : ?loc:((loc, 'a) fixture) -> (bin, 'a) fixture
+val fresh_bin_add : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_sub : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_mul : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_div : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_mod : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_land : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_lor : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_band : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_bor : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_bxor : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_ssl : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_ssr : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_usl : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_usr : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_seq : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_peq : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_sneq : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_pneq : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_gte : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_gt : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_lte : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_lt : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
+val fresh_bin_rfa : ?bin:bin -> ?loc:loc -> (bin, 'a) fixture
 
 (** {3 Patterns} *)
 
-val fresh_patt_ground : ?loc:((loc, 'a) fixture) -> (patt, 'a) fixture
-val fresh_patt_bool : ?loc:((loc, 'a) fixture) -> ?value:((bool, 'a) fixture) -> (patt, 'a) fixture
-val fresh_patt_int : ?loc:((loc, 'a) fixture) -> ?lexeme:((string, 'a) fixture) -> (patt, 'a) fixture
-val fresh_patt_var : ?loc:((loc, 'a) fixture) -> ?lexeme:((string, 'a) fixture) -> (patt, 'a) fixture
-val fresh_patt_fun : ?loc:((loc, 'a) fixture) -> ?name:((name, 'a) fixture) -> ?params:((param list, 'a) fixture) -> (patt, 'a) fixture
+val fresh_patt_ground : ?patt:patt -> ?loc:loc -> (patt, 'a) fixture
+val fresh_patt_bool : ?patt:patt -> ?loc:loc -> ?value:bool -> (patt, 'a) fixture
+val fresh_patt_int : ?patt:patt -> ?loc:loc -> ?lexeme:string -> (patt, 'a) fixture
+val fresh_patt_var : ?patt:patt -> ?loc:loc -> ?lexeme:string -> (patt, 'a) fixture
+val fresh_patt_fun : ?patt:patt -> ?loc:loc -> ?name:name -> ?params:(param list) -> (patt, 'a) fixture
 
 (** {4 Parameters} *)
 
-val fresh_param : ?loc:((loc, 'a) fixture) -> ?patt:((patt, 'a) fixture) -> ?ty:((ty option, 'a) fixture) -> (param, 'a) fixture
+val fresh_param : ?param:param -> ?loc:loc -> ?patt:patt -> ?ty:(ty option) -> (param, 'a) fixture
 
 (** {3 Expressions} *)
 
-val fresh_expr_bool : ?loc:((loc, 'a) fixture) -> ?value:((bool, 'a) fixture) -> (expr, 'a) fixture
-val fresh_expr_int : ?loc:((loc, 'a) fixture) -> ?lexeme:((string, 'a) fixture) -> (expr, 'a) fixture
-val fresh_expr_id : ?loc:((loc, 'a) fixture) -> ?name:((name, 'a) fixture) -> (expr, 'a) fixture
-val fresh_expr_un : ?loc:((loc, 'a) fixture) -> ?op:((un, 'a) fixture) -> ?operand:((expr, 'a) fixture) -> (expr, 'a) fixture
-val fresh_expr_bin : ?loc:((loc, 'a) fixture) -> ?op:((bin, 'a) fixture) -> ?lhs:((expr, 'a) fixture) -> ?rhs:((expr, 'a) fixture) -> (expr, 'a) fixture
-val fresh_expr_cond : ?loc:((loc, 'a) fixture) -> ?cond:((expr, 'a) fixture) -> ?tru:((expr, 'a) fixture) -> ?fls:((expr, 'a) fixture) -> (expr, 'a) fixture
-val fresh_expr_let : ?loc:((loc, 'a) fixture) -> ?recur:((bool, 'a) fixture) -> ?bindings:((binding list, 'a) fixture) -> ?scope:((expr, 'a) fixture) -> (expr, 'a) fixture
-val fresh_expr_abs : ?loc:((loc, 'a) fixture) -> ?params:(param list) -> ?ret:((ty option, 'a) fixture) -> ?body:((expr, 'a) fixture) -> (expr, 'a) fixture
-val fresh_expr_app : ?loc:((loc, 'a) fixture) -> ?fn:((expr, 'a) fixture) -> ?args:((expr list, 'a) fixture) -> (expr, 'a) fixture
+val fresh_expr_bool : ?expr:expr -> ?loc:loc -> ?value:bool -> (expr, 'a) fixture
+val fresh_expr_int : ?expr:expr -> ?loc:loc -> ?lexeme:string -> (expr, 'a) fixture
+val fresh_expr_id : ?expr:expr -> ?loc:loc -> ?name:name -> (expr, 'a) fixture
+val fresh_expr_un : ?expr:expr -> ?loc:loc -> ?op:un -> ?operand:expr -> (expr, 'a) fixture
+val fresh_expr_bin : ?expr:expr -> ?loc:loc -> ?op:bin -> ?lhs:expr -> ?rhs:expr -> (expr, 'a) fixture
+val fresh_expr_cond : ?expr:expr -> ?loc:loc -> ?cond:expr -> ?tru:expr -> ?fls:expr -> (expr, 'a) fixture
+val fresh_expr_let : ?expr:expr -> ?loc:loc -> ?recur:bool -> ?bindings:(binding list) -> ?scope:expr -> (expr, 'a) fixture
+val fresh_expr_abs : ?expr:expr -> ?loc:loc -> ?params:(param list) -> ?ret:(ty option) -> ?body:expr -> (expr, 'a) fixture
+val fresh_expr_app : ?expr:expr -> ?loc:loc -> ?fn:expr -> ?args:(expr list) -> (expr, 'a) fixture
 
 (** {4 Bindings} *)
 
-val fresh_binding : ?loc:((loc, 'a) fixture) -> ?patt:((patt, 'a) fixture) -> ?ty:((ty option, 'a) fixture) -> ?value:expr -> (binding, 'a) fixture
+val fresh_binding : ?binding:binding -> ?loc:loc -> ?patt:patt -> ?ty:(ty option) -> ?value:expr -> (binding, 'a) fixture
 
 (** {3 Package Statements} *)
 
-val fresh_pkg_library : ?loc:((loc, 'a) fixture) -> ?id:((name, 'a) fixture) -> (pkg_stmt, 'a) fixture
-val fresh_pkg_executable : ?loc:((loc, 'a) fixture) -> ?id:((name, 'a) fixture) -> (pkg_stmt, 'a) fixture
+val fresh_pkg_library : ?pkg_stmt:pkg_stmt -> ?loc:loc -> ?name:name -> (pkg_stmt, 'a) fixture
+val fresh_pkg_executable : ?pkg_stmt:pkg_stmt -> ?loc:loc -> ?name:name -> (pkg_stmt, 'a) fixture
 
 (** {3 Imports} *)
 
-val fresh_path : ?loc:((loc, 'a) fixture) -> ?path:((string, 'a) fixture) -> (path, 'a) fixture
-val fresh_alias : ?loc:((loc, 'a) fixture) -> ?local:((name, 'a) fixture) -> ?path:((path, 'a) fixture) -> (alias, 'a) fixture
-val fresh_pkgs : ?loc:((loc, 'a) fixture) -> ?aliases:((alias list, 'a) fixture) -> (pkgs, 'a) fixture
-val fresh_import : ?loc:((loc, 'a) fixture) -> ?pkgs:((pkgs, 'a) fixture) -> (import, 'a) fixture
+val fresh_path : ?path:path -> ?loc:loc -> ?pkgpath:string -> (path, 'a) fixture
+val fresh_alias : ?alias:alias -> ?loc:loc -> ?local:name -> ?path:path -> (alias, 'a) fixture
+val fresh_pkgs : ?pkgs:pkgs -> ?loc:loc -> ?aliases:alias -> (pkgs, 'a) fixture
+val fresh_import : ?import:import -> ?loc:loc -> ?pkgs:pkgs -> (import, 'a) fixture
 
 (** {3 Top-Level Bindings} *)
 
-val fresh_top_ty : ?loc:((loc, 'a) fixture) -> ?local:((bool, 'a) fixture) -> ?bindings:((ty_binding list, 'a) fixture) -> (top, 'a) fixture
-val fresh_top_val : ?loc:((loc, 'a) fixture) -> ?binding:((binding, 'a) fixture) -> (top, 'a) fixture
-val fresh_top_def : ?loc:((loc, 'a) fixture) -> ?binding:((binding, 'a) fixture) -> (top, 'a) fixture
-val fresh_top_let : ?loc:((loc, 'a) fixture) -> ?recur:((bool, 'a) fixture) -> ?bindings:((binding list, 'a) fixture) -> (top, 'a) fixture
-val fresh_top_mod : ?loc:((loc, 'a) fixture) -> ?name:((name, 'a) fixture) -> ?params:((mod_param list, 'a) fixture) -> ?elems:((top list, 'a) fixture) -> (top, 'a) fixture
+val fresh_top_ty : ?top:top -> ?loc:loc -> ?local:bool -> ?bindings:(ty_binding list) -> (top, 'a) fixture
+val fresh_top_val : ?top:top -> ?loc:loc -> ?binding:binding -> (top, 'a) fixture
+val fresh_top_def : ?top:top -> ?loc:loc -> ?binding:binding -> (top, 'a) fixture
+val fresh_top_let : ?top:top -> ?loc:loc -> ?recur:bool -> ?bindings:(binding list) -> (top, 'a) fixture
+val fresh_top_mod : ?top:top -> ?loc:loc -> ?name:name -> ?params:(mod_param list) -> ?elems:(top list) -> (top, 'a) fixture
 
 (** {3 Files} *)
 
-val fresh_file : ?loc:((loc, 'a) fixture) -> ?pkg:((pkg, 'a) fixture) -> ?imports:((import list, 'a) fixture) -> ?tops:((top list, 'a) fixture) -> (file, 'a) fixture
+val fresh_file : ?file:file -> ?loc:loc -> ?pkg:pkg_stmt -> ?imports:(import list) -> ?tops:(top list) -> (file, 'a) fixture
 
 (** {2 Assertions} *)
 

@@ -20,7 +20,7 @@ let next_int_lexeme seq kontinue =
 let next_gensym seq kontinue =
   let next seq value =
     value
-      |> sprintf "gensym-%d"
+      |> sprintf "gensym%d"
       |> kontinue seq
   in
   Core.gen seq next
@@ -221,9 +221,9 @@ let fresh_un constr ?un ?loc =
   in
   fresh ?value:un next
 
-let fresh_un_neg = fresh_un Syntax.un_neg
-let fresh_un_lnot = fresh_un Syntax.un_lnot
-let fresh_un_bnot = fresh_un Syntax.un_bnot
+let fresh_un_neg ?un ?loc seq kontinue = fresh_un Syntax.un_neg ?un ?loc seq kontinue
+let fresh_un_lnot ?un ?loc seq kontinue = fresh_un Syntax.un_lnot ?un ?loc seq kontinue
+let fresh_un_bnot ?un ?loc seq kontinue = fresh_un Syntax.un_bnot ?un ?loc seq kontinue
 
 (* Binary Operators *)
 
@@ -236,29 +236,29 @@ let fresh_bin constr ?bin ?loc =
   in
   fresh ?value:bin next
 
-let fresh_bin_add = fresh_bin Syntax.bin_add
-let fresh_bin_sub = fresh_bin Syntax.bin_sub
-let fresh_bin_mul = fresh_bin Syntax.bin_mul
-let fresh_bin_div = fresh_bin Syntax.bin_div
-let fresh_bin_mod = fresh_bin Syntax.bin_mod
-let fresh_bin_land = fresh_bin Syntax.bin_land
-let fresh_bin_lor = fresh_bin Syntax.bin_lor
-let fresh_bin_band = fresh_bin Syntax.bin_band
-let fresh_bin_bor = fresh_bin Syntax.bin_bor
-let fresh_bin_bxor = fresh_bin Syntax.bin_bxor
-let fresh_bin_ssl = fresh_bin Syntax.bin_ssl  
-let fresh_bin_ssr = fresh_bin Syntax.bin_ssr    
-let fresh_bin_usl = fresh_bin Syntax.bin_usl      
-let fresh_bin_usr = fresh_bin Syntax.bin_usr
-let fresh_bin_seq = fresh_bin Syntax.bin_seq    
-let fresh_bin_peq = fresh_bin Syntax.bin_peq      
-let fresh_bin_sneq = fresh_bin Syntax.bin_sneq        
-let fresh_bin_pneq = fresh_bin Syntax.bin_pneq                      
-let fresh_bin_lte = fresh_bin Syntax.bin_lte        
-let fresh_bin_lt = fresh_bin Syntax.bin_lt        
-let fresh_bin_gte = fresh_bin Syntax.bin_gte        
-let fresh_bin_gt = fresh_bin Syntax.bin_gt                    
-let fresh_bin_rfa = fresh_bin Syntax.bin_rfa
+let fresh_bin_add ?bin ?loc seq kontinue = fresh_bin Syntax.bin_add ?bin ?loc seq kontinue 
+let fresh_bin_sub ?bin ?loc seq kontinue = fresh_bin Syntax.bin_sub ?bin ?loc seq kontinue 
+let fresh_bin_mul ?bin ?loc seq kontinue = fresh_bin Syntax.bin_mul ?bin ?loc seq kontinue 
+let fresh_bin_div ?bin ?loc seq kontinue = fresh_bin Syntax.bin_div ?bin ?loc seq kontinue 
+let fresh_bin_mod ?bin ?loc seq kontinue = fresh_bin Syntax.bin_mod ?bin ?loc seq kontinue 
+let fresh_bin_land ?bin ?loc seq kontinue = fresh_bin Syntax.bin_land ?bin ?loc seq kontinue 
+let fresh_bin_lor ?bin ?loc seq kontinue = fresh_bin Syntax.bin_lor ?bin ?loc seq kontinue 
+let fresh_bin_band ?bin ?loc seq kontinue = fresh_bin Syntax.bin_band ?bin ?loc seq kontinue 
+let fresh_bin_bor ?bin ?loc seq kontinue = fresh_bin Syntax.bin_bor ?bin ?loc seq kontinue 
+let fresh_bin_bxor ?bin ?loc seq kontinue = fresh_bin Syntax.bin_bxor ?bin ?loc seq kontinue 
+let fresh_bin_ssl ?bin ?loc seq kontinue = fresh_bin Syntax.bin_ssl ?bin ?loc seq kontinue   
+let fresh_bin_ssr ?bin ?loc seq kontinue = fresh_bin Syntax.bin_ssr ?bin ?loc seq kontinue     
+let fresh_bin_usl ?bin ?loc seq kontinue = fresh_bin Syntax.bin_usl ?bin ?loc seq kontinue       
+let fresh_bin_usr ?bin ?loc seq kontinue = fresh_bin Syntax.bin_usr ?bin ?loc seq kontinue 
+let fresh_bin_seq ?bin ?loc seq kontinue = fresh_bin Syntax.bin_seq ?bin ?loc seq kontinue     
+let fresh_bin_peq ?bin ?loc seq kontinue = fresh_bin Syntax.bin_peq ?bin ?loc seq kontinue       
+let fresh_bin_sneq ?bin ?loc seq kontinue = fresh_bin Syntax.bin_sneq ?bin ?loc seq kontinue         
+let fresh_bin_pneq ?bin ?loc seq kontinue = fresh_bin Syntax.bin_pneq ?bin ?loc seq kontinue                       
+let fresh_bin_lte ?bin ?loc seq kontinue = fresh_bin Syntax.bin_lte ?bin ?loc seq kontinue         
+let fresh_bin_lt ?bin ?loc seq kontinue = fresh_bin Syntax.bin_lt ?bin ?loc seq kontinue         
+let fresh_bin_gte ?bin ?loc seq kontinue = fresh_bin Syntax.bin_gte ?bin ?loc seq kontinue         
+let fresh_bin_gt ?bin ?loc seq kontinue = fresh_bin Syntax.bin_gt ?bin ?loc seq kontinue                     
+let fresh_bin_rfa ?bin ?loc seq kontinue = fresh_bin Syntax.bin_rfa ?bin ?loc seq kontinue 
 
 (* Patterns *)
 
@@ -427,55 +427,162 @@ let fresh_expr_app ?expr ?loc ?fn ?args:(args = []) =
   in
   fresh ?value:expr next
 
-(* Bindings*)
+(* Bindings *)
 
-(* let fresh_binding = fresh_bin Syntax.let fresh_binding ?bin ?loc:(patt = fresh_patt_ground ()) ?ty:(ty = None) ?value:(value  ?bin ?loc:(patt = fresh_patt_ground ()) ?ty:(ty = None) ?value:(value  *)
+let fresh_binding ?binding ?loc ?patt ?ty:(ty = None) ?value =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_patt_ground ?patt seq (fun seq patt ->
+        (* TODO: Fresh Ty Option *)
+        fresh_expr_int ?expr:value seq (fun seq value ->
+          seq
+            |> kontinue
+            |> Syntax.binding loc patt ty value)))
+  in
+  fresh ?value:binding next
 
 (* Package Statements *)
 
-let fresh_pkg_library ?loc:(loc = fresh_loc ()) ?id:(id = fresh_name ()) _ =
-  Syntax.pkg_library loc id
+let fresh_pkg_library ?pkg ?loc ?name =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name seq (fun seq name ->
+        seq
+          |> kontinue
+          |> Syntax.pkg_library loc name))
+  in
+  fresh ?value:pkg next
 
-let fresh_pkg_executable ?loc:(loc = fresh_loc ()) ?id:(id = fresh_name ()) _ =
-  Syntax.pkg_executable loc id
+let fresh_pkg_executable ?pkg ?loc ?name =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name seq (fun seq name ->
+        seq
+          |> kontinue
+          |> Syntax.pkg_executable loc name))
+  in
+  fresh ?value:pkg next
 
 (* Imports *)
 
-let path_seq = Core.seq_str ~prefix:"pkg/path-" ()
+let fresh_path ?path ?loc ?pkgpath =
+  let next_path seq kontinue =
+    let next seq value =
+      value
+        |> sprintf "path/to/pkg/%d"
+        |> kontinue seq
+    in
+    Core.gen seq next
+  in
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh ?value:pkgpath next_path seq (fun seq pkgpath ->
+        seq
+          |> kontinue
+          |> Syntax.path loc pkgpath))
+  in
+  fresh ?value:path next
 
-let fresh_path ?loc:(loc = fresh_loc ()) ?path:(path = Core.gen path_seq) _ =
-  Syntax.path loc path
+let fresh_alias ?alias ?loc ?local:(local = None) ?path =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      (* TODO: Fresh Name Option *)
+      fresh_path ?path seq (fun seq path ->
+        seq
+          |> kontinue
+          |> Syntax.alias loc local path))
+  in
+  fresh ?value:alias next
 
-let fresh_alias ?loc:(loc = fresh_loc ()) ?local ?path:(path = fresh_path ()) _ =
-  Syntax.alias loc local path
+let fresh_pkgs ?pkgs ?loc ?aliases:(aliases = []) =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      (* TODO: Fresh Alias List *)
+      seq
+        |> kontinue
+        |> Syntax.pkgs loc aliases)
+  in
+  fresh ?value:pkgs next
 
-let fresh_pkgs ?loc:(loc = fresh_loc ()) ?aliases:(aliases = []) _ =
-  Syntax.pkgs loc aliases
-
-let fresh_import ?loc:(loc = fresh_loc ()) ?pkgs:(pkgs = fresh_pkgs ()) _ =
-  Syntax.import loc pkgs
+let fresh_import ?import ?loc ?pkgs =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_pkgs ?pkgs seq (fun seq pkgs ->
+        seq
+          |> kontinue
+          |> Syntax.import loc pkgs))
+  in
+  fresh ?value:import next
 
 (* Top-Level Bindings *)
 
-let fresh_top_ty ?loc:(loc = fresh_loc ()) ?local:(local = false) ?bindings:(bindings = []) _ =
-  Syntax.top_ty loc local bindings
+let fresh_top_ty ?top ?loc ?local ?bindings:(bindings = []) =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_bool ?value:local seq (fun seq local ->
+        (* TODO: Fresh Ty Binding List *)
+        seq
+          |> kontinue
+          |> Syntax.top_ty loc local bindings))
+  in
+  fresh ?value:top next
 
-let fresh_top_val ?loc:(loc = fresh_loc ()) ?binding:(binding = fresh_binding ()) _ =
-  Syntax.top_val loc binding
+let fresh_top_val ?top ?loc ?binding =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_binding ?binding seq (fun seq binding ->
+        seq
+          |> kontinue
+          |> Syntax.top_val loc binding))
+  in
+  fresh ?value:top next
 
-let fresh_top_def ?loc:(loc = fresh_loc ()) ?binding:(binding = fresh_binding ()) _ =
-  Syntax.top_def loc binding
+let fresh_top_def ?top ?loc ?binding =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_binding ?binding seq (fun seq binding ->
+        seq
+          |> kontinue
+          |> Syntax.top_def loc binding))
+  in
+  fresh ?value:top next
 
-let fresh_top_let ?loc:(loc = fresh_loc ()) ?recur:(recur = false) ?bindings:(bindings = []) _ =
-  Syntax.top_let loc recur bindings 
+let fresh_top_let ?top ?loc ?recur ?bindings:(bindings = []) =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_bool ?value:recur seq (fun seq recur ->
+        (* TODO: Fresh Binding List *)
+        seq
+          |> kontinue
+          |> Syntax.top_let loc recur bindings))
+  in
+  fresh ?value:top next
 
-let fresh_top_mod ?loc:(loc = fresh_loc ()) ?name:(name = fresh_name ()) ?params:(params = []) ?elems:(elems = []) _ =
-  Syntax.top_mod loc name params elems
+let fresh_top_mod ?top ?loc ?name ?params:(params = []) ?elems:(elems = []) =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_name ?name seq (fun seq name ->
+        (* TODO: Fresh Param List *)
+        (* TODO: Fresh Top List *)
+        seq
+          |> kontinue
+          |> Syntax.top_mod loc name params elems))
+  in
+  fresh ?value:top next
 
 (* Files *)
 
-let fresh_file ?loc:(loc = fresh_loc ()) ?pkg:(pkg = fresh_pkg_library ()) ?imports:(imports = []) ?tops:(tops = []) _ =
-  Syntax.file loc pkg imports tops
+let fresh_file ?file ?loc ?pkg ?imports:(imports = []) ?tops:(tops = []) =
+  let next seq kontinue =
+    fresh_loc ?loc seq (fun seq loc ->
+      fresh_pkg_library ?pkg seq (fun seq pkg ->
+        (* TODO: Fresh Import List *)
+        (* TODO: Fresh Top List *)
+        seq
+          |> kontinue
+          |> Syntax.file loc pkg imports tops))
+  in
+  fresh ?value:file next
 
 (* Assertions *)
 

@@ -572,7 +572,7 @@ type top =
 type file = private
   | File of {
       loc:     loc;         (** The location of the file *)
-      pkg:     pkg;         (** The package statement *)
+      pkg:     pkg_stmt;    (** The package statement *)
       imports: import list; (** The import statements *)
       tops:    top list;    (** The top-level bindings *)
     }
@@ -1148,7 +1148,7 @@ val expr_app : loc -> expr -> expr list -> (expr -> 'a) -> 'a
  * {3 Bindings}
  *)
 
-val binding : loc -> patt -> ty option -> expr -> binding
+val binding : loc -> patt -> ty option -> expr -> (binding -> 'a) -> 'a
 (**
  * Construct a value binding
  *
@@ -1163,7 +1163,7 @@ val binding : loc -> patt -> ty option -> expr -> binding
  * {3 Package Statements}
  *)
 
-val pkg_library : loc -> name -> pkg_stmt
+val pkg_library : loc -> name -> (pkg_stmt -> 'a) -> 'a
 (**
  * Construct a library package.
  *
@@ -1172,7 +1172,7 @@ val pkg_library : loc -> name -> pkg_stmt
  * @return A library package
  *)
 
-val pkg_executable : loc -> name -> pkg_stmt
+val pkg_executable : loc -> name -> (pkg_stmt -> 'a) -> 'a
 (**
  * Construct an executable package.
  *
@@ -1185,7 +1185,7 @@ val pkg_executable : loc -> name -> pkg_stmt
  * {3 Imports}
  *)
 
-val path : loc -> string -> path
+val path : loc -> string -> (path -> 'a) -> 'a
 (**
  * Construct a package path.
  * 
@@ -1194,7 +1194,7 @@ val path : loc -> string -> path
  * @return A package path
  *)
 
-val alias : loc -> name option -> path -> alias
+val alias : loc -> name option -> path -> (alias -> 'a) -> 'a
 (**
  * Construct a package alias clause with an optional local name.
  *
@@ -1204,7 +1204,7 @@ val alias : loc -> name option -> path -> alias
  * @return An alias clause
  *)
 
-val alias_named : loc -> name -> path -> alias
+val alias_named : loc -> name -> path -> (alias -> 'a) -> 'a
 (**
  * Construct a locally named alias clause.  This is an alias for
  * [alias loc (Some name) path].
@@ -1215,7 +1215,7 @@ val alias_named : loc -> name -> path -> alias
  * @return An alias clause
  *)
 
-val alias_unnamed : loc -> path -> alias
+val alias_unnamed : loc -> path -> (alias -> 'a) -> 'a
 (**
  * Construct an alias clause using the default package name.  This is an alias
  * for [alias loc None path].
@@ -1225,7 +1225,7 @@ val alias_unnamed : loc -> path -> alias
  * @return An alias clause
  *)
 
-val pkgs : loc -> alias list -> pkgs
+val pkgs : loc -> alias list -> (pkgs -> 'a) -> 'a
 (**
  * Construct a package alias list.
  *
@@ -1234,7 +1234,7 @@ val pkgs : loc -> alias list -> pkgs
  * @return A package alias list 
  *)
 
-val import : loc -> pkgs -> import
+val import : loc -> pkgs -> (import -> 'a) -> 'a
 (**
  * Construct an import statement.
  *
@@ -1247,7 +1247,7 @@ val import : loc -> pkgs -> import
  * {3 Top-Level Bindings}
  *)
 
-val top_ty : loc -> bool -> ty_binding list -> top
+val top_ty : loc -> bool -> ty_binding list -> (top -> 'a) -> 'a
 (**
  * Construct a top-level type binding
  *
@@ -1257,7 +1257,7 @@ val top_ty : loc -> bool -> ty_binding list -> top
  * @return A top-level type binding
  *)
 
-val top_val : loc -> binding -> top
+val top_val : loc -> binding -> (top -> 'a) -> 'a
 (**
  * Construct a top-level value binding
  *
@@ -1266,7 +1266,7 @@ val top_val : loc -> binding -> top
  * @return A top-level value binding
  *)
 
-val top_def : loc -> binding -> top
+val top_def : loc -> binding -> (top -> 'a) -> 'a
 (**
  * Construct a top-level function definition
  *
@@ -1275,7 +1275,7 @@ val top_def : loc -> binding -> top
  * @return A top-level function definition
  *)
 
-val top_let : loc -> bool -> binding list -> top
+val top_let : loc -> bool -> binding list -> (top -> 'a) -> 'a
 (**
  * Construct a top-level local binding
  *
@@ -1285,7 +1285,7 @@ val top_let : loc -> bool -> binding list -> top
  * @return A top-level local binding
  *)
 
-val top_mod : loc -> name -> mod_param list -> top list -> top
+val top_mod : loc -> name -> mod_param list -> top list -> (top -> 'a) -> 'a
 (**
  * Construct a top-level module definition
  *
@@ -1300,7 +1300,7 @@ val top_mod : loc -> name -> mod_param list -> top list -> top
  * {3 Files}
  *)
 
-val file : loc -> pkg -> import list -> top list -> file
+val file : loc -> pkg_stmt -> import list -> top list -> (file -> 'a) -> 'a
 (**
  * Constructs a source file.
  * 
