@@ -102,7 +102,7 @@ Hardware
 
 All of the hardware sources are written in SystemVerilog, and tested in C++ using Verilator and GoogleTest.
 
-* `hdub` - A library of shared cores for building and testing softcore CPUs.
+* `cores` - A library of shared cores for building and testing softcore CPUs.
 * `riscv` - A straight RISC-V softcore CPU to serve as a baseline for comparison against PU/CC
 * `pucc` - The PU/CC softcore CPU
 
