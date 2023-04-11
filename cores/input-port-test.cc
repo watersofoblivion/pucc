@@ -21,7 +21,7 @@ namespace cores {
   TEST_F(InputPortTest, Set) {
     std::default_random_engine generator;
     std::uniform_int_distribution<int> distribution;
-    
+
     auto value = distribution(generator);
 
     port->Set(value);

@@ -38,7 +38,6 @@ cc_library(
     # "test-clock.cc",
     # "test-reset.cc",
   ],
-  alwayslink = True,
   deps = [
     ":cores",
   ],
@@ -80,6 +79,5 @@ cc_test(
     ":fixtures",
     ":unit-tests",
   ],
-  linkstatic = True,
   visibility = ["//visibility:private"],
 )
