@@ -1,8 +1,99 @@
 load("@//rules:verilog.bzl", "build_all_the_things")
 
-build_all_the_things(
+load("@//rules:verilog/param/int_enum.bzl", "verilog_param_int_enum")
+load("@//rules:verilog/port.bzl", "verilog_port")
+load("@//rules:verilog/core/interface.bzl", "verilog_core_interface")
+load("@//rules:verilog/core/implementation.bzl", "verilog_core_implementation")
+load("@//rules:verilog/core/core.bzl", "verilog_core")
+load("@//rules:verilog/core/unit.bzl", "verilog_core_gtest_unit_spec")
+
+verilog_param_int_enum(
+  name = "operand-width",
+  values = [32, 64],
+  default = 32,
+)
+
+verilog_port(
+  name = "lhs",
+  width_param = ":operand-width",
+)
+
+verilog_port(
+  name = "rhs",
+  width_param = ":operand-width",
+)
+
+verilog_port(
+  name = "result",
+  width_param = ":operand-width",
+)
+
+verilog_core_interface(
   name = "add-op",
-  impls = [
-    "native",
+  params = [
+    ":operand-width",
+  ],
+  inputs = [
+    ":lhs",
+    ":rhs",
+  ],
+  outputs = [
+    ":result",
   ],
 )
+
+verilog_core_implementation(
+  name = "native",
+  iface = "add-op",
+  module = "NativeAddOp",
+  srcs = [
+    "NativeAddOp.sv",
+  ],
+)
+
+verilog_core(
+  name = "add-op-core",
+  iface = ":add-op",
+  impls = [
+    ":native",
+  ]
+)
+
+verilog_core_gtest_unit_spec(
+  name = "add-op-unit-spec",
+  core = ":add-op-core",
+  hdrs = [
+    
+  ],
+  srcs = [
+
+  ],
+  deps = [
+
+  ],
+)
+
+cc_test(
+  name = "add-op-unit-test",
+  deps = [
+    ":add-op-unit-spec",
+  ]
+)
+
+# verilog_core_gtest_integration_spec(
+#   name = "add-op-integ",
+#   core = ":add-op-core",
+#   hdrs = [
+
+#   ],
+#   srcs = [
+
+#   ],
+#   deps = [
+
+#   ],
+# )
+
+# verilog_core_formal(
+#   name = "add-op-formal",
+# )

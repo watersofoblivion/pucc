@@ -2,13 +2,33 @@ load("@rules_verilog//verilog:defs.bzl", "verilog_module")
 load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 load("@rules_verilator//verilator:defs.bzl", "verilator_cc_library")
 
-# TODO: See how much of this can be generated.
+load("@//rules:verilog/providers.bzl", "VerilogParamIntInfo", "VerilogParamIntEnumInfo", "VerilogPortInfo")
 
+# Convert a dasherized name to upper camel case.
+# 
+# Example: foo-bar -> FooBar
 def camelize(str):
   return "".join([str.capitalize() for str in str.split("-")])
 
+# Convert a dasherized name into underscore.
+#
+# Example: foo-bar -> foo_bar
+def underscore(str):
+  return "_".join(str.split("-"))
+
+# Convert a dasherized name into a constant name.
+#
+# Example: foo-bar -> FOO_BAR
+def constantize(str):
+  return "_".join([str.upper() for str in str.split("-")])
+
+# Convert a name into a package-relative label
+# 
+# Example: foo-bar -> :foo-bar
 def labelize(name):
-  return ":%s" % name
+  return native.package_relative_label(name)
+
+################################
 
 def build_all_the_things(name, impls = []):
   # Camel-cased name
@@ -20,7 +40,7 @@ def build_all_the_things(name, impls = []):
   # A SystemVerilog header file that contains the interface for the core.  The
   # file should be named "<name>.interf.svh" and the interface should be named
   # "<name-camelized>".
-  interface_name = "%s-interface" % name
+  interface_name = "interface"
   interface_file = "%s.interf.sv" % name
   interface_module = camelize(name)
   interface_label = labelize(interface_name)
@@ -37,7 +57,7 @@ def build_all_the_things(name, impls = []):
   # A SystemVerilog module that wrires raw ports to the appropriate interface.
   # The file should be named "<name>.test.harness.sv" and the interface should
   # be named "<name-camelized>TestHarness".
-  test_harness_name = "%s-test-harness" % name
+  test_harness_name = "test-harness"
   test_harness_file = "%s.test.harness.sv" % name
   test_harness_module = camelize(test_harness_name)
   test_harness_label = labelize(test_harness_name)
@@ -57,7 +77,7 @@ def build_all_the_things(name, impls = []):
   #
   # The header file should be named "<name>.test.unit.h" and the implementation
   # should be named "<name>.test.unit.cc".
-  test_unit_lib_name = "%s-test-unit-lib" % name
+  test_unit_lib_name = "test-unit-lib"
   test_unit_lib_label = labelize(test_unit_lib_name)
   test_unit_header_file = "%s.test.unit.h" % name
   test_unit_impl_file = "%s.test.unit.cc" % name
@@ -67,6 +87,7 @@ def build_all_the_things(name, impls = []):
     srcs = [test_unit_impl_file],
     deps = [
         "@com_google_googletest//:gtest",
+        "//cores:cores",
     ],
     visibility = ["//visibility:private"],
   )
@@ -80,7 +101,7 @@ def build_all_the_things(name, impls = []):
   #
   # The header file should be named "<name>.test.integ.h" and the
   # implementation should be named "<name>.test.integ.cc".
-  test_integ_lib_name = "%s-test-integ-lib" % name
+  test_integ_lib_name = "test-integ-lib"
   test_integ_lib_label = labelize(test_integ_lib_name)
   test_integ_header_file = "%s.test.integ.h" % name
   test_integ_impl_file = "%s.test.integ.cc" % name
@@ -90,6 +111,7 @@ def build_all_the_things(name, impls = []):
     srcs = [test_integ_impl_file],
     deps = [
         "@com_google_googletest//:gtest",
+        "//cores:cores",
     ],
     visibility = ["//visibility:private"],
   )
@@ -102,7 +124,7 @@ def build_all_the_things(name, impls = []):
     # A SystemVerilog file that contains a particular implementation of the
     # interface.  The file should be named "<name>.impl.<impl>.sv" and the
     # module should be named "<name-camelized>Impl<impl-camelized>".
-    impl_name = "%s-impl-%s" % (name, impl)
+    impl_name = "impl-%s" % impl
     impl_file_prefix = "%s.impl.%s" % (name, impl)
     impl_file = "%s.sv" % impl_file_prefix
     impl_module = camelize(impl_name)
@@ -164,6 +186,7 @@ def build_all_the_things(name, impls = []):
       ],
       deps = [
         "@com_google_googletest//:gtest",
+        "//cores:cores",
         test_unit_lib_label,
         test_unit_verilated_label,
       ],
@@ -213,6 +236,7 @@ def build_all_the_things(name, impls = []):
       ],
       deps = [
         "@com_google_googletest//:gtest",
+        "//cores:cores",
         test_integ_lib_label,
         test_integ_verilated_label,
       ],

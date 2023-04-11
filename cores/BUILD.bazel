@@ -1,0 +1,85 @@
+load("@rules_cc//cc:defs.bzl", "cc_test")
+
+cc_library(
+  name = "cores",
+  hdrs = [
+    "test-base.h",
+    "port.h",
+    "input-port.h",
+    "output-port.h",
+    "clock.h",
+    "reset.h",
+  ],
+  srcs = [
+    "port.cc",
+    "clock.cc",
+    "reset.cc",
+  ],
+  deps = [
+    "@com_google_googletest//:gtest",
+  ],
+  alwayslink = True,
+  visibility = ["//visibility:public"],
+)
+
+cc_library(
+  name = "fixtures",
+  hdrs = [
+    "test-port.h",
+    "test-input-port.h",
+    "test-output-port.h",
+    # "test-clock.h",
+    # "test-reset.h",
+  ],
+  srcs = [
+    "test-port.cc",
+    "test-input-port.cc",
+    "test-output-port.cc",
+    # "test-clock.cc",
+    # "test-reset.cc",
+  ],
+  alwayslink = True,
+  deps = [
+    ":cores",
+  ],
+  visibility = ["//visibility:private"],
+)
+
+cc_library(
+  name = "unit-tests",
+  hdrs = [
+    "port-test.h",
+    "input-port-test.h",
+    "output-port-test.h",
+    # "clock-test.h",
+    # "reset-test.h",
+  ],
+  srcs = [
+    "port-test.cc",
+    "input-port-test.cc",
+    "output-port-test.cc",
+    # "clock-test.cc",
+    # "reset-test.cc",
+  ],
+  alwayslink = True,
+  deps = [
+    ":cores",
+    ":fixtures",
+  ],
+  visibility = ["//visibility:private"],
+)
+
+cc_test(
+  name = "unit",
+  srcs = [
+    "test-main.cc",
+  ],
+  deps = [
+    "@com_google_googletest//:gtest",
+    ":cores",
+    ":fixtures",
+    ":unit-tests",
+  ],
+  linkstatic = True,
+  visibility = ["//visibility:private"],
+)

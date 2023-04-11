@@ -1,4 +1,4 @@
-module AddOpImplNative (iface);
+module NativeAddOp (iface);
   /*
    * Parameters
    */

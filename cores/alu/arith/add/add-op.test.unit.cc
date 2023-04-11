@@ -13,4 +13,6 @@ namespace cores::alu::arith::add {
 
     void AddOpUnitTest::TearDown() {
     }
+
+    TEST_F(AddOp)
 }

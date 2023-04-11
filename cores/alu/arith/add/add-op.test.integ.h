@@ -3,8 +3,9 @@
 #include <gtest/gtest.h>
 // #include <verilated.h>
 
-#ifndef CORES_ALU_ARITH_ADD_INTEG_TEST
-#define CORES_ALU_ARITH_ADD_INTEG_TEST
+#include "test-base.h"
+
+#pragma once
 
 namespace cores::alu::arith::add {
   class AddOp {
@@ -14,12 +15,10 @@ namespace cores::alu::arith::add {
     virtual const int32_t Res() = 0;
   };
 
-  class AddOpIntegTest : public ::testing::Test {
+  class AddOpIntegTest : public TestBase<AddOp> {
     protected:
 
       void SetUp();
       void TearDown();
   };
 }
-
-#endif // CORES_ALU_ARITH_ADD_INTEG_TEST
