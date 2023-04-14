@@ -6,10 +6,12 @@
 
 #include "cores/cores.h"
 
+#include "device-port.h"
+
 namespace cores {
-  class VerilatedInputPortTest : public ::testing::Test {
+  class DevicePortTest : public ::testing::Test {
   protected:
-    InputPort<int>* port;
+    Port* port;
 
     void SetUp() final;
     void TearDown() final;

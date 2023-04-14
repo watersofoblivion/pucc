@@ -167,3 +167,79 @@ cc_test(
   ],
   visibility = ["//visibility:private"],
 )
+
+###
+# Device Library
+###
+
+# Device Library
+cc_library(
+  name = "device",
+  hdrs = [
+    "device.h",
+  ],
+  srcs = [
+    "device-port.h",
+    "device-input-port.h",
+    "device-output-port.h",
+    "device-clock.h",
+    "device-reset.h",
+  ],
+  deps = [
+    "@com_google_googletest//:gtest",
+    ":cores",
+  ],
+  visibility = ["//visibility:public"],
+)
+
+# Unit Test Fixtures
+cc_library(
+  name = "device-fixtures",
+  hdrs = [
+
+  ],
+  srcs = [
+
+  ],
+  deps = [
+    ":cores",
+    ":device",
+  ],
+  visibility = ["//visibility:private"],
+)
+
+# Unit Test Library
+cc_library(
+  name = "device-unit-tests",
+  hdrs = [
+    "device-port-test.h",
+    "device-input-port-test.h",
+    "device-output-port-test.h",
+  ],
+  srcs = [
+
+  ],
+  deps = [
+    "@com_google_googletest//:gtest",
+    ":cores",
+    ":device",
+    ":device-fixtures",
+  ],
+  visibility = ["//visibility:private"],
+)
+
+# Unit Tests
+cc_test(
+  name = "device-unit-test",
+  srcs = [
+    "device-unit-test-main.cc",
+  ],
+  deps = [
+    "@com_google_googletest//:gtest",
+    ":cores",
+    ":device",
+    ":device-fixtures",
+    ":device-unit-tests",
+  ],
+  visibility = ["//visibility:private"],
+)

@@ -6,10 +6,11 @@
 
 #include "cores/cores.h"
 
+
 namespace cores {
-  class VerilatedInputPortTest : public ::testing::Test {
+  class DeviceOutputPortTest : public ::testing::Test {
   protected:
-    InputPort<int>* port;
+    OutputPort<int>* port;
 
     void SetUp() final;
     void TearDown() final;

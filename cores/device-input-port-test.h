@@ -7,7 +7,7 @@
 #include "cores/cores.h"
 
 namespace cores {
-  class VerilatedInputPortTest : public ::testing::Test {
+  class DeviceInputPortTest : public ::testing::Test {
   protected:
     InputPort<int>* port;
 
