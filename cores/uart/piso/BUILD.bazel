@@ -1,0 +1,40 @@
+load("@rules_verilog//verilog:defs.bzl", "verilog_module")
+load("@rules_cc//cc:defs.bzl", "cc_test")
+load("@rules_verilator//verilator:defs.bzl", "verilator_cc_library")
+
+# Source
+
+verilog_module(
+    name = "core",
+    top = "Piso",
+    srcs = [
+      "Piso.sv",
+    ],
+    visibility = ["//visibility:public"]
+)
+
+# Tests
+
+verilator_cc_library(
+    name = "verilated",
+    module = ":core",
+    vopts = [],
+    visibility = ["//visibility:private"]
+)
+
+cc_test(
+    name = "test",
+    size = "small",
+    srcs = [
+        "test.h",
+        "test.cc",
+        "test-main.cc",
+    ],
+    deps = [
+        "@com_google_googletest//:gtest",
+        "//cores:cores",
+        "//cores:verilated",
+        ":verilated",
+    ],
+    visibility = ["//visibility:private"]
+)

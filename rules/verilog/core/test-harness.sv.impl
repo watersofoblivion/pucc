@@ -1,0 +1,6 @@
+module {{name}}TestHarness ({{port_list}}, dut);
+  {{params}}
+  {{ports}}
+  {{name}}.Injected dut;
+  {{impl}}
+endmodule;

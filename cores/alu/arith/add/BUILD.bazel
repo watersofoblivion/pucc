@@ -59,25 +59,15 @@ verilog_core(
   ]
 )
 
-verilog_core_gtest_unit_spec(
+verilog_core_unit_spec(
   name = "add-op-unit-spec",
   core = ":add-op-core",
   hdrs = [
     
   ],
-  srcs = [
-
-  ],
   deps = [
 
   ],
-)
-
-cc_test(
-  name = "add-op-unit-test",
-  deps = [
-    ":add-op-unit-spec",
-  ]
 )
 
 # verilog_core_gtest_integration_spec(

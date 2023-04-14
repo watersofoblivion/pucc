@@ -1,16 +1,23 @@
 load("@rules_cc//cc:defs.bzl", "cc_test")
 
+###
+# Cores Library
+###
+
+# Library
 cc_library(
   name = "cores",
   hdrs = [
     "test-base.h",
+    "cores.h",
+  ],
+  srcs = [
     "port.h",
     "input-port.h",
     "output-port.h",
     "clock.h",
     "reset.h",
-  ],
-  srcs = [
+
     "port.cc",
     "clock.cc",
     "reset.cc",
@@ -22,8 +29,9 @@ cc_library(
   visibility = ["//visibility:public"],
 )
 
+# Test Fixtures
 cc_library(
-  name = "fixtures",
+  name = "cores-fixtures",
   hdrs = [
     "test-port.h",
     "test-input-port.h",
@@ -44,8 +52,9 @@ cc_library(
   visibility = ["//visibility:private"],
 )
 
+# Unit Test Library
 cc_library(
-  name = "unit-tests",
+  name = "cores-unit-tests",
   hdrs = [
     "port-test.h",
     "input-port-test.h",
@@ -63,21 +72,98 @@ cc_library(
   alwayslink = True,
   deps = [
     ":cores",
-    ":fixtures",
+    ":cores-fixtures",
   ],
   visibility = ["//visibility:private"],
 )
 
+# Unit Tests
 cc_test(
-  name = "unit",
+  name = "cores-unit-test",
   srcs = [
-    "test-main.cc",
+    "cores-unit-test-main.cc",
   ],
   deps = [
     "@com_google_googletest//:gtest",
     ":cores",
-    ":fixtures",
-    ":unit-tests",
+    ":cores-fixtures",
+    ":cores-unit-tests",
+  ],
+  visibility = ["//visibility:private"],
+)
+
+###
+# Verilated Cores Library
+###
+
+# Verilator Library
+cc_library(
+  name = "verilated",
+  hdrs = [
+    "verilated.h",
+  ],
+  srcs = [
+    "verilated-port.h",
+    "verilated-input-port.h",
+    "verilated-output-port.h",
+    "verilated-clock.h",
+    "verilated-reset.h",
+  ],
+  deps = [
+    "@com_google_googletest//:gtest",
+    ":cores",
+  ],
+  visibility = ["//visibility:public"],
+)
+
+# Unit Test Fixtures
+cc_library(
+  name = "verilated-fixtures",
+  hdrs = [
+
+  ],
+  srcs = [
+
+  ],
+  deps = [
+    ":cores",
+    ":verilated",
+  ],
+  visibility = ["//visibility:private"],
+)
+
+# Unit Test Library
+cc_library(
+  name = "verilated-unit-tests",
+  hdrs = [
+    "verilated-port-test.h",
+    "verilated-input-port-test.h",
+    "verilated-output-port-test.h",
+  ],
+  srcs = [
+
+  ],
+  deps = [
+    "@com_google_googletest//:gtest",
+    ":cores",
+    ":verilated",
+    ":verilated-fixtures",
+  ],
+  visibility = ["//visibility:private"],
+)
+
+# Unit Tests
+cc_test(
+  name = "verilated-unit-test",
+  srcs = [
+    "verilated-unit-test-main.cc",
+  ],
+  deps = [
+    "@com_google_googletest//:gtest",
+    ":cores",
+    ":verilated",
+    ":verilated-fixtures",
+    ":verilated-unit-tests",
   ],
   visibility = ["//visibility:private"],
 )
