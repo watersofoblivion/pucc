@@ -2,28 +2,43 @@
  * A UART Receiver
  */
 
-module UartRx ();
-  // Configuration
-  parameter CLOCK_RATE_HZ = 100000000;
-  parameter BAUD_RATE = 9600;
+module UartRx8n1 (clk, rst, rx, valid, data, ready);
+  /*
+   * Configuration
+   */
 
+  // Parameters
+  parameter CLOCK_RATE_HZ = 100_000_000;
+  parameter BAUD_RATE = 9_600;
+ 
+  // Useful Constants
   localparam DATA_BITS = 8;
   localparam STOP_BITS = 1;
   localparam CLOCKS_PER_TICK = CLOCK_RATE_HZ / BAUD_RATE / 2;
+  localparam SYNC_TICKS = 3;
+  localparam BIT_TICKS = 2;
+
+  /*
+   * Ports
+   */
 
   // Clock and Reset
-  input logic clock;
-  input locic reset;
+  input logic clk;
+  input locic rst;
 
   // Serial Data
   input logic rx;
 
   // Received data
   output logic valid;
-  output logic [7:0] data;
+  output logic [DATA_BITS-1:0] data;
 
   // Consumer
   input logic ready;
+
+  /*
+   * Implementation
+   */
 
   // States
   enum {IDLE, SYNC, RX, STOP, VALID} state_t;

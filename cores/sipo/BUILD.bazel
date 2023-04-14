@@ -6,9 +6,9 @@ load("@rules_verilator//verilator:defs.bzl", "verilator_cc_library")
 
 verilog_module(
     name = "core",
-    top = "Piso",
+    top = "Sipo",
     srcs = [
-      "Piso.sv",
+      "Sipo.sv",
     ],
     visibility = ["//visibility:public"]
 )

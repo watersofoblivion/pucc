@@ -2,7 +2,26 @@
  * A UART Transmitter
  */
 
-module UartTx ();
+module UartTx8n1 (clk, rst, tx, valid, data, ready);
+  /*
+   * Configuration
+   */
+
+  // Parameters
+  parameter CLOCK_RATE_HZ = 100_000_000;
+  parameter BAUD_RATE = 9_600;
+ 
+  // Useful Constants
+  localparam DATA_BITS = 8;
+  localparam STOP_BITS = 1;
+  localparam CLOCKS_PER_TICK = CLOCK_RATE_HZ / BAUD_RATE / 2;
+  localparam SYNC_TICKS = 3;
+  localparam BIT_TICKS = 2;
+
+  /*
+   * Ports
+   */
+
   // Clock and Reset
   input logic clock;
   input logic reset;
@@ -14,6 +33,10 @@ module UartTx ();
 
   // Data
   output logic tx;
+
+  /*
+   * Implementation
+   */
 
   // States
   enum {
