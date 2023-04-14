@@ -1,8 +1,8 @@
-#include "input-port.h"
-
 #pragma once
 
+#include "input-signal.h"
+
 namespace cores {
-  class Reset : public InputPort<bool> {
+  class Reset : public InputSignal {
   };
 }

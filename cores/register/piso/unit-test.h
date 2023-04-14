@@ -1,3 +1,5 @@
+#pragma once
+
 #include <memory>
 
 #include <gtest/gtest.h>
@@ -7,43 +9,28 @@
 
 #include "VPiso.h"
 
-#pragma once
-
 namespace cores::uart {
-  class PisoDut {
-    const std::unique_ptr<VPiso> dut;
-    const Clock clk;
-    const Reset rst;
+  class PisoDut : public ClockedDesign {
+    const InputSignal& input_valid;
+    const InputBus<uint8_t>& input_data;
+    const OutputSignal& input_ready;
 
-    const InputPort input_valid;
-    const InputPort input_data;
-    const OutputPort input_ready;
-
-    const OutputPort output_valid;
-    const OutputPort output_bit;
-    const InputPort input_ready;
+    const OutputSignal& output_valid;
+    const OutputSignal& output_bit;
+    const InputSignal& output_ready;
 
   public:
-    PisoDut();
-    ~PisoDut();
+    ~PisoDut() = default;
 
-    Clock& Clock();
-    Reset& Reset();
+    InputSignal& InputValid();
+    InputBus<uint8_t>& InputData();
+    OutputSignal& InputReady();
 
-    InputPort& InputValid();
-    InputPort& InputData();
-    OutputPort& InputReady();
-
-    OutputPort& OutputValid();
-    OutputPort& OutputBit();
-    InputPort& InputReady();
+    OutputSignal& OutputValid();
+    OutputSignal& OutputBit();
+    InputSignal& OutputReady();
   };
 
-  class PisoTest : public ::testing::Test {
-  protected:
-    PisoDut dut;
-
-    void SetUp() override;
-    void TearDown() override;
+  class PisoTest : public ClockedDesignTest<PisoDut> {
   };
 }

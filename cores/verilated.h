@@ -2,8 +2,9 @@
 
 #include "cores/cores.h"
 
-#include "verilated-port.h"
-#include "verilated-input-port.h"
-#include "verilated-output-port.h"
+#include "verilated-input-bus.h"
+#include "verilated-output-bus.h"
+#include "verilated-input-signal.h"
+#include "verilated-output-signal.h"
 #include "verilated-clock.h"
 #include "verilated-reset.h"

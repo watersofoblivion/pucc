@@ -1,5 +1,3 @@
-#include <cstdint>
-
 #pragma once
 
 namespace cores {

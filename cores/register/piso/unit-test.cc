@@ -4,55 +4,41 @@
 #include <verilated.h>
 
 #include "cores/cores.h"
-#include "cores/verilated.h"
+// #include "cores/verilated.h"
 
 #include "VPiso.h"
-#include "test.h"
+#include "unit-test.h"
 
 namespace cores::uart {
   PisoDut::PisoDut() {
-    dut = std::unique_ptr<VPiso>(new VPiso("PISO DUT"));
   }
 
-  ~PisoDut::PisoDut() {
-    dut->final();
+  InputSignal& PisoDut::InputValid() {
+    return input_valid;
   }
 
-  cores::Clock& PisoDut::Clock() {
-    return this.clk;
+  InputBus<uint8_t>& PisoDut::InputData() {
+    return input_data;
   }
 
-  Reset& PisoDut::Reset() {
-    return this.rst;
+  OutputSignal& PisoDut::InputReady() {
+    return input_ready;
   }
 
-  InputPort& PisoDut::InputValid() {
-    return this.input_valid;
+  OutputSignal& PisoDut::OutputValid() {
+    return output_valid;
   }
 
-  InputPort& PisoDut::InputData() {
-    return this.input_data;
+  OutputSignal& PisoDut::OutputBit() {
+    return output_bit;
   }
 
-  OutputPort& PisoDut::InputReady() {
-    return this.input_ready;
-  }
-
-  OutputPort& PisoDut::OutputValid() {
-    return this.output_valid;
-  }
-
-  OutputPort& PisoDut::OutputBit() {
-    return this.output_bit;
-  }
-
-  InputPort& PisoDut::InputReady() {
-    return this.input_ready;
+  InputSignal& PisoDut::OutputReady() {
+    return output_ready;
   }
 
   TEST_F(PisoTest, Reset) {
-    dut.Reset().Reset();
-    dut.Clock().Tick();
+    dut.Reset();
 
     dut.InputReady().Expect(1);
     dut.OutputValid().Expect(0);
@@ -64,7 +50,7 @@ namespace cores::uart {
     dut.InputValid().Set(1);
     dut.InputData().Set(0xFF);
 
-    dut.Clock().Tick();
+    dut.Tick();
 
     dut.OutputValid().Expect(0);
   }

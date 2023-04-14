@@ -1,9 +1,9 @@
-#include "input-port.h"
-
 #pragma once
 
+#include "input-signal.h"
+
 namespace cores {
-  class Clock : public InputPort<bool> {
+  class Clock : public InputSignal {
     void Toggle();
   };
 }

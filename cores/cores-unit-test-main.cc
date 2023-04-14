@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "port-test.h"
-#include "input-port-test.h"
-#include "output-port-test.h"
+#include "input-bus-test.h"
+#include "output-bus-test.h"
+#include "input-signal-test.h"
+// #include "output-signal-test.h"
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);

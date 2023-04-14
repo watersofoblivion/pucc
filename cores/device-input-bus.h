@@ -8,10 +8,10 @@
 
 namespace cores {
   template <typename WIDTH>
-  class DeviceOutputBus : public DeviceBus {
+  class DeviceInputBus : public DeviceBus {
   public:
-    virtual ~DeviceOutputBus() = default;
+    virtual ~DeviceInputBus() = default;
 
-    virtual WIDTH Get() = 0;
+    virtual void Set(const WIDTH) = 0;
   };
 }

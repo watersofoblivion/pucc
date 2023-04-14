@@ -2,15 +2,15 @@
 
 #include "cores/cores.h"
 
-#include "device-bus.h"
+#include "verilated-port.h"
 
 #pragma once
 
 namespace cores {
   template <typename WIDTH>
-  class DeviceOutputBus : public DeviceBus {
+  class VerilatedOutputBus : public VerilatedBus {
   public:
-    virtual ~DeviceOutputBus() = default;
+    virtual ~VerilatedOutputBus() = default;
 
     virtual WIDTH Get() = 0;
   };

@@ -2,8 +2,7 @@
 
 #include "cores/cores.h"
 
-#include "device-port.h"
-#include "device-input-port.h"
-#include "device-output-port.h"
+#include "device-input-bus.h"
+#include "device-output-bus.h"
 #include "device-clock.h"
 #include "device-reset.h"
