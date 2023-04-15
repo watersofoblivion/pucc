@@ -4,8 +4,8 @@
 
 #include "cores/cores.h"
 
-#include "verilator-signal.h"
 #include "verilator-input.h"
+#include "verilator-signal.h"
 
 namespace cores {
   class VerilatorInputSignal : public VerilatorInput, public VerilatorSignal, public InputSignal {

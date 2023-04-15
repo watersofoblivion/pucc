@@ -4,8 +4,8 @@
 
 #include "cores/cores.h"
 
-#include "verilator-bus.h"
 #include "verilator-input.h"
+#include "verilator-bus.h"
 
 namespace cores {
   template <typename WIDTH>

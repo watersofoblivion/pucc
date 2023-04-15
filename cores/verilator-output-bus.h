@@ -1,11 +1,13 @@
 #pragma once
 
+#include <cstdint>
+
 #include "verilated.h"
 
 #include "cores/cores.h"
 
-#include "verilator-port.h"
 #include "verilator-output.h"
+#include "verilator-bus.h"
 
 namespace cores {
   template <typename WIDTH>

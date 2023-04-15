@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-
 #include "input.h"
 #include "bus.h"
 
