@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "cores/cores.h"
 #include "verilator-signal.h"
 

@@ -9,10 +9,12 @@
 #include "output-bus-test.h"
 
 namespace cores {
+  void OutputBusTest::SetUp() {
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    generator.seed(seed);
+  }
+
   TEST_F(OutputBusTest, Expect) {
-    std::default_random_engine generator;
-    std::uniform_int_distribution<int> distribution;
-    
     auto value = distribution(generator);
     test_bus.Set(value);
 
@@ -20,9 +22,6 @@ namespace cores {
   }
 
   TEST_F(OutputBusTest, Assert) {
-    std::default_random_engine generator;
-    std::uniform_int_distribution<int> distribution;
-    
     auto value = distribution(generator);
     test_bus.Set(value);
 

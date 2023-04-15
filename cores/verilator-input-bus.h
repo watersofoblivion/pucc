@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include "verilated.h"
+
 #include "cores/cores.h"
 
 #include "verilator-input.h"
@@ -26,6 +28,17 @@ namespace cores {
     virtual ~VerilatorInputBus() = default;
 
     virtual void Set(const bool value) final {
+      this->wire = value;
+    }
+  };
+
+  template<std::size_t SIZE>
+  class VerilatorInputBus<VlWide<SIZE>> : public VerilatorInput, public VerilatorBus<VlWide<SIZE>>, public InputBus<VlWide<SIZE>> {
+  public:
+    VerilatorInputBus(VlWide<SIZE>& wire) : VerilatorBus<VlWide<SIZE>>(wire) {}
+    virtual ~VerilatorInputBus() = default;
+
+    virtual void Set(const VlWide<SIZE> value) final {
       this->wire = value;
     }
   };

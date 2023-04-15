@@ -3,6 +3,11 @@
 #include "verilator-bus-test.h"
 
 namespace cores {
+  void VerilatorBusTest::SetUp() {
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    generator.seed(seed);
+  }
+
   void VerilatorBusTest::TearDown() {
     fixtures.final();
   }
@@ -71,25 +76,25 @@ namespace cores {
     large_output_bus.Assert(value);
   }
 
-  // TEST_F(VerilatorBusTest, ExpectXLarge) {
-  //   VlWide<3> value;
-  //   value[0] = 0x0EFFFFFF;
-  //   value[1] = 0xFFFFFFFF;
-  //   value[2] = 0xFFFFFFFF;
+  TEST_F(VerilatorBusTest, ExpectXLarge) {
+    VlWide<3> value;
+    value[0] = distribution_medium(generator) & 0x00FFFFFF;
+    value[1] = distribution_medium(generator);
+    value[2] = distribution_medium(generator);
 
-  //   xlarge_input_bus.Set(value);
-  //   fixtures.eval();
-  //   xlarge_output_bus.Expect(value);
-  // }
+    xlarge_input_bus.Set(value);
+    fixtures.eval();
+    xlarge_output_bus.Expect(value);
+  }
 
-  // TEST_F(VerilatorBusTest, AssertXLarge) {
-  //   VlWide<3> value;
-  //   value[0] = 0x0EFFFFFF;
-  //   value[1] = 0xFFFFFFFF;
-  //   value[2] = 0xFFFFFFFF;
+  TEST_F(VerilatorBusTest, AssertXLarge) {
+    VlWide<3> value;
+    value[0] = distribution_medium(generator) & 0x00FFFFFF;
+    value[1] = distribution_medium(generator);
+    value[2] = distribution_medium(generator);
 
-  //   xlarge_input_bus.Set(value);
-  //   fixtures.eval();
-  //   xlarge_output_bus.Assert(value);
-  // }
+    xlarge_input_bus.Set(value);
+    fixtures.eval();
+    xlarge_output_bus.Assert(value);
+  }
 }

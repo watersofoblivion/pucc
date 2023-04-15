@@ -40,17 +40,22 @@ namespace cores {
     }
   };
 
-  // template <std::size_t SIZE>
-  // class VerilatorOutputBus<VlWide<SIZE>> : public VerilatorOutput, public VerilatorBus<VlWide<SIZE>>, public OutputBus<VlWide<SIZE>> {
-  //   VerilatorOutputBus(VlWide<SIZE> wire) : VerilatorBus<::VlWide<SIZE>>(wire) {
-  //   }
+  template <std::size_t SIZE>
+  class VerilatorOutputBus<VlWide<SIZE>> : public VerilatorOutput, public VerilatorBus<VlWide<SIZE>>, public OutputBus<VlWide<SIZE>> {
+  public:
+    VerilatorOutputBus(VlWide<SIZE> wire) : VerilatorBus<VlWide<SIZE>>(wire) {}
+    virtual ~VerilatorOutputBus() = default;
 
-  //   virtual VerilatorOutputBus() = default;
+    virtual void Expect(const VlWide<SIZE> expected) {
+      for (int i = 0; i < SIZE; i++) {
+        EXPECT_EQ(this->wire[i], expected[i]);
+      }
+    }
 
-  //   virtual void Expect(const VlWide<SIZE> expected) {
-  //   }
-
-  //   virtual void Assert(const VlWide<SIZE> expected) {
-  //   }
-  // };
+    virtual void Assert(const VlWide<SIZE> expected) {
+      for (int i = 0; i < SIZE; i++) {
+        ASSERT_EQ(this->wire[i], expected[i]);
+      }
+    }
+  };
 }
