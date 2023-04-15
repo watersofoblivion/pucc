@@ -9,8 +9,6 @@
 #include "output-bus.h"
 #include "input-signal.h"
 #include "output-signal.h"
-// #include "clock.h"
-// #include "reset.h"
 
 #include "design.h"
 #include "combinatorial-design.h"

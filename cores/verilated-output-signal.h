@@ -7,7 +7,7 @@
 #pragma once
 
 namespace cores {
-  class VerilatedOutputSignal : public OutputSignal {
+  class VerilatedOutputSignal : public VerilatedOutput, public VerilatedSignal, public OutputSignal {
   public:
     virtual ~VerilatedOutputSignal() = default;
   };

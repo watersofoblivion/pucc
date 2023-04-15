@@ -1,3 +1,5 @@
+load("@rules_verilog//verilog:defs.bzl", "verilog_module")
+load("@rules_verilator//verilator:defs.bzl", "verilator_cc_library")
 load("@rules_cc//cc:defs.bzl", "cc_test")
 
 ###
@@ -20,20 +22,14 @@ cc_library(
     "output-bus.h",
     "input-signal.h",
     "output-signal.h",
-    # "clock.h",
-    # "reset.h",
     "design.h",
     "combinatorial-design.h",
     "clocked-design.h",
-
     "design-test.h",
     "combinatorial-design-test.h",
     "clocked-design-test.h",
-
     "input-signal.cc",
     "output-signal.cc",
-    # "clock.cc",
-    # "reset.cc",
   ],
   deps = [
     "@com_google_googletest//:gtest",
@@ -50,16 +46,12 @@ cc_library(
     "test-output-bus.h",
     "test-input-signal.h",
     "test-output-signal.h",
-    # "test-clock.h",
-    # "test-reset.h",
   ],
   srcs = [
     "test-input-bus.cc",
     "test-output-bus.cc",
     "test-input-signal.cc",
     "test-output-signal.cc",
-    # "test-clock.cc",
-    # "test-reset.cc",
   ],
   deps = [
     ":cores",
@@ -76,16 +68,12 @@ cc_library(
     "output-bus-test.h",
     "input-signal-test.h",
     "output-signal-test.h",
-    # "clock-test.h",
-    # "reset-test.h",
   ],
   srcs = [
     "input-bus-test.cc",
     "output-bus-test.cc",
     "input-signal-test.cc",
     "output-signal-test.cc",
-    # "clock-test.cc",
-    # "reset-test.cc",
   ],
   alwayslink = True,
   deps = [
@@ -122,12 +110,18 @@ cc_library(
     "verilated.h",
   ],
   srcs = [
+    "verilated-port.h",
+    "verilated-bus.h",
+    "verilated-signal.h",
+    "verilated-input.h",
+    "verilated-output.h",
     "verilated-input-bus.h",
     "verilated-output-bus.h",
     "verilated-input-signal.h",
     "verilated-output-signal.h",
-    "verilated-clock.h",
-    "verilated-reset.h",
+    "verilated-design.h",
+    "verilated-combinatorial-design.h",
+    "verilated-clocked-design.h",
   ],
   deps = [
     "@com_google_googletest//:gtest",
@@ -137,19 +131,16 @@ cc_library(
 )
 
 # Unit Test Fixtures
-cc_library(
+verilog_module(
+  name = "verilated-fixture-module",
+  srcs = ["VerilatedFixtures.sv"],
+  top = "VerilatedFixtures",
+)
+
+verilator_cc_library(
   name = "verilated-fixtures",
-  hdrs = [
-
-  ],
-  srcs = [
-
-  ],
-  deps = [
-    ":cores",
-    ":verilated",
-  ],
-  visibility = ["//visibility:private"],
+  module = ":verilated-fixture-module",
+  visibility = ["//visibility:private"]
 )
 
 # Unit Test Library
@@ -158,9 +149,14 @@ cc_library(
   hdrs = [
     "verilated-input-bus-test.h",
     "verilated-output-bus-test.h",
+    "verilated-input-signal-test.h",
+    "verilated-output-signal-test.h",
   ],
   srcs = [
-
+    "verilated-input-bus-test.cc",
+    "verilated-output-bus-test.cc",
+    "verilated-input-signal-test.cc",
+    "verilated-output-signal-test.cc",
   ],
   deps = [
     "@com_google_googletest//:gtest",
@@ -199,12 +195,18 @@ cc_library(
     "device.h",
   ],
   srcs = [
+    "device-port.h",
+    "device-bus.h",
+    "device-signal.h",
+    "device-input.h",
+    "device-output.h",
     "device-input-bus.h",
     "device-output-bus.h",
     "device-input-signal.h",
     "device-output-signal.h",
-    "device-clock.h",
-    "device-reset.h",
+    "device-design.h",
+    "device-combinatorial-design.h",
+    "device-clocked-design.h",
   ],
   deps = [
     "@com_google_googletest//:gtest",
@@ -239,7 +241,10 @@ cc_library(
     "device-output-signal-test.h",
   ],
   srcs = [
-
+    "device-input-bus-test.cc",
+    "device-output-bus-test.cc",
+    "device-input-signal-test.cc",
+    "device-output-signal-test.cc",
   ],
   deps = [
     "@com_google_googletest//:gtest",

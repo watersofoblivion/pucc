@@ -8,7 +8,7 @@
 
 namespace cores {
   template <typename WIDTH>
-  class VerilatedInputSignal : public VerilatedSignal {
+  class VerilatedInputSignal : public VerialtedInput, public VerilatedSignal, public InputSignal {
   public:
     virtual ~VerilatedInputSignal() = default;
   };

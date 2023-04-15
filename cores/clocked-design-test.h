@@ -10,7 +10,7 @@ namespace cores {
 
   protected:
     virtual void SetUp() {
-      dut.Reset();
+      this->dut.Reset();
     }
   };
 }

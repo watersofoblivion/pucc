@@ -8,7 +8,7 @@
 
 namespace cores {
   template <typename WIDTH>
-  class VerilatedOutputBus : public VerilatedBus {
+  class VerilatedOutputBus : public VerilatedOutput, public VerilatedBus<WIDTH>, public OutputBus<WIDTH> {
   public:
     virtual ~VerilatedOutputBus() = default;
 
