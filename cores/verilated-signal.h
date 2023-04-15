@@ -6,6 +6,7 @@
 namespace cores {
   class VerilatedSignal : public VerilatedBus<bool>, public Signal {
   public:
+    VerilatedSignal(uint8_t& wire);
     virtual ~VerilatedSignal() = default;
   };
 }

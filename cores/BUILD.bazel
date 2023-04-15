@@ -122,6 +122,8 @@ cc_library(
     "verilated-design.h",
     "verilated-combinatorial-design.h",
     "verilated-clocked-design.h",
+    "verilated-signal.cc",
+    "verilated-input-signal.cc",
   ],
   deps = [
     "@com_google_googletest//:gtest",
@@ -147,16 +149,12 @@ verilator_cc_library(
 cc_library(
   name = "verilated-unit-tests",
   hdrs = [
-    "verilated-input-bus-test.h",
-    "verilated-output-bus-test.h",
-    "verilated-input-signal-test.h",
-    "verilated-output-signal-test.h",
+    "verilated-bus-test.h",
+    "verilated-signal-test.h",
   ],
   srcs = [
-    "verilated-input-bus-test.cc",
-    "verilated-output-bus-test.cc",
-    "verilated-input-signal-test.cc",
-    "verilated-output-signal-test.cc",
+    "verilated-bus-test.cc",
+    "verilated-signal-test.cc",
   ],
   deps = [
     "@com_google_googletest//:gtest",

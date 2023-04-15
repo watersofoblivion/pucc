@@ -1,15 +1,18 @@
+#pragma once
+
 #include <cstdint>
 
 #include "cores/cores.h"
 
-#include "verilated-bus.h"
-
-#pragma once
+#include "verilated-signal.h"
+#include "verilated-input.h"
 
 namespace cores {
-  template <typename WIDTH>
-  class VerilatedInputSignal : public VerialtedInput, public VerilatedSignal, public InputSignal {
+  class VerilatedInputSignal : public VerilatedInput, public VerilatedSignal, public InputSignal {
   public:
+    VerilatedInputSignal(uint8_t& wire);
     virtual ~VerilatedInputSignal() = default;
+
+    void Set(const bool) final;
   };
 }

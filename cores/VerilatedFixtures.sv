@@ -20,10 +20,10 @@ module VerilatedFixtures (
   output logic[23:0] medium_output_bus,
 
   input logic[47:0] large_input_bus,
-  output logic[47:0] large_output_bus,
+  output logic[47:0] large_output_bus //,
 
-  input logic[95:0] xlarge_input_bus,
-  output logic[95:0] xlarge_output_bus
+  // input logic[95:0] xlarge_input_bus,
+  // output logic[95:0] xlarge_output_bus
 );
 
   // Signal Tests
@@ -32,7 +32,7 @@ module VerilatedFixtures (
   assign small_output_bus  = small_input_bus;
   assign medium_output_bus = medium_input_bus;
   assign large_output_bus  = large_input_bus;
-  assign xlarge_output_bus = xlarge_input_bus;
+  // assign xlarge_output_bus = xlarge_input_bus;
 
   // Synchronous Reset
   always_ff @(posedge clk) begin
