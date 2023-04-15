@@ -1,9 +1,13 @@
 #include <gtest/gtest.h>
 
-#include "verilated-bus-test.h"
+#include "verilator-bus-test.h"
 
 namespace cores {
-  TEST_F(VerilatedBusTest, ExpectXSmall) {
+  void VerilatorBusTest::TearDown() {
+    fixtures.final();
+  }
+
+  TEST_F(VerilatorBusTest, ExpectXSmall) {
     auto value = distribution_xsmall(generator) & 0x0F;
 
     xsmall_input_bus.Set(value);
@@ -11,7 +15,7 @@ namespace cores {
     xsmall_output_bus.Expect(value);
   }
 
-  TEST_F(VerilatedBusTest, AssertXSmall) {
+  TEST_F(VerilatorBusTest, AssertXSmall) {
     auto value = distribution_xsmall(generator) & 0x0F;
 
     xsmall_input_bus.Set(value);
@@ -19,7 +23,7 @@ namespace cores {
     xsmall_output_bus.Assert(value);
   }
 
-  TEST_F(VerilatedBusTest, ExpectSmall) {
+  TEST_F(VerilatorBusTest, ExpectSmall) {
     auto value = distribution_small(generator) & 0x0FFF;
 
     small_input_bus.Set(value);
@@ -27,7 +31,7 @@ namespace cores {
     small_output_bus.Expect(value);
   }
 
-  TEST_F(VerilatedBusTest, AssertSmall) {
+  TEST_F(VerilatorBusTest, AssertSmall) {
     auto value = distribution_small(generator) & 0x0FFF;
 
     small_input_bus.Set(value);
@@ -35,7 +39,7 @@ namespace cores {
     small_output_bus.Assert(value);
   }
 
-  TEST_F(VerilatedBusTest, ExpectMedium) {
+  TEST_F(VerilatorBusTest, ExpectMedium) {
     auto value = distribution_medium(generator) & 0x00FFFFFF;
 
     medium_input_bus.Set(value);
@@ -43,7 +47,7 @@ namespace cores {
     medium_output_bus.Expect(value);
   }
 
-  TEST_F(VerilatedBusTest, AssertMedium) {
+  TEST_F(VerilatorBusTest, AssertMedium) {
     auto value = distribution_medium(generator) & 0x00FFFFFF;
 
     medium_input_bus.Set(value);
@@ -51,7 +55,7 @@ namespace cores {
     medium_output_bus.Assert(value);
   }
 
-  TEST_F(VerilatedBusTest, ExpectLarge) {
+  TEST_F(VerilatorBusTest, ExpectLarge) {
     auto value = distribution_large(generator) & 0x0000FFFFFFFFFFFF;
 
     large_input_bus.Set(value);
@@ -59,7 +63,7 @@ namespace cores {
     large_output_bus.Expect(value);
   }
 
-  TEST_F(VerilatedBusTest, AssertLarge) {
+  TEST_F(VerilatorBusTest, AssertLarge) {
     auto value = distribution_large(generator) & 0x0000FFFFFFFFFFFF;
 
     large_input_bus.Set(value);
@@ -67,7 +71,7 @@ namespace cores {
     large_output_bus.Assert(value);
   }
 
-  // TEST_F(VerilatedBusTest, ExpectXLarge) {
+  // TEST_F(VerilatorBusTest, ExpectXLarge) {
   //   VlWide<3> value;
   //   value[0] = 0x0EFFFFFF;
   //   value[1] = 0xFFFFFFFF;
@@ -78,7 +82,7 @@ namespace cores {
   //   xlarge_output_bus.Expect(value);
   // }
 
-  // TEST_F(VerilatedBusTest, AssertXLarge) {
+  // TEST_F(VerilatorBusTest, AssertXLarge) {
   //   VlWide<3> value;
   //   value[0] = 0x0EFFFFFF;
   //   value[1] = 0xFFFFFFFF;

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "verilated-bus-test.h"
-#include "verilated-signal-test.h"
+#include "verilator-bus-test.h"
+#include "verilator-signal-test.h"
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);

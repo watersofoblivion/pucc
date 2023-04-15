@@ -105,25 +105,25 @@ cc_test(
 
 # Verilator Library
 cc_library(
-  name = "verilated",
+  name = "verilator",
   hdrs = [
-    "verilated.h",
+    "verilator.h",
   ],
   srcs = [
-    "verilated-port.h",
-    "verilated-bus.h",
-    "verilated-signal.h",
-    "verilated-input.h",
-    "verilated-output.h",
-    "verilated-input-bus.h",
-    "verilated-output-bus.h",
-    "verilated-input-signal.h",
-    "verilated-output-signal.h",
-    "verilated-design.h",
-    "verilated-combinatorial-design.h",
-    "verilated-clocked-design.h",
-    "verilated-signal.cc",
-    "verilated-input-signal.cc",
+    "verilator-port.h",
+    "verilator-bus.h",
+    "verilator-signal.h",
+    "verilator-input.h",
+    "verilator-output.h",
+    "verilator-input-bus.h",
+    "verilator-output-bus.h",
+    "verilator-input-signal.h",
+    "verilator-output-signal.h",
+    "verilator-design.h",
+    "verilator-combinatorial-design.h",
+    "verilator-clocked-design.h",
+    "verilator-signal.cc",
+    "verilator-input-signal.cc",
   ],
   deps = [
     "@com_google_googletest//:gtest",
@@ -134,33 +134,33 @@ cc_library(
 
 # Unit Test Fixtures
 verilog_module(
-  name = "verilated-fixture-module",
-  srcs = ["VerilatedFixtures.sv"],
-  top = "VerilatedFixtures",
+  name = "verilator-fixture-module",
+  srcs = ["VerilatorFixtures.sv"],
+  top = "VerilatorFixtures",
 )
 
 verilator_cc_library(
-  name = "verilated-fixtures",
-  module = ":verilated-fixture-module",
+  name = "verilator-fixtures",
+  module = ":verilator-fixture-module",
   visibility = ["//visibility:private"]
 )
 
 # Unit Test Library
 cc_library(
-  name = "verilated-unit-tests",
+  name = "verilator-unit-tests",
   hdrs = [
-    "verilated-bus-test.h",
-    "verilated-signal-test.h",
+    "verilator-bus-test.h",
+    "verilator-signal-test.h",
   ],
   srcs = [
-    "verilated-bus-test.cc",
-    "verilated-signal-test.cc",
+    "verilator-bus-test.cc",
+    "verilator-signal-test.cc",
   ],
   deps = [
     "@com_google_googletest//:gtest",
     ":cores",
-    ":verilated",
-    ":verilated-fixtures",
+    ":verilator",
+    ":verilator-fixtures",
   ],
   alwayslink = True,
   visibility = ["//visibility:private"],
@@ -168,16 +168,16 @@ cc_library(
 
 # Unit Tests
 cc_test(
-  name = "verilated-unit-test",
+  name = "verilator-unit-test",
   srcs = [
-    "verilated-unit-test-main.cc",
+    "verilator-unit-test-main.cc",
   ],
   deps = [
     "@com_google_googletest//:gtest",
     ":cores",
-    ":verilated",
-    ":verilated-fixtures",
-    ":verilated-unit-tests",
+    ":verilator",
+    ":verilator-fixtures",
+    ":verilator-unit-tests",
   ],
   visibility = ["//visibility:private"],
 )
