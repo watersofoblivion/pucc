@@ -4,51 +4,67 @@
 
 namespace cores {
   TEST_F(VerilatedBusTest, ExpectXSmall) {
-    xsmall_input_bus.Set(0x0E);
+    auto value = distribution_xsmall(generator) & 0x0F;
+
+    xsmall_input_bus.Set(value);
     fixtures.eval();
-    xsmall_output_bus.Expect(0x0E);
+    xsmall_output_bus.Expect(value);
   }
 
   TEST_F(VerilatedBusTest, AssertXSmall) {
-    xsmall_input_bus.Set(0x0E);
+    auto value = distribution_xsmall(generator) & 0x0F;
+
+    xsmall_input_bus.Set(value);
     fixtures.eval();
-    xsmall_output_bus.Assert(0x0E);
+    xsmall_output_bus.Assert(value);
   }
 
   TEST_F(VerilatedBusTest, ExpectSmall) {
-    small_input_bus.Set(0x0EFF);
+    auto value = distribution_small(generator) & 0x0FFF;
+
+    small_input_bus.Set(value);
     fixtures.eval();
-    small_output_bus.Expect(0x0EFF);
+    small_output_bus.Expect(value);
   }
 
   TEST_F(VerilatedBusTest, AssertSmall) {
-    small_input_bus.Set(0x0EFF);
+    auto value = distribution_small(generator) & 0x0FFF;
+
+    small_input_bus.Set(value);
     fixtures.eval();
-    small_output_bus.Assert(0x0EFF);
+    small_output_bus.Assert(value);
   }
 
   TEST_F(VerilatedBusTest, ExpectMedium) {
-    medium_input_bus.Set(0x0EFFFFFF);
+    auto value = distribution_medium(generator) & 0x00FFFFFF;
+
+    medium_input_bus.Set(value);
     fixtures.eval();
-    medium_output_bus.Expect(0x0EFFFFFF);
+    medium_output_bus.Expect(value);
   }
 
   TEST_F(VerilatedBusTest, AssertMedium) {
-    medium_input_bus.Set(0x0EFFFFFF);
+    auto value = distribution_medium(generator) & 0x00FFFFFF;
+
+    medium_input_bus.Set(value);
     fixtures.eval();
-    medium_output_bus.Assert(0x0EFFFFFF);
+    medium_output_bus.Assert(value);
   }
 
   TEST_F(VerilatedBusTest, ExpectLarge) {
-    large_input_bus.Set(0x0EFFFFFFFFFFFFFF);
+    auto value = distribution_large(generator) & 0x0000FFFFFFFFFFFF;
+
+    large_input_bus.Set(value);
     fixtures.eval();
-    large_output_bus.Expect(0x0EFFFFFFFFFFFFFF);
+    large_output_bus.Expect(value);
   }
 
   TEST_F(VerilatedBusTest, AssertLarge) {
-    large_input_bus.Set(0x0EFFFFFFFFFFFFFF);
+    auto value = distribution_large(generator) & 0x0000FFFFFFFFFFFF;
+
+    large_input_bus.Set(value);
     fixtures.eval();
-    large_output_bus.Assert(0x0EFFFFFFFFFFFFFF);
+    large_output_bus.Assert(value);
   }
 
   // TEST_F(VerilatedBusTest, ExpectXLarge) {

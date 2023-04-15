@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <random>
 
 #include <gtest/gtest.h>
 
@@ -12,6 +13,12 @@
 namespace cores {
   class VerilatedBusTest : public ::testing::Test {
   protected:
+    std::default_random_engine generator;
+    std::uniform_int_distribution<uint8_t> distribution_xsmall;
+    std::uniform_int_distribution<uint16_t> distribution_small;
+    std::uniform_int_distribution<uint32_t> distribution_medium;
+    std::uniform_int_distribution<uint64_t> distribution_large;
+
     VVerilatedFixtures fixtures;
 
     InputBus<uint8_t>& xsmall_input_bus = verilated_xsmall_input_bus;
