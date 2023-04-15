@@ -1,11 +1,19 @@
 #include "clocked-design.h"
 
 namespace cores {
+  void ClockedDesign::ClockHigh() {
+    clk.SetHigh();
+  }
+
+  void ClockedDesign::ClockLow() {
+    clk.SetLow();
+  }
+
   void ClockedDesign::Tick() {
-      ToggleClock();
+      ClockHigh();
       Eval();
 
-      ToggleClock();
+      ClockLow();
       Eval();
   }
 
@@ -13,14 +21,5 @@ namespace cores {
     for (int i = 0; i < ticks; i++) {
       Tick();
     }
-  }
-
-  void ClockedDesign::Reset() {
-    ResetStart();
-    ResetComplete();
-  }
-
-  void ClockedDesign::Reset(const int ticks) {
-    ResetStart();
   }
 }

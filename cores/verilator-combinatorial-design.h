@@ -4,8 +4,18 @@
 #include "verilator-design.h"
 
 namespace cores {
-  class VerilatorCombinatorialDesign : public VerilatorDesign, public CombinatorialDesign {
+  template <class DESIGN>
+  class VerilatorCombinatorialDesign : public VerilatorDesign<DESIGN>, public CombinatorialDesign {
   public:
+    VerilatorCombinatorialDesign(DESIGN& design) : VerilatorDesign<DESIGN>(design) {}
     virtual ~VerilatorCombinatorialDesign() = default;
+
+    void Eval() final {
+      this->design.eval();
+    }
+
+    void Finalize() final {
+      this->design.final();
+    }
   };
 }

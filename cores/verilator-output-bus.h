@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "verilated.h"
+#include <verilated.h>
 
 #include "cores/cores.h"
 

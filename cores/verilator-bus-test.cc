@@ -77,10 +77,11 @@ namespace cores {
   }
 
   TEST_F(VerilatorBusTest, ExpectXLarge) {
-    VlWide<3> value;
-    value[0] = distribution_medium(generator) & 0x00FFFFFF;
-    value[1] = distribution_medium(generator);
-    value[2] = distribution_medium(generator);
+    VlWide<3> value{
+    /* value[0] = */ distribution_medium(generator), /* ; */
+    /* value[1] = */ distribution_medium(generator), /* ; */
+    /* value[2] = */ distribution_medium(generator) & 0x00FFFFFF /* ; */
+    };
 
     xlarge_input_bus.Set(value);
     fixtures.eval();
@@ -88,10 +89,11 @@ namespace cores {
   }
 
   TEST_F(VerilatorBusTest, AssertXLarge) {
-    VlWide<3> value;
-    value[0] = distribution_medium(generator) & 0x00FFFFFF;
-    value[1] = distribution_medium(generator);
-    value[2] = distribution_medium(generator);
+    VlWide<3> value{
+    /* value[0] = */ distribution_medium(generator), /* ; */
+    /* value[1] = */ distribution_medium(generator), /* ; */
+    /* value[2] = */ distribution_medium(generator) & 0x00FFFFFF /* ; */
+    };
 
     xlarge_input_bus.Set(value);
     fixtures.eval();

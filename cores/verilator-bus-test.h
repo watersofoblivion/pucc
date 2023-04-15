@@ -2,16 +2,13 @@
 
 #include <cstdint>
 #include <random>
-#include <chrono>
 
+#include <verilated.h>
 #include <gtest/gtest.h>
 
 #include "cores/cores.h"
+#include "cores/verilator.h"
 
-#include "verilator-input-bus.h"
-#include "verilator-output-bus.h"
-
-#include "verilated.h"
 #include "VVerilatorFixtures.h"
 
 namespace cores {

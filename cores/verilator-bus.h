@@ -1,6 +1,6 @@
 #pragma once
 
-#include "verilated.h"
+#include <verilated.h>
 
 #include "cores/cores.h"
 #include "verilator-port.h"
@@ -29,7 +29,7 @@ namespace cores {
   template <std::size_t SIZE>
   class VerilatorBus<VlWide<SIZE>> : public VerilatorPort, public Bus<VlWide<SIZE>> {
   public:
-    VerilatorBus(VlWide<SIZE> wire) : wire{wire} {}
+    VerilatorBus(VlWide<SIZE>& wire) : wire{wire} {}
     virtual ~VerilatorBus() = default;
   
   protected:

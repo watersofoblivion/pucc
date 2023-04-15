@@ -1,13 +1,11 @@
 #pragma once
 
 #include <gtest/gtest.h>
+#include <verilated.h>
 
 #include "cores/cores.h"
+#include "cores/verilator.h"
 
-#include "verilator-input-signal.h"
-#include "verilator-output-signal.h"
-
-#include "verilated.h"
 #include "VVerilatorFixtures.h"
 
 namespace cores {
@@ -17,6 +15,8 @@ namespace cores {
 
     InputSignal& input_signal = verilator_input_signal;
     OutputSignal& output_signal = verilator_output_signal;
+
+    void TearDown() final;
 
   private:
     VerilatorInputSignal verilator_input_signal{fixtures.input_signal};

@@ -30,6 +30,7 @@ cc_library(
     "clocked-design-test.h",
     "input-signal.cc",
     "output-signal.cc",
+    "clocked-design.cc",
   ],
   deps = [
     "@com_google_googletest//:gtest",
@@ -153,10 +154,14 @@ cc_library(
   hdrs = [
     "verilator-bus-test.h",
     "verilator-signal-test.h",
+    "verilator-combinatorial-design-test.h",
+    "verilator-clocked-design-test.h",
   ],
   srcs = [
     "verilator-bus-test.cc",
     "verilator-signal-test.cc",
+    "verilator-combinatorial-design-test.cc",
+    "verilator-clocked-design-test.cc",
   ],
   deps = [
     "@com_google_googletest//:gtest",
