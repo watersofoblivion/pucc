@@ -3,8 +3,8 @@
 #include "design-test.h"
 
 namespace cores {
-  template <class Design>
-  class ClockedDesignTest : public DesignTest<Design> {
+  template <class DESIGN>
+  class ClockedDesignTest : public DesignTest<DESIGN> {
   public:
     virtual ~ClockedDesignTest() = default;
 

@@ -1,7 +1,5 @@
 #include <cstdint>
 
-#include "cores/cores.h"
-
 #include "verilator-signal.h"
 #include "verilator-input-signal.h"
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cores/cores.h"
+
 #include "verilator-bus.h"
 
 namespace cores {

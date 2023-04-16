@@ -1,11 +1,5 @@
-#include <random>
-#include <cstdint>
-
 #include <gtest/gtest.h>
 
-#include "output-signal.h"
-
-#include "test-output-signal.h"
 #include "output-signal-test.h"
 
 namespace cores {

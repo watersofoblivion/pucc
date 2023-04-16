@@ -3,8 +3,8 @@
 #include "design-test.h"
 
 namespace cores {
-  template <class Design>
-  class CombinatorialDesignTest : public DesignTest<Design> {
+  template <class DESIGN>
+  class CombinatorialDesignTest : public DesignTest<DESIGN> {
   public:
     virtual ~CombinatorialDesignTest() = default;
   };

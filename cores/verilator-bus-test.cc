@@ -1,4 +1,7 @@
+#include <chrono>
+
 #include <gtest/gtest.h>
+#include <verilated.h>
 
 #include "verilator-bus-test.h"
 

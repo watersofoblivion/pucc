@@ -1,11 +1,7 @@
-#include <random>
-#include <cstdint>
+#include <chrono>
 
 #include <gtest/gtest.h>
 
-#include "input-bus.h"
-
-#include "test-input-bus.h"
 #include "input-bus-test.h"
 
 namespace cores {

@@ -1,7 +1,8 @@
 #include <cstdint>
 
-#include "cores/cores.h"
+#include <gtest/gtest.h>
 
+#include "verilator-signal.h"
 #include "verilator-output-signal.h"
 
 namespace cores {

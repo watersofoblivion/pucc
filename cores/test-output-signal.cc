@@ -1,5 +1,3 @@
-#include <cstdint>
-
 #include <gtest/gtest.h>
 
 #include "test-output-signal.h"

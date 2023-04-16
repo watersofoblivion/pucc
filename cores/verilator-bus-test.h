@@ -3,8 +3,8 @@
 #include <cstdint>
 #include <random>
 
-#include <verilated.h>
 #include <gtest/gtest.h>
+#include <verilated.h>
 
 #include "cores/cores.h"
 #include "cores/verilator.h"

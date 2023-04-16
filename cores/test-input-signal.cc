@@ -1,8 +1,5 @@
-#include <cstdint>
-
 #include <gtest/gtest.h>
 
-#include "input-signal.h"
 #include "test-input-signal.h"
 
 namespace cores {

@@ -1,8 +1,5 @@
-#include <cstdint>
-
 #include <gtest/gtest.h>
 
-#include "input-bus.h"
 #include "test-input-bus.h"
 
 namespace cores {

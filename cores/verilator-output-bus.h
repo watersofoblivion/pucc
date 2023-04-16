@@ -2,6 +2,7 @@
 
 #include <cstdint>
 
+#include <gtest/gtest.h>
 #include <verilated.h>
 
 #include "cores/cores.h"

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "cores/cores.h"
+
+#include "verilator-input-signal.h"
 #include "verilator-design.h"
 
 namespace cores {

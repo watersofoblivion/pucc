@@ -1,11 +1,4 @@
-#include <random>
-#include <cstdint>
-
 #include <gtest/gtest.h>
-
-#include "input-signal.h"
-
-#include "test-input-signal.h"
 
 #include "input-signal-test.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#import "port.h"
+#include "port.h"
 
 namespace cores {
   class Input : public Port {

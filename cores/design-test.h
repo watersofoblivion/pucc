@@ -3,12 +3,12 @@
 #include <gtest/gtest.h>
 
 namespace cores {
-  template <class Design>
+  template <class DESIGN>
   class DesignTest : public ::testing::Test {
   public:
     virtual ~DesignTest() = default;
 
   protected:
-    Design dut;
+    DESIGN& dut;
   };
 }
