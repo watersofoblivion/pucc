@@ -8,7 +8,7 @@ namespace cores {
   public:
     virtual ~InputSignal() = default;
 
-    void SetHigh();
-    void SetLow();
+    void Assert();
+    void Deassert();
   };
 }

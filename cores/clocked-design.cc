@@ -1,19 +1,19 @@
 #include "clocked-design.h"
 
 namespace cores {
-  void ClockedDesign::ClockHigh() {
-    clk.SetHigh();
+  void ClockedDesign::AssertClock() {
+    clk.Assert();
   }
 
-  void ClockedDesign::ClockLow() {
-    clk.SetLow();
+  void ClockedDesign::DeassertClock() {
+    clk.Deassert();
   }
 
   void ClockedDesign::Tick() {
-      ClockHigh();
+      AssertClock();
       Eval();
 
-      ClockLow();
+      DeassertClock();
       Eval();
   }
 

@@ -32,21 +32,21 @@ namespace cores {
     count.Expect(5);
   }
 
-  TEST_F(VerilatorClockedDesignTest, ClockHighLow) {
+  TEST_F(VerilatorClockedDesignTest, ClockAssertDeassert) {
     count.Assert(0);
 
-    design.ClockHigh();
+    design.AssertClock();
     design.Eval();
 
-    design.ClockLow();
+    design.DeassertClock();
     design.Eval();
     count.Expect(1);
 
-    design.ClockHigh();
+    design.AssertClock();
     design.Eval();
     count.Expect(2);
 
-    design.ClockLow();
+    design.DeassertClock();
     design.Eval();
     count.Expect(2);
   }

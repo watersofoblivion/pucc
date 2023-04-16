@@ -19,23 +19,23 @@ namespace cores {
     signal.Assert(true);
   }
 
-  TEST_F(OutputSignalTest, ExpectHigh) {
+  TEST_F(OutputSignalTest, ExpectAsserted) {
     test_signal.Set(true);
-    signal.ExpectHigh();
+    signal.ExpectAsserted();
   }
 
-  TEST_F(OutputSignalTest, AssertHigh) {
+  TEST_F(OutputSignalTest, AssertAsserted) {
     test_signal.Set(true);
-    signal.AssertHigh();
+    signal.AssertAsserted();
   }
 
-  TEST_F(OutputSignalTest, ExpectLow) {
+  TEST_F(OutputSignalTest, ExpectDeasserted) {
     test_signal.Set(false);
-    signal.ExpectLow();
+    signal.ExpectDeasserted();
   }
 
-  TEST_F(OutputSignalTest, AssertLow) {
+  TEST_F(OutputSignalTest, AssertDeasserted) {
     test_signal.Set(false);
-    signal.AssertLow();
+    signal.AssertDeasserted();
   }
 }

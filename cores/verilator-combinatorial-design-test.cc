@@ -37,9 +37,9 @@ namespace cores {
 
   TEST_F(VerilatorCombinatorialDesignTest, Finalize) {
     design.Eval();
-    finalized.ExpectLow();
+    finalized.ExpectDeasserted();
 
     design.Finalize();
-    finalized.ExpectHigh();
+    finalized.ExpectAsserted();
   }
 }

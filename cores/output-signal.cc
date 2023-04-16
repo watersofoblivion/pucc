@@ -1,19 +1,19 @@
 #include "output-signal.h"
 
 namespace cores {
-  void OutputSignal::ExpectHigh() {
+  void OutputSignal::ExpectAsserted() {
     Expect(true);
   }
 
-  void OutputSignal::ExpectLow() {
+  void OutputSignal::ExpectDeasserted() {
     Expect(false);
   }
 
-  void OutputSignal::AssertHigh() {
+  void OutputSignal::AssertAsserted() {
     Assert(true);
   }
 
-  void OutputSignal::AssertLow() {
+  void OutputSignal::AssertDeasserted() {
     Assert(false);
   }
 }

@@ -8,10 +8,10 @@ namespace cores {
   public:
     virtual ~OutputSignal() = default;
 
-    void ExpectHigh();
-    void ExpectLow();
+    void ExpectAsserted();
+    void ExpectDeasserted();
 
-    void AssertHigh();
-    void AssertLow();
+    void AssertAsserted();
+    void AssertDeasserted();
   };
 }

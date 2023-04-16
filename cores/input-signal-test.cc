@@ -18,13 +18,13 @@ namespace cores {
     test_signal.Expect(false);
   }
 
-  TEST_F(InputSignalTest, SetHigh) {
-    signal.SetHigh();
+  TEST_F(InputSignalTest, Assert) {
+    signal.Assert();
     test_signal.Expect(true);
   }
 
-  TEST_F(InputSignalTest, SetLow) {
-    signal.SetLow();
+  TEST_F(InputSignalTest, Deassert) {
+    signal.Deassert();
     test_signal.Expect(false);
   }
 }

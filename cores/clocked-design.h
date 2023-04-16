@@ -9,8 +9,8 @@ namespace cores {
     ClockedDesign(InputSignal& clk) : clk(clk) {}
     virtual ~ClockedDesign() = default;
 
-    virtual void ClockHigh();
-    virtual void ClockLow();
+    virtual void AssertClock();
+    virtual void DeassertClock();
     virtual void Tick();
     virtual void Tick(const int);
   

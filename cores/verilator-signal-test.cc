@@ -13,16 +13,16 @@ namespace cores {
     output_signal.Expect(true);
   }
 
-  TEST_F(VerilatorSignalTest, ExpectHigh) {
-    input_signal.Set(true);
+  TEST_F(VerilatorSignalTest, ExpectAsserted) {
+    input_signal.Assert();
     fixtures.eval();
-    output_signal.ExpectHigh();
+    output_signal.ExpectAsserted();
   }
 
-  TEST_F(VerilatorSignalTest, ExpectLow) {
-    input_signal.Set(false);
+  TEST_F(VerilatorSignalTest, ExpectDeasserted) {
+    input_signal.Deassert();
     fixtures.eval();
-    output_signal.ExpectLow();
+    output_signal.ExpectDeasserted();
   }
 
   TEST_F(VerilatorSignalTest, Assert) {
@@ -31,33 +31,15 @@ namespace cores {
     output_signal.Assert(true);
   }
 
-  TEST_F(VerilatorSignalTest, AssertHigh) {
-    input_signal.Set(true);
+  TEST_F(VerilatorSignalTest, AssertAsserted) {
+    input_signal.Assert();
     fixtures.eval();
-    output_signal.AssertHigh();
+    output_signal.AssertAsserted();
   }
 
-  TEST_F(VerilatorSignalTest, AssertLow) {
-    input_signal.Set(false);
+  TEST_F(VerilatorSignalTest, AssertDeasserted) {
+    input_signal.Deassert();
     fixtures.eval();
-    output_signal.AssertLow();
-  }
-
-  TEST_F(VerilatorSignalTest, Set) {
-    input_signal.Set(true);
-    fixtures.eval();
-    output_signal.Expect(true);
-  }
-
-  TEST_F(VerilatorSignalTest, SetHigh) {
-    input_signal.SetHigh();
-    fixtures.eval();
-    output_signal.Expect(true);
-  }
-
-  TEST_F(VerilatorSignalTest, SetLow) {
-    input_signal.SetLow();
-    fixtures.eval();
-    output_signal.ExpectLow();
+    output_signal.AssertDeasserted();
   }
 }
